@@ -83,7 +83,7 @@ export default function TicketListPage({
       <header className="mb-8">
         <div className="flex items-center">
           <h1 className="text-2xl font-bold tracking-tight text-white">
-            All Ticket List
+            모든 티켓
           </h1>
           <span className="ml-2 font-bold text-accent-300">
             {reviews.length}

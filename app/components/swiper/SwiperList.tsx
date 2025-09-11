@@ -14,10 +14,10 @@ export default function SwiperList({ movieList }: { movieList: MovieList[] }) {
       modules={[Navigation]}
       breakpoints={{
         320: {
-          slidesPerView: 2.5,
+          slidesPerView: 1.5,
         },
         480: {
-          slidesPerView: 3,
+          slidesPerView: 2.5,
         },
         640: {
           slidesPerView: 3.5,

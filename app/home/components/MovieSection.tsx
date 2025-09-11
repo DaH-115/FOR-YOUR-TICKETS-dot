@@ -60,8 +60,8 @@ const MovieSection = memo(function MovieSection({
           isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
       >
-        <h2 className="text-2xl font-bold text-white">{title}</h2>
-        <p className="text-sm text-gray-300">{description}</p>
+        <h2 className="text-2xl font-bold text-white lg:text-4xl">{title}</h2>
+        <p className="mt-2 text-sm text-gray-300">{description}</p>
       </div>
 
       {/* SwiperList 애니메이션 */}

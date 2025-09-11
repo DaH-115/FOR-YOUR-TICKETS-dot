@@ -8,6 +8,7 @@ import {
   selectWatchlist,
   fetchWatchlist,
 } from "store/redux-toolkit/slice/watchlistSlice";
+import EmptyState from "./EmptyState";
 
 interface WatchlistSectionProps {
   uid?: string | null;
@@ -26,15 +27,22 @@ export default function WatchlistSection({ uid }: WatchlistSectionProps) {
   }, [uid, dispatch]);
 
   return (
-    <section className="mt-8">
-      <h2 className="mb-4 text-lg font-bold text-white">보고 싶은 영화</h2>
+    <section className="my-8">
+      <div className="flex items-center justify-between">
+        <h2 className="mb-4 text-lg font-bold text-white">보고 싶은 영화</h2>
+        {/* 더보기 링크 - 로딩 중이 아닐 때만 표시 */}
+        {!loading && (
+          <Link
+            href="/my-page/watchlist"
+            className="mt-4 block text-right text-sm text-accent-300 hover:underline"
+          >
+            더보기
+          </Link>
+        )}
+      </div>
 
       {/* 로딩 상태 표시 */}
-      {loading && (
-        <div className="flex items-center justify-center py-8">
-          <p className="text-sm text-gray-400">불러오는 중...</p>
-        </div>
-      )}
+      {loading && <EmptyState message="불러오는 중..." />}
 
       {/* 에러 상태 표시 */}
       {error && !loading && (
@@ -57,17 +65,7 @@ export default function WatchlistSection({ uid }: WatchlistSectionProps) {
 
       {/* 성공 상태 - 데이터가 없는 경우 */}
       {!loading && !error && watchlist.length === 0 && (
-        <p className="text-sm text-gray-400">보고 싶은 영화가 비어 있습니다.</p>
-      )}
-
-      {/* 더보기 링크 - 로딩 중이 아닐 때만 표시 */}
-      {!loading && (
-        <Link
-          href="/my-page/watchlist"
-          className="mt-4 block text-right text-sm text-accent-500 hover:underline"
-        >
-          더보기
-        </Link>
+        <EmptyState message="보고 싶은 영화가 비어 있습니다." />
       )}
     </section>
   );

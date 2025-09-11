@@ -4,7 +4,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Pagination from "app/components/ui/layout/Pagination";
 import ReviewTicket from "app/components/review/ReviewTicket";
 import SearchSection from "app/components/search/SearchSection";
-import Loading from "app/loading";
 import EmptyState from "app/my-page/components/EmptyState";
 import MyTicketHeader from "app/my-page/components/ticket-list-page/MyTicketHeader";
 import { buildQueryUrl } from "app/my-page/utils/buildQueryUrl";
@@ -64,14 +63,14 @@ export default function TicketListLayout({
       />
       {/* 리뷰 목록 */}
       {loading ? (
-        <Loading />
+        <EmptyState message="불러오는 중..." />
       ) : error ? (
         <div className="rounded-lg bg-red-50 p-4 text-center">
           <p className="font-medium text-red-600">오류가 발생했습니다</p>
           <p className="mt-1 text-sm text-red-500">{error}</p>
         </div>
       ) : reviews.length > 0 ? (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {reviews.map((review) => (
             <Link key={review.id} href={`/ticket-list/${review.id}`}>
               <ReviewTicket review={review} />

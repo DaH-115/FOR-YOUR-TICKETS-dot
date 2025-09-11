@@ -194,4 +194,4 @@ yarn test
 
 ## 🔗 링크
 
-- **배포 사이트**: [https://just-your-tickets-git-main-dah115s-projects.vercel.app/](https://just-your-tickets-git-main-dah115s-projects.vercel.app/)
+- **배포 사이트**: [https://just-your-tickets.vercel.app/](https://just-your-tickets.vercel.app/)

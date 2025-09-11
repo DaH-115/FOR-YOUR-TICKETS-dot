@@ -13,18 +13,18 @@ export default async function Page() {
     await Promise.all([
       fetchNowPlayingMovies(),
       fetchTrendingMovies(),
-      fetchReviewsPaginated({ page: 1, pageSize: 12 }),
+      fetchReviewsPaginated({ page: 1, pageSize: 10 }),
     ]);
 
   if (!nowPlayingMovies?.length) {
     return notFound();
   }
 
-  // 날짜 기반으로 추천 영화를 선택 (매일 다른 영화 추천)
+  // 매일 다른 추천 영화 선택 (SSR 안전한 날짜 기반 로직)
+  // 1-31일 날짜를 영화 배열 길이로 나눈 나머지로 인덱스 결정
   const today = new Date().getDate();
-  const randomLikeIndex = today % 10;
-  const recommendMovie =
-    nowPlayingMovies[randomLikeIndex] || nowPlayingMovies[0];
+  const recommendIndex = today % nowPlayingMovies.length;
+  const recommendMovie = nowPlayingMovies[recommendIndex];
 
   const [trailerData, credits, movieDetails] = await Promise.all([
     fetchVideosMovies(recommendMovie.id),

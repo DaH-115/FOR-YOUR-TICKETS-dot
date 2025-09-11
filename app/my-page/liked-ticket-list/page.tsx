@@ -26,8 +26,8 @@ function LikedTicketListContainer() {
   return (
     <TicketListLayout
       header={{
-        title: "Liked Ticket List",
-        content: "좋아요한 티켓 목록입니다",
+        title: "내가 좋아요한 티켓",
+        content: "내가 좋아요한 티켓을 확인해 보세요",
       }}
       reviews={reviews}
       totalPages={totalPages}

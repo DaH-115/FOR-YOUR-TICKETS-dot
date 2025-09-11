@@ -1,3 +1,5 @@
+"use client";
+
 import SwiperList from "app/components/swiper/SwiperList";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 

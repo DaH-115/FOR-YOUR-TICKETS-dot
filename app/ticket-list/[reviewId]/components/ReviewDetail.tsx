@@ -93,8 +93,8 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
   // 리뷰 수정 핸들러
   const editHandler = useCallback(() => {
-    router.push(`/write-review/edit/${reviewId}`);
-  }, [router, reviewId]);
+    router.push(`/write-review/${reviewId}?movieId=${content.movieId}`);
+  }, [router, reviewId, content.movieId]);
 
   // 리뷰 삭제 핸들러
   const deleteHandler = useCallback(async () => {
@@ -135,7 +135,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
   return (
     <main className="py-24">
       {/* 영화 포스터 */}
-      <div className="mx-auto aspect-[2/3] max-w-lg overflow-hidden rounded-t-2xl">
+      <div className="mx-auto aspect-[2/3] max-w-lg overflow-hidden rounded-2xl">
         <MoviePoster
           posterPath={content.moviePosterPath}
           title={content.movieTitle}
@@ -143,7 +143,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
       </div>
 
       {/* 리뷰 정보 */}
-      <div className="mx-auto max-w-lg rounded-b-2xl border bg-white p-4">
+      <div className="mx-auto max-w-lg rounded-2xl border bg-white p-4">
         {/* 별점, 제목, 영화 정보, 좋아요 버튼 */}
         <header className="mb-4 flex items-center justify-between">
           <div className="flex items-center">

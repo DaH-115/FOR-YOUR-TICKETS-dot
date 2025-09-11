@@ -30,9 +30,9 @@ export default function Header() {
   const userDisplayName = user?.displayName;
   const userPhotoURL = user?.photoKey;
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
-  // 스크롤 여부 상태 (20px 이상 스크롤 시 true)
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  // 헤더 숨김 상태 (스크롤 다운 시 true)
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
   const logoutHandler = useCallback(async () => {
     try {
@@ -53,10 +53,29 @@ export default function Header() {
     }
   }, [dispatch, router]);
 
-  // 스크롤 감지 효과: 스크롤이 20px 이상이면 isScrolled를 true로 설정
+  // 스크롤 방향 감지 및 헤더 숨김/보임 처리
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+
+      // 스크롤 위치가 100px 이상일 때만 헤더 숨김/보임 처리
+      if (currentScrollY > 100) {
+        // 아래로 스크롤: 헤더 숨김
+        if (currentScrollY > lastScrollY) {
+          setIsHeaderHidden(true);
+        }
+        // 위로 스크롤: 헤더 보임
+        else if (currentScrollY < lastScrollY) {
+          setIsHeaderHidden(false);
+        }
+      } else {
+        // 최상단 근처에서는 항상 헤더 보임
+        setIsHeaderHidden(false);
+      }
+
+      lastScrollY = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -77,16 +96,14 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-6 pb-4 pt-8 text-xs transition-all duration-300 ease-in-out ${
-        // 스크롤 시 블러 효과 없이 블랙→투명 그라데이션만 적용
-        isScrolled && !isSideMenuOpen
-          ? "bg-gradient-to-b from-black via-black/80 to-transparent"
-          : "bg-transparent"
+      className={`fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between bg-gradient-to-b from-black via-black/80 to-transparent px-6 pb-4 pt-8 text-xs transition-all duration-500 ease-in-out ${
+        // 스크롤 다운 시 헤더를 위로 숨김
+        isHeaderHidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
       {/* LOGO */}
-      <h1 className="mr-2 bg-gradient-to-r from-white via-accent-200 to-white bg-clip-text text-lg font-bold text-transparent sm:mr-4 sm:text-lg md:text-xl">
-        <span>Just Your Tickets</span>
+      <h1 className="mr-2 text-lg font-bold tracking-tighter text-white sm:mr-4 md:text-xl">
+        Just Your Tickets
       </h1>
 
       {/* DESKTOP NAVIGATION - 중앙 배치 */}
@@ -150,7 +167,7 @@ export default function Header() {
           className="rounded-full p-2 text-white transition-colors duration-300 hover:bg-white/20 md:hidden"
           aria-label="메뉴 열기"
         >
-          <IoIosMenu size={24} aria-hidden />
+          <IoIosMenu size={32} aria-hidden />
         </button>
       </div>
 

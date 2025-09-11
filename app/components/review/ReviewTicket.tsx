@@ -36,7 +36,7 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
         />
       </div>
       {/* 정보 카드 - 고정 높이 설정 */}
-      <section className="relative z-10 flex h-32 flex-col rounded-b-xl border bg-white p-3 pt-2 text-black transition-colors duration-200 group-hover:bg-gray-200">
+      <section className="relative z-10 flex h-32 flex-col rounded-xl border bg-white p-3 pt-2 text-black transition-colors duration-200 group-hover:bg-gray-200">
         {/* 별점 */}
         <div className="flex items-center">
           <FaStar className="text-accent-300" size={16} />

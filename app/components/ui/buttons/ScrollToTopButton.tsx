@@ -32,9 +32,7 @@ const ScrollToTopButton = () => {
       }`}
       aria-label="맨 위로 스크롤"
     >
-      <div className="flex flex-col items-center">
-        <FaArrowUp className="mb-1" />
-      </div>
+      <FaArrowUp />
     </button>
   );
 };

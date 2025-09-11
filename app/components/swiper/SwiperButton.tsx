@@ -14,7 +14,7 @@ export default function SwiperButton({
       onClick={() =>
         direction === "next" ? swiper.slideNext() : swiper.slidePrev()
       }
-      className={`absolute top-1/2 z-50 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900/80 p-2 text-xs text-white shadow-md transition-all duration-300 ease-in-out hover:scale-110 focus:border-none focus:outline-none focus:ring-1 focus:ring-accent-300 md:p-3 md:text-sm ${
+      className={`absolute top-1/2 z-50 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900/80 p-2 text-sm text-white shadow-md transition-all duration-300 ease-in-out hover:scale-110 focus:border-none focus:outline-none focus:ring-1 focus:ring-accent-300 md:p-3 md:text-base ${
         direction === "prev" ? "left-2 md:left-4" : "right-2 md:right-4"
       }`}
       aria-label={ariaLabel}

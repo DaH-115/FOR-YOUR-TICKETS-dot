@@ -26,11 +26,10 @@ export default function HomePage({
   movieList,
   recommendMovie,
   trailerKey,
-  trendingMovies,
   latestReviews,
 }: HomePageProps) {
   return (
-    <main className="px-4 md:px-6 lg:px-8">
+    <main className="px-6">
       <MovieSection
         title="Now Playing"
         description="지금 상영 중인 영화들을 만나보세요"
@@ -38,11 +37,6 @@ export default function HomePage({
         maxItems={10}
       />
       <RecommendSection movie={recommendMovie} trailerKey={trailerKey} />
-      <MovieSection
-        title="Trending Movies"
-        description="요즘 가장 인기 있는 영화들을 만나보세요"
-        movieList={trendingMovies}
-      />
       <LatestReviewList reviews={latestReviews} />
     </main>
   );

@@ -1,8 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { usePresignedUrl } from "app/components/user/hooks/usePresignedUrl";
+
+// 헬퍼 함수들
+const getImageSrc = (
+  previewSrc?: string,
+  s3photoKey?: string | null,
+  presignedUrl?: string,
+) => {
+  if (previewSrc) return previewSrc;
+  if (s3photoKey) return presignedUrl;
+  return undefined;
+};
+
+const getFirstLetter = (displayName?: string) => {
+  return displayName ? displayName.charAt(0).toUpperCase() : "U";
+};
 
 /**
  * 프로필 아바타 컴포넌트
@@ -26,7 +41,7 @@ interface ProfileAvatarProps {
   onImageError?: () => void;
 }
 
-export default function ProfileAvatar({
+function ProfileAvatar({
   userDisplayName,
   s3photoKey,
   previewSrc,
@@ -40,21 +55,27 @@ export default function ProfileAvatar({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // src 계산 함수: previewSrc > presignedUrl > undefined
+  // s3photoKey가 있고 화면에 보일 때만 presigned URL 요청
+  const shouldFetchUrl = isVisible && s3photoKey && !previewSrc;
   const { url: presignedUrl, loading } = usePresignedUrl({
-    key: isVisible && s3photoKey ? s3photoKey : null,
+    key: shouldFetchUrl ? s3photoKey : null,
     isPublic,
   });
-  const getImageSrc = () => {
-    if (previewSrc) return previewSrc;
-    if (s3photoKey) return presignedUrl;
-    return undefined;
-  };
-  const src = getImageSrc();
+
+  const src = getImageSrc(previewSrc, s3photoKey, presignedUrl);
 
   // S3 presignedUrl이 필요한 경우에만 Intersection Observer 사용
   useEffect(() => {
-    if (!s3photoKey) return;
+    // previewSrc가 있거나 s3photoKey가 없으면 observer 불필요
+    if (!s3photoKey || previewSrc) return;
+
+    // 이미 보이면 observer 생성할 필요 없음 (한 번 로드되면 끝)
+    if (isVisible) return;
+
+    const currentRef = containerRef.current;
+    if (!currentRef) return;
+
+    // rootMargin을 통해 뷰포트 진입 전에 미리 로딩하여 사용자 경험 향상
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -64,46 +85,40 @@ export default function ProfileAvatar({
           }
         });
       },
-      { threshold: 0.1 },
+      { threshold: 0, rootMargin: "600px 0px" },
     );
-    const currentRef = containerRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
+
+    observer.observe(currentRef);
+
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
+      observer.unobserve(currentRef);
     };
-  }, [s3photoKey]);
+
+    // isVisible을 의존성에 포함하면 observer가 재생성되어 성능 문제 발생
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [s3photoKey, previewSrc]);
 
   // 이미지 소스가 바뀔 때 에러 상태 초기화
   useEffect(() => {
     setImageError(false);
   }, [previewSrc, s3photoKey]);
 
-  // 이미지 표시 조건: src만 있으면 됨
+  // 렌더링 조건들
   const shouldShowImage = !imageError && src;
-
-  // 닉네임의 첫 글자 추출
-  const firstLetter = userDisplayName
-    ? userDisplayName.charAt(0).toUpperCase()
-    : "U";
-
-  // 회색 배경 통일
-  const backgroundColorClass = "bg-gray-500";
+  const shouldShowLoading = loading && !previewSrc && showLoading;
+  const firstLetter = getFirstLetter(userDisplayName);
 
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden rounded-full ${className}`}
-      style={{ width: size, height: size }}
+      className={`isolation-isolate relative transform-gpu overflow-hidden rounded-full will-change-[transform] ${className}`}
+      style={{ width: size, height: size, contain: "paint" }}
       aria-label={
         userDisplayName ? `${userDisplayName} 프로필 이미지` : "프로필 이미지"
       }
       data-testid="profile-avatar"
     >
-      {loading && !previewSrc && showLoading ? (
+      {shouldShowLoading ? (
         <div className="flex h-full w-full items-center justify-center bg-gray-200">
           <div
             className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent"
@@ -123,10 +138,7 @@ export default function ProfileAvatar({
           }}
         />
       ) : (
-        <div
-          className={`flex h-full w-full items-center justify-center ${backgroundColorClass}`}
-        >
-          {/* fallback: 이니셜 */}
+        <div className="flex h-full w-full items-center justify-center bg-gray-500">
           <span
             className="select-none font-bold text-white"
             style={{ fontSize: size * 0.4 }}
@@ -138,3 +150,5 @@ export default function ProfileAvatar({
     </div>
   );
 }
+
+export default memo(ProfileAvatar);

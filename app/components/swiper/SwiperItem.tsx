@@ -2,6 +2,7 @@ import Link from "next/link";
 import GenreList from "app/components/movie/GenreList";
 import MovieCertification from "app/components/movie/MovieCertification";
 import MoviePoster from "app/components/movie/MoviePoster";
+import Tooltip from "app/components/ui/feedback/Tooltip";
 import getEnrichMovieTitle from "app/utils/getEnrichMovieTitle";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 import { FaStar } from "react-icons/fa";
@@ -27,9 +28,9 @@ export default function SwiperItem({
   const displayTitle = getEnrichMovieTitle(original_title, title);
 
   return (
-    <article className="relative flex flex-col items-stretch drop-shadow-xl transition-transform duration-300 ease-in-out hover:scale-105 hover:drop-shadow-2xl">
+    <article className="relative flex flex-col items-stretch drop-shadow-xl transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:drop-shadow-2xl">
       {/* 랭킹 번호 */}
-      <header className="absolute left-0 top-0 z-50 flex w-full items-center justify-between rounded-t-xl bg-gradient-to-t from-transparent to-black px-2 py-1 text-2xl font-bold text-white md:px-4 md:py-3 md:text-3xl">
+      <header className="absolute left-0 top-0 z-50 flex w-full items-center justify-between rounded-t-xl bg-gradient-to-t from-transparent to-black px-3 py-2 text-3xl font-bold text-white md:px-4 md:py-3">
         <strong>{idx + 1}</strong>
       </header>
       {/* 영화 포스터 */}
@@ -38,13 +39,13 @@ export default function SwiperItem({
       </div>
 
       {/* 영화 정보 카드 - 제목, 등급, 평점, 장르 */}
-      <section className="overflow-hidden rounded-t-2xl border-t-4 border-dotted border-gray-300 bg-gradient-to-br from-white to-gray-50">
-        <div className="p-2 pb-0 md:px-3 md:pt-3">
+      <section className="overflow-hidden rounded-2xl border-t-8 border-dotted border-gray-300 bg-gradient-to-br from-white to-gray-50 lg:border-t-4">
+        <div className="p-2 px-3 pb-0 md:pt-3">
           {/* 영화 제목 */}
           <div className="pb-2">
             <div className="flex items-center gap-1 md:gap-2">
               <div className="flex-1">
-                <h3 className="line-clamp-1 text-sm font-bold md:text-base">
+                <h3 className="line-clamp-1 text-base font-bold lg:text-lg">
                   {title}
                 </h3>
                 <p className="line-clamp-1 text-sm leading-tight text-gray-500">
@@ -59,7 +60,7 @@ export default function SwiperItem({
             {/* 평점 */}
             <div className="flex items-center">
               <FaStar className="mr-1 text-lg text-accent-300" />
-              <span className="text-sm font-semibold md:text-lg">
+              <span className="text-base font-semibold md:text-lg">
                 {vote_average ? Math.round(vote_average * 10) / 10 : 0}
               </span>
             </div>
@@ -68,17 +69,23 @@ export default function SwiperItem({
               {/* 등급 */}
               <MovieCertification certification={movie.certification || null} />
               {/* 인포 버튼 */}
-              <Link
-                href={`/movie-details/${id}`}
-                aria-label={`${displayTitle} 영화 상세정보 보기`}
-              >
-                <IoInformationCircle className="text-xl" aria-hidden />
-              </Link>
+              <div className="relative">
+                <Link
+                  href={`/movie-details/${id}`}
+                  aria-label={`${displayTitle} 영화 상세정보 보기`}
+                >
+                  <IoInformationCircle
+                    className="text-xl text-gray-300 transition-all duration-300 ease-in-out hover:text-gray-800"
+                    aria-hidden
+                  />
+                </Link>
+                <Tooltip>{displayTitle} 영화 상세정보 보기</Tooltip>
+              </div>
             </div>
           </div>
 
           {/* 장르 */}
-          <div className="py-4">
+          <div className="pb-2 pt-3 md:py-4">
             <GenreList genres={genres?.slice(0, 3) || []} />
           </div>
         </div>

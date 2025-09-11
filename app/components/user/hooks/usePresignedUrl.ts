@@ -21,23 +21,31 @@ const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5분마다 정리
 function cleanupExpiredCache() {
   const now = Date.now();
   const expiredKeys: string[] = [];
-  
+
   // 만료된 항목들의 키를 수집
   for (const [key, value] of presignedUrlCache.entries()) {
     if (value.expiresAt <= now) {
       expiredKeys.push(key);
     }
   }
-  
+
   // 만료된 항목들을 캐시에서 제거
-  expiredKeys.forEach(key => {
+  expiredKeys.forEach((key) => {
     presignedUrlCache.delete(key);
   });
-  
+
   // 정리된 항목이 있으면 로그 출력 (개발 환경에서만)
-  if (expiredKeys.length > 0 && process.env.NODE_ENV === 'development') {
+  if (expiredKeys.length > 0 && process.env.NODE_ENV === "development") {
     console.log(`캐시 정리: ${expiredKeys.length}개 만료 항목 제거`);
   }
+}
+
+/**
+ * 캐시 키 생성 헬퍼
+ * - 공개 여부를 포함하여 동일 key라도 공개/비공개가 다르면 분리
+ */
+function buildCacheKey(key: string, isPublic: boolean) {
+  return `${isPublic ? "public" : "private"}:${key}`;
 }
 
 /**
@@ -47,9 +55,9 @@ function startCleanupTimer() {
   if (cleanupTimer) {
     return; // 이미 타이머가 실행 중이면 중복 시작 방지
   }
-  
+
   cleanupTimer = setInterval(cleanupExpiredCache, CLEANUP_INTERVAL);
-  
+
   // 초기 정리 실행 (즉시 한 번 실행)
   cleanupExpiredCache();
 }
@@ -67,17 +75,17 @@ function stopCleanupTimer() {
 /**
  * 캐시에서 유효한 항목만 반환하는 헬퍼 함수
  */
-function getValidCachedItem(key: string) {
-  const cached = presignedUrlCache.get(key);
+function getValidCachedItem(cacheKey: string) {
+  const cached = presignedUrlCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) {
     return cached;
   }
-  
+
   // 만료된 항목이면 즉시 제거
   if (cached) {
-    presignedUrlCache.delete(key);
+    presignedUrlCache.delete(cacheKey);
   }
-  
+
   return null;
 }
 
@@ -102,7 +110,7 @@ export function usePresignedUrl({
   // 컴포넌트 마운트 시 캐시 정리 타이머 시작
   useEffect(() => {
     startCleanupTimer();
-    
+
     // 컴포넌트 언마운트 시 타이머 정리
     return () => {
       // 다른 컴포넌트에서도 이 훅을 사용할 수 있으므로
@@ -133,16 +141,17 @@ export function usePresignedUrl({
       setError("인증이 필요합니다.");
       return;
     }
-    
+
     // presigned URL 캐시 조회 및 만료 체크 (개선된 방식)
-    const cached = getValidCachedItem(key);
+    const cacheKey = buildCacheKey(key, isPublic);
+    const cached = getValidCachedItem(cacheKey);
     if (cached) {
       setUrl(cached.url);
       setLoading(false);
       setError(null);
       return;
     }
-    
+
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -169,7 +178,7 @@ export function usePresignedUrl({
         });
         if (!abortController.signal.aborted) {
           // presigned URL과 만료 시각을 캐시에 저장
-          presignedUrlCache.set(key, {
+          presignedUrlCache.set(cacheKey, {
             url,
             expiresAt: Date.now() + expiresIn * 1000,
           });
@@ -205,6 +214,6 @@ export function usePresignedUrl({
 }
 
 // 앱 종료 시 타이머 정리 (선택적)
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', stopCleanupTimer);
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeunload", stopCleanupTimer);
 }

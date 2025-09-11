@@ -32,7 +32,7 @@ export default function ConditionalLayout({
 
   // 일반 페이지: 헤더/푸터 포함
   return (
-    <div className="flex min-h-screen flex-col pt-18 md:pt-24">
+    <div className="flex min-h-screen flex-col pt-24 lg:pt-32">
       <Header />
       <main className="flex-1">{children}</main>
       <div id="modal-root" />

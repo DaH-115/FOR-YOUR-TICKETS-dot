@@ -29,7 +29,7 @@ function WatchlistContainer() {
   }, [user?.uid, dispatch]);
 
   if (!user?.uid) return <EmptyState message="로그인이 필요합니다." />;
-  if (loading) return <EmptyState message="로딩 중..." />;
+  if (loading) return <EmptyState message="불러오는 중..." />;
   if (error) return <EmptyState message={error} />;
   if (movies.length === 0)
     return <EmptyState message="보고 싶은 영화가 비어 있습니다." />;
@@ -39,7 +39,7 @@ function WatchlistContainer() {
       {/* 헤더 섹션 */}
       <MyTicketHeader
         title="보고 싶은 영화"
-        content={`보고 싶은 영화 목록입니다`}
+        content={`보고 싶은 영화를 확인해 보세요`}
         reviewsCount={movies.length}
       />
 

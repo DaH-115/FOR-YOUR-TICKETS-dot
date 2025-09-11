@@ -28,8 +28,10 @@ export default function AddWatchlistButton({ movieId }: { movieId: number }) {
   return (
     <button
       onClick={handleClick}
-      aria-label={savedList ? "Remove from watchlist" : "Add to watchlist"}
-      className="text-2xl text-accent-300"
+      aria-label={
+        savedList ? "보고 싶은 영화에서 제거" : "보고 싶은 영화에 추가"
+      }
+      className="text-xl text-accent-300"
     >
       {savedList ? <FaBookmark /> : <FaRegBookmark />}
     </button>
