@@ -1,4 +1,4 @@
-import { ReviewFormValues } from "app/write-review/types";
+import { ReviewFormValues } from "@/write-review/types";
 
 // 리뷰 수정 API 호출 유틸
 export async function putReview({

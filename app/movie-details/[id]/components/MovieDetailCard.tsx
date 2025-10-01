@@ -1,14 +1,15 @@
-import MovieCertification from "app/components/movie/MovieCertification";
-import MoviePoster from "app/components/movie/MoviePoster";
-import WriteButton from "app/components/ui/buttons/WriteButton";
-import MetaInfoItem from "app/movie-details/[id]/components/MetaInfoItem";
-import convertRuntime from "app/movie-details/[id]/utils/convertRuntime";
-import formatMovieDate from "app/utils/formatMovieDate";
+import MovieCertification from "@/components/movie/MovieCertification";
+import MoviePoster from "@/components/movie/MoviePoster";
+import WriteButton from "@/components/ui/buttons/WriteButton";
+import MetaInfoItem from "@/movie-details/[id]/components/MetaInfoItem";
+import convertRuntime from "@/movie-details/[id]/utils/convertRuntime";
+import formatMovieDate from "@/utils/formatMovieDate";
 import { MovieCredits } from "lib/movies/fetchMovieCredits";
 import { MovieDetails } from "lib/movies/fetchMovieDetails";
-import ProfileAvatar from "app/components/user/ProfileAvatar";
+import ProfileAvatar from "@/components/user/ProfileAvatar";
 import { FaStar } from "react-icons/fa";
-// import AddWatchlistButton from "app/components/movie/AddWatchlistButton";
+import AddWatchlistButton from "@/components/movie/AddWatchlistButton";
+import GenreList from "@/components/movie/GenreList";
 
 interface MovieDetailCardProps {
   movieDetails: MovieDetails;
@@ -46,23 +47,31 @@ export default function MovieDetailCard({
       : undefined;
   };
 
+  // 한글 포함 여부 체크
+  const hasKorean = (text: string) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text);
+
+  // 같은 언어인지 체크 (둘 다 한글이거나 둘 다 영어)
+  const isSameLanguage = (name: string, originalName: string) => {
+    return hasKorean(name) === hasKorean(originalName);
+  };
+
   return (
-    <main className="relative mb-12 flex w-full items-center justify-center px-4 pt-8 md:my-12 md:px-0 md:pt-16">
-      <div className="flex flex-col justify-center gap-4 md:w-2/3 md:flex-row md:gap-6">
+    <main className="relative mx-auto -mt-12 flex max-w-7xl justify-center md:mb-8 md:mt-12">
+      <div className="flex flex-col justify-center md:w-2/3 md:flex-row md:gap-6">
         {/* 영화 포스터 */}
-        <section className="w-2/3">
-          <div className="aspect-[2/3] w-full overflow-hidden rounded-2xl">
-            <MoviePoster posterPath={poster_path} title={title} />
-          </div>
+        <section className="mx-auto w-full md:w-3/4">
+          <MoviePoster posterPath={poster_path || ""} title={title} />
         </section>
         <div className="mx-auto w-full overflow-hidden">
           {/* 영화 정보 */}
-          <article className="shadow-lg">
-            <div className="rounded-2xl bg-white px-8 py-6">
+          <article className="w-full shadow-lg">
+            <div className="w-full rounded-2xl bg-white px-6 pb-4 pt-6 md:px-8">
               {/* 영화 정보 & 제목 */}
               <h1 className="sr-only">MOVIE DETAILS</h1>
               <div className="flex items-center">
-                <h2 className="mr-3 break-keep text-3xl font-bold">{title}</h2>
+                <h2 className="mr-3 break-keep text-xl font-bold md:text-3xl">
+                  {title}
+                </h2>
                 {certification && (
                   <MovieCertification
                     certification={certification}
@@ -78,21 +87,9 @@ export default function MovieDetailCard({
               </div>
 
               {/* 장르 */}
-              <ul className="flex w-full items-center overflow-x-scroll pt-4 scrollbar-hide">
-                {genres
-                  .map((genre) => genre.name)
-                  .map((genre: string, idx: number) => (
-                    <li key={idx} className="flex items-center">
-                      <p className="text-nowrap text-sm">
-                        {genre}
-                        {/* 마지막 아이템이 아니면 점 표시 */}
-                        {idx < genres.length - 1 && (
-                          <span className="mx-2">·</span>
-                        )}
-                      </p>
-                    </li>
-                  ))}
-              </ul>
+              <div className="pt-4">
+                <GenreList genres={genres.map((genre) => genre.name)} />
+              </div>
 
               {/* 평점 */}
               <div className="py-4">
@@ -107,18 +104,18 @@ export default function MovieDetailCard({
               {/* 줄거리 */}
               {overview && (
                 <div className="mb-6">
-                  <p className="break-keep leading-relaxed text-gray-800">
+                  <p className="break-keep text-sm leading-relaxed text-gray-800">
                     {overview}
                   </p>
                 </div>
               )}
               {/* 출연진 */}
               <div className="border-t-4 border-dotted pb-4 pt-8">
-                <h3 className="mb-2 text-xs font-bold">출연진</h3>
+                <h3 className="mb-3 text-xs font-bold">출연진</h3>
                 {casts.length > 0 ? (
                   <ul className="space-y-4">
                     {casts.slice(0, 5).map((cast) => (
-                      <li key={cast.id} className="flex items-center gap-2">
+                      <li key={cast.id} className="flex items-center gap-4">
                         {/* 출연진 프로필 */}
                         <ProfileAvatar
                           userDisplayName={cast.name}
@@ -130,9 +127,11 @@ export default function MovieDetailCard({
                         <div>
                           <div className="mb-1">
                             <p className="text-sm">{cast.name}</p>
-                            <p className="text-xs text-gray-500">
-                              {cast.original_name}
-                            </p>
+                            {!isSameLanguage(cast.name, cast.original_name) && (
+                              <p className="text-xs text-gray-500">
+                                {cast.original_name}
+                              </p>
+                            )}
                           </div>
                           <p className="text-xs text-gray-600">
                             {cast.character}
@@ -148,15 +147,15 @@ export default function MovieDetailCard({
                 )}
               </div>
               {/* 감독 */}
-              <div className="pb-8">
-                <h3 className="mb-2 text-xs font-bold">감독</h3>
+              <div className="pb-6">
+                <h3 className="mb-3 text-xs font-bold">감독</h3>
                 {crews.length > 0 &&
                 crews.filter((crew) => crew.job === "Director").length > 0 ? (
                   <ul className="space-y-1">
                     {crews
                       .filter((crew) => crew.job === "Director")
                       .map((crew) => (
-                        <li key={crew.id} className="flex items-center gap-2">
+                        <li key={crew.id} className="flex items-center gap-4">
                           <ProfileAvatar
                             userDisplayName={crew.name}
                             previewSrc={profilePath(crew.profile_path)}
@@ -166,43 +165,47 @@ export default function MovieDetailCard({
                           />
                           <div>
                             <p className="text-sm">{crew.name}</p>
-                            <p className="text-xs text-gray-600">
-                              {crew.original_name}
-                            </p>
+                            {!isSameLanguage(crew.name, crew.original_name) && (
+                              <p className="text-xs text-gray-600">
+                                {crew.original_name}
+                              </p>
+                            )}
                           </div>
                         </li>
                       ))}
                   </ul>
                 ) : (
-                  <p className="text-gray-400">감독 정보가 없습니다.</p>
+                  <p className="text-sm text-gray-400">감독 정보가 없습니다.</p>
                 )}
               </div>
               {/* 기타 정보 */}
-              <div className="flex w-full items-center justify-center py-4">
+              <div className="flex w-full items-center justify-center pb-4">
                 <MetaInfoItem label={"개봉일"}>
                   {movieDate ? (
                     <p>{movieDate}</p>
                   ) : (
-                    <p className="text-gray-400">개봉일 정보가 없습니다.</p>
+                    <p className="text-sm text-gray-400">
+                      개봉일 정보가 없습니다.
+                    </p>
                   )}
                 </MetaInfoItem>
                 <MetaInfoItem label={"러닝 타임"}>
                   {convertedRuntime ? (
                     <p>{convertedRuntime}</p>
                   ) : (
-                    <span className="text-gray-400">
+                    <span className="text-sm text-gray-400">
                       러닝 타임 정보가 없습니다.
                     </span>
                   )}
                 </MetaInfoItem>
               </div>
               {/* 제작사 */}
-              <div className="py-4">
+              <div className="pb-4">
                 <h3 className="mb-3 text-xs font-bold">제작</h3>
                 <ul className="flex flex-wrap">
                   {movieDetails.production_companies.map(
                     (company, idx, arr) => (
-                      <li key={idx} className="text-sm">
+                      <li key={idx} className="text-xs md:text-sm">
                         {company.name}
                         {/* 마지막 항목이 아니라면 구분 마크(·) 추가 */}
                         {idx < arr.length - 1 && (
@@ -214,9 +217,13 @@ export default function MovieDetailCard({
                 </ul>
               </div>
               {/* 리뷰 작성 & 워치리스트 버튼 */}
-              <div className="flex items-center gap-3 border-t-4 border-dotted pt-4">
-                <WriteButton movieId={movieDetails.id} />
-                {/* <AddWatchlistButton movieId={movieDetails.id} /> */}
+              <div className="flex w-full items-center justify-between gap-3 border-t-4 border-dotted pt-4">
+                <div className="flex-1">
+                  <WriteButton movieId={movieDetails.id} size="large" />
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-white p-2">
+                  <AddWatchlistButton movieId={movieDetails.id} />
+                </div>
               </div>
             </div>
           </article>

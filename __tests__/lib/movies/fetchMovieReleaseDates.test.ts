@@ -1,7 +1,4 @@
-import {
-  fetchMovieReleaseDates,
-  clearCache,
-} from "lib/movies/fetchMovieReleaseDates";
+import { fetchMovieReleaseDates } from "lib/movies/fetchMovieReleaseDates";
 import {
   getCertification,
   normalizeCertification,
@@ -84,8 +81,6 @@ describe("fetchMovieReleaseDates", () => {
       ok: true,
       json: () => Promise.resolve(mockApiResponse),
     });
-    // 각 테스트 전에 캐시를 클리어하여 독립성 보장
-    clearCache();
   });
 
   test("성공: API를 호출하여 연령 등급 정보를 반환해야 함", async () => {
@@ -94,16 +89,15 @@ describe("fetchMovieReleaseDates", () => {
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  test("성공: 데이터가 캐시되어 있으면 fetch를 호출하지 않아야 함", async () => {
-    // 1. 첫 호출로 데이터를 캐시에 저장
-    await fetchMovieReleaseDates(mockMovieId);
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-
-    // 2. 두 번째 호출
+  test("성공: Next.js 캐싱으로 동일한 결과를 반환해야 함", async () => {
     const result = await fetchMovieReleaseDates(mockMovieId);
     expect(result).toEqual(mockApiResponse);
-    // fetch가 추가로 호출되지 않았는지 확인
-    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining(`/movie/${mockMovieId}/release_dates`),
+      expect.objectContaining({
+        next: { revalidate: 86400 },
+      }),
+    );
   });
 
   test("실패: API 응답이 실패하면 에러를 던져야 함", async () => {

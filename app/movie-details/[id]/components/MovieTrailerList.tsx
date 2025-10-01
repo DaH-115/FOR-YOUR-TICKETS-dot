@@ -62,13 +62,10 @@ export default function MovieTrailerList({
     : trailerList.slice(0, currentItemsPerRow);
 
   return (
-    <section className="p-6">
-      <div className="mb-8">
-        <h2 className="mb-2 text-2xl font-bold tracking-tight text-white">
-          Movie Trailers
-        </h2>
-        <p className="text-sm text-gray-300">이 영화의 예고편을 확인해보세요</p>
-      </div>
+    <section className="px-6 py-8">
+      <header className="mb-4">
+        <h2 className="text-xl font-bold tracking-tight text-white">예고편</h2>
+      </header>
       {trailerList.length > 0 ? (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -79,10 +76,10 @@ export default function MovieTrailerList({
             ))}
           </div>
           {shouldShowMoreButton && (
-            <div className="mt-8 flex justify-center">
+            <div className="mt-6 flex justify-center">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="rounded-full bg-white/10 px-6 py-3 text-sm text-white backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-white/20 focus:outline-none focus:ring-1 focus:ring-white/50"
+                className="rounded-full px-6 py-3 text-sm text-white transition-all duration-300 hover:scale-105 hover:bg-white/20 focus:outline-none focus:ring-1 focus:ring-white/50"
               >
                 {showAll ? (
                   <div className="flex items-center">

@@ -155,6 +155,26 @@ const watchlistSlice = createSlice({
         state.status = "failed";
         state.error = action.payload || "워치리스트 조회에 실패했습니다.";
       })
+      // addWatchlist 액션 처리 - 즉시 추가 (사용자 경험 향상)
+      .addCase(
+        addWatchlist.fulfilled,
+        (state, action: PayloadAction<number>) => {
+          // 영화가 이미 목록에 있는지 확인
+          const isAlreadyAdded = state.movies.some(
+            (movie) => movie.id === action.payload,
+          );
+          if (!isAlreadyAdded) {
+            // 영화 상세 정보를 가져와서 추가 (기본 정보만)
+            state.movies.unshift({
+              id: action.payload,
+              title: "영화 정보를 불러오는 중...",
+              poster_path: undefined,
+              genres: [],
+              certification: null,
+            });
+          }
+        },
+      )
       // removeWatchlist 액션 처리 - 즉시 제거 (사용자 경험 향상)
       .addCase(
         removeWatchlist.fulfilled,

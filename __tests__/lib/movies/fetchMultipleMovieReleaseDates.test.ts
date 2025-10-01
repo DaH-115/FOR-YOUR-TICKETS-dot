@@ -59,4 +59,26 @@ describe("fetchMultipleMovieReleaseDates", () => {
     expect(mockFetcher).toHaveBeenCalledWith(2);
     expect(mockFetcher).toHaveBeenCalledWith(3);
   });
+
+  test("중복된 ID가 있어도 한 번씩만 fetcher를 호출해야 합니다.", async () => {
+    // 중복 ID가 포함된 배열
+    const duplicatedIds = [1, 2, 1, 3, 2, 1];
+
+    const results = await fetchMultipleMovieReleaseDates(
+      duplicatedIds,
+      mockFetcher,
+    );
+
+    // 결과 검증 - 중복 제거된 3개의 고유 ID만 처리
+    expect(results.size).toBe(3);
+    expect(results.get(1)).toEqual(mockApiResponse1);
+    expect(results.get(2)).toEqual(mockApiResponse2);
+    expect(results.get(3)).toEqual(mockApiResponse3);
+
+    // 중복 제거로 인해 각 ID당 한 번씩만 호출
+    expect(mockFetcher).toHaveBeenCalledTimes(3);
+    expect(mockFetcher).toHaveBeenCalledWith(1);
+    expect(mockFetcher).toHaveBeenCalledWith(2);
+    expect(mockFetcher).toHaveBeenCalledWith(3);
+  });
 });

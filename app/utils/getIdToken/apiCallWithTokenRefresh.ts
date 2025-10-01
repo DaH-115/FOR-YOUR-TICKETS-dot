@@ -1,4 +1,4 @@
-import { getAuthHeaders } from "app/utils/getIdToken/getAuthHeaders";
+import { getAuthHeaders } from "@/utils/getIdToken/getAuthHeaders";
 
 /**
  * 토큰 만료 시 자동으로 새로고침하여 API 요청을 재시도합니다.

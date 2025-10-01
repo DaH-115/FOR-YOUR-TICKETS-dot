@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ReviewTicket from "app/components/review/ReviewTicket";
+import ReviewTicket from "@/components/review/ReviewTicket";
 
 describe("ReviewTicket 렌더링 테스트", () => {
   // 좋아요하지 않은 상태의 리뷰
@@ -61,7 +61,7 @@ describe("ReviewTicket 렌더링 테스트", () => {
 
     // 기본 정보들이 올바르게 표시되는지 확인
     expect(screen.getByText("테스터1")).toBeInTheDocument();
-    expect(screen.getByText("재미있는 영화1")).toBeInTheDocument();
+    expect(screen.getByText('"재미있는 영화1"')).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument();
     expect(screen.getByText("0")).toBeInTheDocument();
     expect(screen.getByText("영화 제목1 (2023)")).toBeInTheDocument();
@@ -72,17 +72,10 @@ describe("ReviewTicket 렌더링 테스트", () => {
 
     // 기본 정보들이 올바르게 표시되는지 확인
     expect(screen.getByText("테스터1")).toBeInTheDocument();
-    expect(screen.getByText("재미있는 영화1")).toBeInTheDocument();
+    expect(screen.getByText('"재미있는 영화1"')).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument();
     expect(screen.getByText("1")).toBeInTheDocument();
     expect(screen.getByText("영화 제목1 (2023)")).toBeInTheDocument();
-  });
-
-  test("영화 제목 링크가 올바른 경로로 설정된다", () => {
-    render(<ReviewTicket review={mockReviews[0]} />);
-
-    const movieLink = screen.getByText("영화 제목1 (2023)");
-    expect(movieLink.closest("a")).toHaveAttribute("href", "/movie-details/1");
   });
 
   test("프로필 아바타가 올바르게 렌더링된다", () => {

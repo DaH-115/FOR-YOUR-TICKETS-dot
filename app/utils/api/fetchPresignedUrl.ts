@@ -1,7 +1,7 @@
 // presigned URL 요청 유틸
 export async function fetchPresignedUrl({
   key,
-  isPublic = false,
+  isPublic = true,
   idToken,
   signal,
 }: {

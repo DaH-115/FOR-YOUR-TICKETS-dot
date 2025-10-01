@@ -78,26 +78,23 @@ export default function TicketListPage({
   };
 
   return (
-    <main className="flex flex-col p-6">
+    <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
       {/* 헤더 */}
-      <header className="mb-8">
+      <header className="mb-4">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-xl font-bold tracking-tight text-white">
             모든 티켓
           </h1>
           <span className="ml-2 font-bold text-accent-300">
             {reviews.length}
           </span>
         </div>
-        <p className="text-sm text-gray-300">
-          모든 사용자들의 리뷰 티켓을 확인해보세요
-        </p>
       </header>
       {/* 리뷰 목록 */}
       {loading ? (
         <Loading />
       ) : reviews.length > 0 ? (
-        <div className="grid grid-cols-3 gap-x-2 gap-y-6 sm:grid-cols-4 sm:gap-x-3 sm:gap-y-8 md:grid-cols-5 md:gap-x-3 md:gap-y-8 lg:grid-cols-6 lg:gap-x-4 lg:gap-y-10 xl:grid-cols-7 xl:gap-x-4 xl:gap-y-12 2xl:grid-cols-8 2xl:gap-x-5 2xl:gap-y-14">
+        <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
           {reviews.map((review) => (
             <Link key={review.id} href={`/ticket-list/${review.id}`}>
               <ReviewTicket review={review} />
@@ -109,7 +106,7 @@ export default function TicketListPage({
           message={
             search
               ? `"${search}"에 대한 검색 결과가 없습니다`
-              : "등록된 리뷰 티켓이 없습니다"
+              : "등록된 티켓이 없습니다"
           }
         />
       )}

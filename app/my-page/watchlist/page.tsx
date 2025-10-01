@@ -9,7 +9,6 @@ import {
   selectWatchlist,
   fetchWatchlist,
 } from "store/redux-toolkit/slice/watchlistSlice";
-import MyTicketHeader from "../components/ticket-list-page/MyTicketHeader";
 
 export default function Page() {
   return <WatchlistContainer />;
@@ -29,26 +28,32 @@ function WatchlistContainer() {
   }, [user?.uid, dispatch]);
 
   if (!user?.uid) return <EmptyState message="로그인이 필요합니다." />;
-  if (loading) return <EmptyState message="불러오는 중..." />;
   if (error) return <EmptyState message={error} />;
-  if (movies.length === 0)
-    return <EmptyState message="보고 싶은 영화가 비어 있습니다." />;
 
   return (
-    <main className="flex w-full flex-col pl-0 md:w-3/4 md:pl-4">
-      {/* 헤더 섹션 */}
-      <MyTicketHeader
-        title="보고 싶은 영화"
-        content={`보고 싶은 영화를 확인해 보세요`}
-        reviewsCount={movies.length}
-      />
+    <main className="flex w-full flex-col pb-16 md:w-3/4">
+      {/* 헤더 */}
+      <header className="mb-4">
+        <div className="flex items-center">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            보고 싶은 영화
+          </h1>
+        </div>
+        <p className="text-sm text-gray-300">보고 싶은 영화를 확인해 보세요</p>
+      </header>
 
-      {/* 보고 싶은 영화 그리드 */}
-      <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {movies.map((movie) => (
-          <WatchlistMovieCard key={movie.id} movie={movie} />
-        ))}
-      </section>
+      {/* 보고 싶은 영화 */}
+      {loading ? (
+        <EmptyState message="불러오는 중..." />
+      ) : movies.length === 0 ? (
+        <EmptyState message="보고 싶은 영화가 비어 있습니다." />
+      ) : (
+        <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
+          {movies.map((movie) => (
+            <WatchlistMovieCard key={movie.id} movie={movie} />
+          ))}
+        </section>
+      )}
     </main>
   );
 }

@@ -1,7 +1,7 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-import { updateCommentsActivityLevel } from "app/api/users/[uid]/route.helper";
+import { updateCommentsActivityLevel } from "@/api/users/[uid]/route.helper";
 import { adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 import { fetchReviewsPaginated } from "lib/reviews/fetchReviewsPaginated";

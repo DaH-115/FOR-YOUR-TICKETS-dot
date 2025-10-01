@@ -3,18 +3,18 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import ProfileAvatar from "app/components/user/ProfileAvatar";
-import ActivityBadge from "app/components/ui/feedback/ActivityBadge";
-import formatDate from "app/utils/formatDate";
+import ProfileAvatar from "@/components/user/ProfileAvatar";
+import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
+import formatDate from "@/utils/formatDate";
 import { FaHeart, FaRegHeart, FaStar, FaEdit, FaTrash } from "react-icons/fa";
-import CommentList from "app/components/review/comment/CommentList";
+import CommentList from "@/components/review/comment/CommentList";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import { useAppSelector } from "store/redux-toolkit/hooks";
 import { selectUser } from "store/redux-toolkit/slice/userSlice";
 import { useAlert } from "store/context/alertContext";
 import { isAuth } from "firebase-config";
-import MoviePoster from "app/components/movie/MoviePoster";
-import { getAuthHeaders } from "app/utils/getIdToken";
+import MoviePoster from "@/components/movie/MoviePoster";
+import { getAuthHeaders } from "@/utils/getIdToken";
 
 interface ReviewDetailProps {
   review: ReviewDoc;
@@ -133,11 +133,11 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
   }, [reviewId, showSuccessHandler, showErrorHandler, router]);
 
   return (
-    <main className="py-24">
-      {/* 영화 포스터 */}
-      <div className="mx-auto aspect-[2/3] max-w-lg overflow-hidden rounded-2xl">
+    <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+      <div className="mx-auto max-w-lg">
+        {/* 영화 포스터 */}
         <MoviePoster
-          posterPath={content.moviePosterPath}
+          posterPath={content.moviePosterPath || ""}
           title={content.movieTitle}
         />
       </div>
@@ -186,7 +186,6 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
               s3photoKey={user.photoKey || undefined}
               userDisplayName={user.displayName || "사용자"}
               size={24}
-              isPublic
             />
             <p className="min-w-0 truncate text-sm">
               {user.displayName || "사용자"}

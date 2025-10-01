@@ -77,7 +77,7 @@ export default async function MovieDetailPage({
 
     return (
       <>
-        <Background imageUrl={backdrop_path || ""} />
+        <Background imageUrl={backdrop_path || ""} height="100vh" />
         <MovieDetailCard
           movieDetails={movieDetails}
           movieCredits={movieCredits}

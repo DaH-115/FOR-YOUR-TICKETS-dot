@@ -18,7 +18,7 @@ import { fetchMovieReleaseDates } from "lib/movies/fetchMovieReleaseDates";
 
 // 배치 처리 함수
 // ✳️ 여러 개의 id가 담긴 배열을 받아, 이 모든 id에 대한 연령 등급 정보를 '가장 효율적으로' 가져오는 상위 레벨의 함수
-// 성능 최적화: 불필요한 API 호출을 최소화하고, 필요한 호출은 병렬로 처리하여 네트워크 지연 시간을 획기적으로 줄입니다.
+// 성능 최적화: 중복 ID 제거 및 병렬 처리를 통해 네트워크 지연 시간을 획기적으로 줄입니다.
 // 작업 조율 (Orchestration): 여러 개의 단일 작업을 효율적으로 관리하고 조율하는 역할을 합니다.
 export async function fetchMultipleMovieReleaseDates(
   movieIds: number[],
@@ -26,9 +26,12 @@ export async function fetchMultipleMovieReleaseDates(
 ): Promise<Map<number, MovieReleaseDates | null>> {
   const results = new Map<number, MovieReleaseDates | null>();
 
-  const promises = movieIds.map(async (id) => {
+  // 중복 ID 제거
+  const uniqueIds = [...new Set(movieIds)];
+
+  const promises = uniqueIds.map(async (id) => {
     try {
-      // 각 id에 대해 fetcher를 호출합니다. 캐싱 여부는 fetcher 내부에서 처리됩니다.
+      // 각 id에 대해 fetcher를 호출합니다. Next.js 캐싱은 fetch 레벨에서 처리됩니다.
       const data = await fetcher(id);
       return { id, data, success: true };
     } catch (error: unknown) {

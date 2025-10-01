@@ -1,3 +1,3 @@
-export * from "app/utils/getIdToken/getIdToken";
-export * from "app/utils/getIdToken/getAuthHeaders";
-export * from "app/utils/getIdToken/apiCallWithTokenRefresh";
+export * from "@/utils/getIdToken/getIdToken";
+export * from "@/utils/getIdToken/getAuthHeaders";
+export * from "@/utils/getIdToken/apiCallWithTokenRefresh";

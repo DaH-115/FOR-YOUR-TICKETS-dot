@@ -9,11 +9,12 @@ export default function SimilarMovieList({
   movieList: MovieList[];
 }) {
   return (
-    <section className="p-6">
-      <h2 className="mb-2 text-2xl font-bold tracking-tight text-white">
-        Similar Movies
-      </h2>
-      <p className="pb-2 text-sm text-gray-300">이런 영화는 어떠세요</p>
+    <section className="px-6 py-8">
+      <header className="mb-4">
+        <h2 className="text-xl font-bold tracking-tight text-white">
+          비슷한 영화
+        </h2>
+      </header>
       {/* 비슷한 영화 목록 */}
       {movieList.length > 0 ? (
         <SwiperList movieList={movieList} />

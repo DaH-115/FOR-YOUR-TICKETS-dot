@@ -1,17 +1,17 @@
-import { GET, POST } from "app/api/reviews/route";
+import { GET, POST } from "@/api/reviews/route";
 import { NextRequest } from "next/server";
 import { adminFirestore } from "firebase-admin-config";
 import { fetchReviewsPaginated } from "lib/reviews/fetchReviewsPaginated";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
-import { updateCommentsActivityLevel } from "app/api/users/[uid]/route.helper";
+import { updateCommentsActivityLevel } from "@/api/users/[uid]/route.helper";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createMockRequest } from "__tests__/utils/test-utils";
 
 jest.mock("lib/reviews/fetchReviewsPaginated");
 jest.mock("lib/auth/verifyToken");
 jest.mock("lib/users/updateUserActivityLevel");
-jest.mock("app/api/users/[uid]/route.helper");
+jest.mock("@/api/users/[uid]/route.helper");
 jest.mock("next/cache");
 jest.mock("firebase-admin-config", () => ({
   adminFirestore: {

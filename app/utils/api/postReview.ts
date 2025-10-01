@@ -1,4 +1,4 @@
-import { ReviewFormValues } from "app/write-review/types";
+import { ReviewFormValues } from "@/write-review/types";
 
 // 리뷰 생성 API 데이터 타입
 export interface ReviewApiData {

@@ -163,6 +163,13 @@ const userSlice = createSlice({
     clearError(state) {
       state.error = null;
     },
+
+    // 개발용 등급 변경 액션
+    updateActivityLevel(state, action: PayloadAction<string>) {
+      if (state.user) {
+        state.user.activityLevel = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -207,8 +214,13 @@ const userSlice = createSlice({
 });
 
 // 액션과 리듀서 내보내기
-export const { setUser, clearUser, updatePhotoKey, clearError } =
-  userSlice.actions;
+export const {
+  setUser,
+  clearUser,
+  updatePhotoKey,
+  clearError,
+  updateActivityLevel,
+} = userSlice.actions;
 export default userSlice.reducer;
 
 // 상태 선택자 (Selector) - 컴포넌트에서 쉽게 사용할 수 있도록

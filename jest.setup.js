@@ -1,6 +1,10 @@
 import "@testing-library/jest-dom";
 import { TextEncoder, TextDecoder } from "util";
 
+// =============================================================================
+// 브라우저 API 모킹
+// =============================================================================
+
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
@@ -17,7 +21,7 @@ mockIntersectionObserver.mockReturnValue({
 });
 global.IntersectionObserver = mockIntersectionObserver;
 
-// Mock window.matchMedia
+// Mock window.matchMedia (반응형 디자인 테스트용)
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
@@ -32,18 +36,33 @@ Object.defineProperty(window, "matchMedia", {
   })),
 });
 
-// Mock window.scrollTo
+// Mock window.scrollTo (스크롤 관련 테스트용)
 Object.defineProperty(window, "scrollTo", {
   writable: true,
   value: jest.fn(),
 });
 
-// Mock fetch
+// Mock URL.createObjectURL (파일 업로드 테스트용)
+Object.defineProperty(URL, "createObjectURL", {
+  writable: true,
+  value: jest.fn(() => "mock-object-url"),
+});
+
+Object.defineProperty(URL, "revokeObjectURL", {
+  writable: true,
+  value: jest.fn(),
+});
+
+// Mock fetch API
 global.fetch = jest.fn();
 
 // Mock Web APIs for Node.js environment
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
+
+// =============================================================================
+// React 및 Next.js 모킹
+// =============================================================================
 
 // Mock React Cache
 jest.mock("react", () => {
@@ -54,7 +73,11 @@ jest.mock("react", () => {
   };
 });
 
-// Mock Firebase modules
+// =============================================================================
+// Firebase 모킹
+// =============================================================================
+
+// Mock Firebase Client SDK
 jest.mock("firebase/app", () => ({
   initializeApp: jest.fn(),
   getApps: jest.fn(() => []),
@@ -98,6 +121,7 @@ jest.mock("firebase/firestore", () => ({
   serverTimestamp: jest.fn(),
 }));
 
+// Mock Firebase Admin SDK
 jest.mock("firebase-admin", () => ({
   apps: [],
   initializeApp: jest.fn(),
@@ -106,11 +130,27 @@ jest.mock("firebase-admin", () => ({
   },
   auth: jest.fn(() => ({
     verifyIdToken: jest.fn(),
+    getUser: jest.fn(),
+    updateUser: jest.fn(),
   })),
-  firestore: jest.fn(),
+  firestore: jest.fn(() => ({
+    collection: jest.fn(() => ({
+      doc: jest.fn(() => ({
+        get: jest.fn(),
+        set: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+      })),
+    })),
+    runTransaction: jest.fn(),
+  })),
 }));
 
-// Mock Next.js router
+// =============================================================================
+// Next.js 모킹
+// =============================================================================
+
+// Mock Next.js router (Pages Router)
 jest.mock("next/router", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -122,7 +162,7 @@ jest.mock("next/router", () => ({
   }),
 }));
 
-// Mock Next.js navigation
+// Mock Next.js navigation (App Router)
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -136,7 +176,7 @@ jest.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-// Mock next.js server Request for testing
+// Mock Next.js server components
 jest.mock("next/server", () => ({
   NextRequest: jest.fn().mockImplementation((url, init) => ({
     url,
@@ -152,42 +192,109 @@ jest.mock("next/server", () => ({
   },
 }));
 
-// Mock Redux Toolkit
-jest.mock("store/redux-toolkit/hooks", () => ({
-  useAppDispatch: () => jest.fn(),
-  useAppSelector: jest.fn(),
+// Mock Next.js cache
+jest.mock("next/cache", () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
 }));
 
-jest.mock("store/redux-toolkit/slice/userSlice", () => ({
-  selectUser: (state) => state.user,
-  userSlice: {
-    actions: {
-      setUser: (user) => ({ type: "user/setUser", payload: user }),
-      clearUser: () => ({ type: "user/clearUser" }),
+// =============================================================================
+// 상태 관리 모킹
+// =============================================================================
+
+// Mock Redux Toolkit (조건부 모킹)
+try {
+  jest.mock("@/store/redux-toolkit/hooks", () => ({
+    useAppDispatch: () => jest.fn(),
+    useAppSelector: jest.fn(),
+  }));
+
+  jest.mock("@/store/redux-toolkit/slice/userSlice", () => ({
+    selectUser: (state) => state.user,
+    userSlice: {
+      actions: {
+        setUser: (user) => ({ type: "user/setUser", payload: user }),
+        clearUser: () => ({ type: "user/clearUser" }),
+      },
     },
-  },
-}));
+  }));
+} catch (error) {
+  // 모듈이 없으면 무시
+}
 
 // Mock Redux Persist
 jest.mock("redux-persist/integration/react", () => ({
   PersistGate: ({ children }) => children,
 }));
 
-// Mock Alert Context
-jest.mock("store/context/alertContext", () => ({
-  useAlert: () => ({
-    showSuccessHandler: jest.fn(),
-    showErrorHandler: jest.fn(),
-  }),
+// =============================================================================
+// Context API 모킹
+// =============================================================================
+
+// Mock Alert Context (조건부 모킹)
+try {
+  jest.mock("@/store/context/alertContext", () => ({
+    useAlert: () => ({
+      showSuccessHandler: jest.fn(),
+      showErrorHandler: jest.fn(),
+    }),
+  }));
+
+  jest.mock("@/store/context/auth/authContext", () => ({
+    useAuth: () => ({
+      isAuthenticated: false,
+      isLoading: false,
+    }),
+    AuthProvider: ({ children }) => children,
+  }));
+} catch (error) {
+  // 모듈이 없으면 무시
+}
+
+// =============================================================================
+// 외부 라이브러리 모킹
+// =============================================================================
+
+// Mock AWS SDK
+jest.mock("@aws-sdk/client-s3", () => ({
+  PutObjectCommand: jest.fn(),
+  GetObjectCommand: jest.fn(),
+  DeleteObjectCommand: jest.fn(),
 }));
 
-// Mock Auth Context
-jest.mock("store/context/auth/authContext", () => ({
-  useAuth: () => ({
-    isAuthenticated: false,
-    isLoading: false,
-  }),
-  AuthProvider: ({ children }) => children,
+jest.mock("@aws-sdk/s3-request-presigner", () => ({
+  getSignedUrl: jest.fn(),
 }));
 
-// usePresignedUrl 훅 모킹 제거 - 실제 훅을 테스트에서 사용할 수 있도록 함
+// Mock Swiper
+jest.mock("swiper/react", () => ({
+  Swiper: ({ children, ...props }) => (
+    <div data-testid="swiper" {...props}>
+      {children}
+    </div>
+  ),
+  SwiperSlide: ({ children, ...props }) => (
+    <div data-testid="swiper-slide" {...props}>
+      {children}
+    </div>
+  ),
+}));
+
+jest.mock("swiper/modules", () => ({
+  Navigation: jest.fn(),
+  Pagination: jest.fn(),
+  Autoplay: jest.fn(),
+}));
+
+// React Hook Form의 zodResolver는 실제 구현을 사용 (모킹 제거)
+
+// Mock Lodash
+jest.mock("lodash/debounce", () => jest.fn((fn) => fn));
+
+// Mock React Icons
+jest.mock("react-icons", () => ({
+  IoSearchOutline: () => <div data-testid="search-icon" />,
+  IoCloseOutline: () => <div data-testid="close-icon" />,
+  IoEyeOutline: () => <div data-testid="eye-icon" />,
+  IoEyeOffOutline: () => <div data-testid="eye-off-icon" />,
+}));

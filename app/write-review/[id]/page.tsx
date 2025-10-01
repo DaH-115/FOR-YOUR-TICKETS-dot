@@ -3,8 +3,8 @@ import ReviewContainer from "app/write-review/components/ReviewContainer";
 import { fetchMovieDetails } from "lib/movies/fetchMovieDetails";
 
 export const metadata: Metadata = {
-  title: "리뷰 티켓 수정",
-  description: "리뷰 티켓을 수정하는 페이지입니다.",
+  title: "티켓 수정",
+  description: "티켓을 수정하는 페이지입니다",
 };
 
 export default async function EditReviewPage({

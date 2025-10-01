@@ -1,4 +1,4 @@
-import { getIdToken } from "app/utils/getIdToken/getIdToken";
+import { getIdToken } from "@/utils/getIdToken/getIdToken";
 
 /**
  * API 요청용 Authorization 헤더를 생성합니다.

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import MoviePoster from "app/components/movie/MoviePoster";
-import AddWatchlistButton from "app/components/movie/AddWatchlistButton";
-import getEnrichMovieTitle from "app/utils/getEnrichMovieTitle";
+import MoviePoster from "@/components/movie/MoviePoster";
+import AddWatchlistButton from "@/components/movie/AddWatchlistButton";
+import getEnrichMovieTitle from "@/utils/getEnrichMovieTitle";
 
 interface MovieDetails {
   id: number;
@@ -26,13 +26,7 @@ export default function WatchlistMovieCard({ movie }: WatchlistMovieCardProps) {
   return (
     <div className="group relative">
       <Link href={`/movie-details/${movie.id}`}>
-        <div className="aspect-[2/3] w-full overflow-hidden rounded-lg">
-          <MoviePoster
-            posterPath={movie.poster_path}
-            title={movie.title}
-            lazy
-          />
-        </div>
+        <MoviePoster posterPath={movie.poster_path || ""} title={movie.title} />
       </Link>
 
       {/* 그라데이션 배경 */}
