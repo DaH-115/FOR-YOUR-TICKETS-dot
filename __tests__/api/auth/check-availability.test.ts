@@ -1,4 +1,4 @@
-import { POST } from "app/api/auth/check-availability/route";
+import { POST } from "@/api/auth/check-availability/route";
 import {
   createMockRequest,
   createMockAvailabilityCheckData,
