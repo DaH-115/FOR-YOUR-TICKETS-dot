@@ -1,9 +1,11 @@
 import { Metadata } from "next";
-import "app/globals.css";
-import ConditionalLayout from "app/components/ui/layout/ConditionalLayout";
+import "@/globals.css";
 import { AlertProvider } from "store/context/alertContext";
 import { AuthProvider } from "store/context/auth/authContext";
 import Providers from "store/redux-toolkit/Providers";
+import Header from "@/components/ui/layout/header/Header";
+import Footer from "@/components/ui/layout/Footer";
+import ScrollToTopButton from "@/components/ui/buttons/ScrollToTopButton";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://just-your-tickets.vercel.app"),
@@ -14,11 +16,11 @@ export const metadata: Metadata = {
     template: "%s | Just Your Tickets",
     default: "Just Your Tickets",
   },
-  description: "Make a ticket for your own movie ticket.",
+  description: "나만의 영화 티켓을 만들어보세요",
   keywords: ["movie", "ticket", "booking"],
   openGraph: {
     title: "Just Your Tickets",
-    description: "Make a ticket for your own movie ticket.",
+    description: "나만의 영화 티켓을 만들어보세요",
     url: "/",
     siteName: "Just Your Tickets",
     images: [
@@ -104,12 +106,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="flex min-h-screen w-full min-w-[320px] flex-col bg-[#121212]">
+      <body className="bg-[#121212]">
         {/* RTK Provider */}
         <Providers>
           <AuthProvider>
             <AlertProvider>
-              <ConditionalLayout>{children}</ConditionalLayout>
+              <Header />
+              <div className="mx-auto mt-36 min-w-80">{children}</div>
+              <Footer />
+              <ScrollToTopButton />
             </AlertProvider>
           </AuthProvider>
         </Providers>

@@ -1,6 +1,5 @@
 import HomePage from "app/home/HomePage";
 import { fetchNowPlayingMovies } from "lib/movies/fetchNowPlayingMovies";
-import { fetchTrendingMovies } from "lib/movies/fetchTrendingMovies";
 import { fetchVideosMovies } from "lib/movies/fetchVideosMovies";
 import { fetchReviewsPaginated } from "lib/reviews/fetchReviewsPaginated";
 import { notFound } from "next/navigation";
@@ -9,12 +8,10 @@ import { fetchMovieDetails } from "lib/movies/fetchMovieDetails";
 import { MovieDetailsProvider } from "store/context/movieDetailsContext";
 
 export default async function Page() {
-  const [nowPlayingMovies, trendingMovies, { reviews: latestReviews }] =
-    await Promise.all([
-      fetchNowPlayingMovies(),
-      fetchTrendingMovies(),
-      fetchReviewsPaginated({ page: 1, pageSize: 10 }),
-    ]);
+  const [nowPlayingMovies, { reviews: latestReviews }] = await Promise.all([
+    fetchNowPlayingMovies(),
+    fetchReviewsPaginated({ page: 1, pageSize: 10 }),
+  ]);
 
   if (!nowPlayingMovies?.length) {
     return notFound();
@@ -50,7 +47,6 @@ export default async function Page() {
         movieList={nowPlayingMovies}
         recommendMovie={recommendMovieWithDetails}
         trailerKey={trailerKey}
-        trendingMovies={trendingMovies}
         latestReviews={latestReviews}
       />
     </MovieDetailsProvider>

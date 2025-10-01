@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import LatestReviewTicket from "app/home/components/reviews/LatestReviewTicket";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
-import { useResponsiveCount } from "app/utils/hooks/useResponsiveCount";
 
 function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const maxReviewCount = useResponsiveCount(3, 4, 8); // 모바일: 3개, 태블릿: 4개, 데스크톱: 8개
+
+  // 클라이언트 사이드 렌더링 상태 설정
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // IntersectionObserver 설정 - 한 번만 실행되도록 최적화
   const observerCallback = useCallback(
@@ -39,46 +43,40 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
   }, [observerCallback, isVisible]);
 
   return (
-    <section ref={sectionRef} className="py-8 md:pb-16">
+    <section
+      ref={sectionRef}
+      className="mx-4 mt-16 lg:mx-12 lg:mt-20 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]"
+    >
       {/* 헤더 영역 애니메이션 */}
       <header
-        className={`mb-4 transition-all duration-500 ease-out ${
-          isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+        className={`mb-4 flex items-center justify-between transition-all duration-500 ease-out ${
+          isClient && isVisible
+            ? "translate-y-0 opacity-100"
+            : "translate-y-8 opacity-0"
         }`}
       >
-        <h2 className="mb-2 text-2xl font-bold tracking-tight text-white lg:text-4xl">
+        <h2 className="text-xl font-bold tracking-tight text-white">
           새로운 티켓
         </h2>
-        <div className="flex items-center">
-          <p className="text-sm text-gray-300">
-            최근 등록된 티켓을 확인해 보세요
-          </p>
-          <Link
-            href="/ticket-list"
-            className="ml-2 text-xs text-accent-300 transition-colors duration-300 hover:font-semibold hover:text-accent-200 hover:underline hover:underline-offset-2"
-          >
-            모든 티켓 보기
-          </Link>
-        </div>
+        <Link
+          href="/ticket-list"
+          className="text-sm text-accent-300 transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
+        >
+          모든 티켓 보기
+        </Link>
       </header>
 
-      {/* 리뷰 티켓 목록 애니메이션 */}
+      {/* 티켓 목록 애니메이션 - CSS Grid로 반응형 처리 */}
       <div
-        className={`mx-auto grid grid-cols-1 gap-4 transition-all duration-500 ease-out md:grid-cols-2 md:py-4 lg:grid-cols-4 ${
-          isVisible
+        className={`mx-auto grid grid-cols-3 gap-x-4 gap-y-4 transition-all duration-500 ease-out md:grid-cols-4 lg:gap-y-8 xl:grid-cols-8 ${
+          isClient && isVisible
             ? "translate-y-0 opacity-100 transition-delay-300"
             : "translate-y-8 opacity-0"
         }`}
       >
-        {useMemo(
-          () =>
-            reviews
-              .slice(0, maxReviewCount)
-              .map((review) => (
-                <LatestReviewTicket key={review.id} review={review} />
-              )),
-          [reviews, maxReviewCount],
-        )}
+        {reviews.map((review) => (
+          <LatestReviewTicket key={review.id} review={review} />
+        ))}
       </div>
     </section>
   );

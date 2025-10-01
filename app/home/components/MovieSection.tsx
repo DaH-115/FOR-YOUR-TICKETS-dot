@@ -6,14 +6,12 @@ import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 
 interface MovieSectionProps {
   title: string;
-  description: string;
   movieList: MovieList[];
   maxItems?: number;
 }
 
 const MovieSection = memo(function MovieSection({
   title,
-  description,
   movieList,
   maxItems,
 }: MovieSectionProps) {
@@ -53,20 +51,18 @@ const MovieSection = memo(function MovieSection({
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-8">
-      {/* 헤더 영역 애니메이션 */}
-      <div
-        className={`transition-all duration-500 ease-out ${
+    <section ref={sectionRef} className="mt-8 lg:mt-16">
+      <header
+        className={`mx-4 mb-4 transition-all duration-500 ease-out lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px] ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
       >
-        <h2 className="text-2xl font-bold text-white lg:text-4xl">{title}</h2>
-        <p className="mt-2 text-sm text-gray-300">{description}</p>
-      </div>
+        <h2 className="text-xl font-bold tracking-tight text-white">{title}</h2>
+      </header>
 
-      {/* SwiperList 애니메이션 */}
+      {/* SwiperList */}
       <div
-        className={`transition-all duration-500 ease-out ${
+        className={`mx-4 transition-all duration-500 ease-out lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px] ${
           isVisible
             ? "translate-y-0 opacity-100 transition-delay-300"
             : "translate-y-8 opacity-0"

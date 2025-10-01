@@ -5,6 +5,7 @@ import { RecommendSection, MovieSection } from "app/home/components";
 import LatestReviewSkeleton from "app/home/components/reviews/LatestReviewSkeleton";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
+import Background from "@/components/ui/layout/Background";
 
 // 컴포넌트 지연 로딩
 const LatestReviewList = dynamic(
@@ -18,7 +19,6 @@ interface HomePageProps {
   movieList: MovieList[];
   recommendMovie: MovieList;
   trailerKey: string;
-  trendingMovies: MovieList[];
   latestReviews: ReviewDoc[];
 }
 
@@ -29,14 +29,19 @@ export default function HomePage({
   latestReviews,
 }: HomePageProps) {
   return (
-    <main className="px-6">
+    <main className="">
+      <Background
+        imageUrl={recommendMovie.backdrop_path}
+        height="60vh"
+        aspectRatio="16/9"
+      />
+      {/* <Background imageUrl={recommendMovie.backdrop_path} /> */}
+      <RecommendSection movie={recommendMovie} trailerKey={trailerKey} />
       <MovieSection
-        title="Now Playing"
-        description="지금 상영 중인 영화들을 만나보세요"
+        title="상영 중인 영화"
         movieList={movieList}
         maxItems={10}
       />
-      <RecommendSection movie={recommendMovie} trailerKey={trailerKey} />
       <LatestReviewList reviews={latestReviews} />
     </main>
   );

@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Just Your Tickets",
     short_name: "JYT",
-    description: "Make your own movie ticket",
+    description: "나만의 영화 티켓을 만들어보세요",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
