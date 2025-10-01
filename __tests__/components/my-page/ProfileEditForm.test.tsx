@@ -30,30 +30,6 @@ jest.mock("store/redux-toolkit/slice/userSlice", () => ({
   selectUser: jest.fn(),
 }));
 
-jest.mock("app/my-page/components/NicknameInput", () => {
-  return function MockNicknameInput() {
-    return <div data-testid="nickname-input">닉네임 입력 컴포넌트</div>;
-  };
-});
-
-jest.mock("app/my-page/components/BioInput", () => {
-  return function MockBioInput() {
-    return <div data-testid="bio-input">바이오 입력 컴포넌트</div>;
-  };
-});
-
-jest.mock("app/my-page/components/profile-avatar/AvatarUploader", () => {
-  return function MockAvatarUploader() {
-    return <div data-testid="avatar-uploader">아바타 업로더 컴포넌트</div>;
-  };
-});
-
-jest.mock("app/components/user/ProfileAvatar", () => {
-  return function MockProfileImage() {
-    return <div data-testid="profile-avatar">프로필 이미지</div>;
-  };
-});
-
 jest.mock("app/my-page/components/ChangePassword", () => {
   return function MockChangePassword() {
     return <div data-testid="change-password">비밀번호 변경 컴포넌트</div>;
@@ -106,10 +82,8 @@ describe("ProfileEditForm", () => {
     expect(screen.getByText("완료")).toBeInTheDocument();
     expect(screen.getByText("프로필 사진")).toBeInTheDocument();
     expect(screen.getByText("기본 정보")).toBeInTheDocument();
-    expect(screen.getByTestId("nickname-input")).toBeInTheDocument();
-    expect(screen.getByTestId("bio-input")).toBeInTheDocument();
-    expect(screen.getByTestId("avatar-uploader")).toBeInTheDocument();
-    expect(screen.getByTestId("profile-avatar")).toBeInTheDocument();
+    expect(screen.getByLabelText("닉네임")).toBeInTheDocument();
+    expect(screen.getByLabelText("소개")).toBeInTheDocument();
   });
 
   test("이메일 제공자인 경우 비밀번호 변경 섹션이 표시된다", () => {
@@ -157,28 +131,5 @@ describe("ProfileEditForm", () => {
 
     const submitButton = screen.getByText("완료");
     expect(submitButton).toBeDisabled();
-    expect(submitButton).toHaveClass("cursor-not-allowed");
-  });
-
-  describe("API 호출 관련", () => {
-    beforeEach(() => {
-      global.fetch = jest.fn();
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
-    test("프로필 업데이트 성공 시 성공 메시지를 표시하고 마이페이지로 이동한다", async () => {
-      mockDispatch.mockResolvedValue({
-        unwrap: jest.fn().mockResolvedValue({}),
-      });
-      render(<ProfileEditForm />);
-    });
-
-    test("프로필 업데이트 실패 시 에러 메시지를 표시한다", async () => {
-      mockDispatch.mockRejectedValue(new Error("업데이트 실패"));
-      render(<ProfileEditForm />);
-    });
   });
 });

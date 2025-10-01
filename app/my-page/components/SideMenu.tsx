@@ -1,37 +1,33 @@
 "use client";
 
+import { MenuItem } from "app/components/ui/navigation/HeaderSideMenu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-interface MenuItem {
-  path: string;
-  label: string;
-}
-
 const menuItems: MenuItem[] = [
-  { path: "/my-page", label: "MY PROFILE" },
-  { path: "/my-page/my-ticket-list", label: "MY TICKETS" },
-  { path: "/my-page/liked-ticket-list", label: "LIKED TICKETS" },
-  { path: "/my-page/watchlist", label: "WATCHLIST" },
+  { href: "/my-page", label: "나의 프로필" },
+  { href: "/my-page/my-ticket-list", label: "작성한 티켓" },
+  { href: "/my-page/liked-ticket-list", label: "좋아요한 티켓" },
+  { href: "/my-page/watchlist", label: "보고 싶은 영화" },
 ];
 
 export default function SideMenu() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-1/4 space-y-2 pr-4 lg:block">
-      {menuItems.map(({ path, label }) => {
-        const isActive = pathname === path;
+    <aside className="hidden w-1/3 space-y-1 md:block xl:space-y-2">
+      {menuItems.map(({ href, label }) => {
+        const isActive = pathname === href;
 
         return (
-          <div key={path} className="w-full">
+          <div key={href} className="w-full">
             <Link
-              href={path}
-              className={`block w-full text-center text-lg transition-all duration-300 ease-in-out md:text-2xl lg:text-start ${
+              href={href}
+              className={`block w-full transition-all duration-300 ease-in-out ${
                 isActive
-                  ? "font-bold text-accent-300"
-                  : "text-gray-300 hover:text-accent-300"
-              } `}
+                  ? "my-2 text-xl font-bold text-accent-300 xl:my-4 xl:text-2xl"
+                  : "text-lg text-gray-300 hover:text-accent-300 xl:text-xl"
+              }`}
             >
               {label}
             </Link>

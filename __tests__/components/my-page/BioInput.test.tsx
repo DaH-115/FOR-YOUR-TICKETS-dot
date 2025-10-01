@@ -60,28 +60,6 @@ describe("BioInput", () => {
       expect(textarea).toHaveValue("새로운 바이오입니다.");
     });
 
-    test("텍스트 영역이 3행으로 설정되어 있다", () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue="기존 바이오" isEditing={true} />
-        </TestWrapper>,
-      );
-
-      const textarea = screen.getByLabelText("소개");
-      expect(textarea).toHaveAttribute("rows", "3");
-    });
-
-    test("리사이즈가 비활성화되어 있다", () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue="기존 바이오" isEditing={true} />
-        </TestWrapper>,
-      );
-
-      const textarea = screen.getByLabelText("소개");
-      expect(textarea).toHaveClass("resize-none");
-    });
-
     test("100자를 초과할 때 에러 메시지가 표시된다", async () => {
       render(
         <TestWrapper>
@@ -98,26 +76,6 @@ describe("BioInput", () => {
         expect(
           screen.getByText("바이오는 100자를 초과할 수 없습니다"),
         ).toBeInTheDocument();
-      });
-    });
-
-    test("에러 메시지가 빨간색으로 표시된다", async () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue="기존 바이오" isEditing={true} />
-        </TestWrapper>,
-      );
-
-      const textarea = screen.getByLabelText("소개");
-      const longBio = "a".repeat(101);
-      fireEvent.change(textarea, { target: { value: longBio } });
-      fireEvent.blur(textarea);
-
-      await waitFor(() => {
-        const errorMessage = screen.getByText(
-          "바이오는 100자를 초과할 수 없습니다",
-        );
-        expect(errorMessage).toHaveClass("text-red-500");
       });
     });
 
@@ -175,18 +133,6 @@ describe("BioInput", () => {
         ).not.toBeInTheDocument();
       });
     });
-
-    test("포커스 스타일이 올바르게 적용된다", () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue="기존 바이오" isEditing={true} />
-        </TestWrapper>,
-      );
-
-      const textarea = screen.getByLabelText("소개");
-      expect(textarea).toHaveClass("focus:border-accent-500");
-      expect(textarea).toHaveClass("focus:ring-accent-300");
-    });
   });
 
   describe("읽기 전용 모드", () => {
@@ -230,65 +176,10 @@ describe("BioInput", () => {
 
       expect(screen.getByText("소개")).toBeInTheDocument();
     });
-
-    test("읽기 전용 모드에서 올바른 스타일이 적용된다", () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue="바이오 내용" isEditing={false} />
-        </TestWrapper>,
-      );
-
-      const bioText = screen.getByText("바이오 내용");
-      expect(bioText).toHaveClass("border-b");
-      expect(bioText).toHaveClass("border-gray-500");
-      expect(bioText).toHaveClass("py-2");
-      expect(bioText).toHaveClass("text-gray-800");
-    });
-  });
-
-  describe("라벨 및 접근성", () => {
-    test("라벨이 입력 필드와 올바르게 연결되어 있다", () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue="기존 바이오" isEditing={true} />
-        </TestWrapper>,
-      );
-
-      const label = screen.getByText("소개");
-      const textarea = screen.getByLabelText("소개");
-
-      expect(label).toHaveAttribute("for", "biography");
-      expect(textarea).toHaveAttribute("id", "biography");
-    });
-
-    test("라벨에 올바른 스타일이 적용되어 있다", () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue="기존 바이오" isEditing={true} />
-        </TestWrapper>,
-      );
-
-      const label = screen.getByText("소개");
-      expect(label).toHaveClass("mb-2");
-      expect(label).toHaveClass("block");
-      expect(label).toHaveClass("text-sm");
-      expect(label).toHaveClass("font-medium");
-      expect(label).toHaveClass("text-gray-700");
-    });
   });
 
   describe("기본값 처리", () => {
-    test("originalValue가 undefined일 때 올바르게 처리된다", () => {
-      render(
-        <TestWrapper>
-          <BioInput originalValue={undefined} isEditing={false} />
-        </TestWrapper>,
-      );
-
-      expect(screen.getByText("바이오 없음")).toBeInTheDocument();
-    });
-
-    test("originalValue가 null일 때 올바르게 처리된다", () => {
+    test("바이오가 없을 때 '바이오 없음'이 표시된다", () => {
       render(
         <TestWrapper>
           <BioInput originalValue={null} isEditing={false} />

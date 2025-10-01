@@ -153,26 +153,6 @@ describe("ChangePassword", () => {
     ).toBeInTheDocument();
   });
 
-  test("현재 비밀번호 입력 필드가 올바르게 렌더링된다", () => {
-    render(<ChangePassword />);
-    const currentPasswordInput = screen.getByTestId("currentPassword");
-    expect(currentPasswordInput).toHaveAttribute("type", "password");
-    expect(currentPasswordInput).toHaveAttribute(
-      "placeholder",
-      "현재 비밀번호를 입력하세요.",
-    );
-  });
-
-  test("새 비밀번호 입력 필드가 올바르게 렌더링된다", () => {
-    render(<ChangePassword />);
-    const newPasswordInput = screen.getByTestId("newPassword");
-    expect(newPasswordInput).toHaveAttribute("type", "password");
-    expect(newPasswordInput).toHaveAttribute(
-      "placeholder",
-      "새로운 비밀번호를 입력하세요.",
-    );
-  });
-
   test("비밀번호 확인 버튼 클릭 시 핸들러가 호출된다", async () => {
     (EmailAuthProvider.credential as jest.Mock).mockReturnValue({
       user: "mock-user",

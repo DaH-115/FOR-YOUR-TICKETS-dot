@@ -5,7 +5,6 @@ import Pagination from "app/components/ui/layout/Pagination";
 import ReviewTicket from "app/components/review/ReviewTicket";
 import SearchSection from "app/components/search/SearchSection";
 import EmptyState from "app/my-page/components/EmptyState";
-import MyTicketHeader from "app/my-page/components/ticket-list-page/MyTicketHeader";
 import { buildQueryUrl } from "app/my-page/utils/buildQueryUrl";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import { useAppSelector } from "store/redux-toolkit/hooks";
@@ -54,13 +53,20 @@ export default function TicketListLayout({
   };
 
   return (
-    <main className="flex min-h-full w-full flex-col md:w-3/4">
+    <main className="mx-auto w-full flex-col">
       {/* 헤더 */}
-      <MyTicketHeader
-        title={header.title}
-        content={header.content}
-        reviewsCount={reviews.length}
-      />
+      <header className="mb-4">
+        <div className="flex items-center">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            {header.title}
+          </h1>
+          <span className="ml-2 text-lg font-bold text-accent-300">
+            {reviews.length}
+          </span>
+        </div>
+        <p className="text-sm text-gray-300">{header.content}</p>
+      </header>
+
       {/* 리뷰 목록 */}
       {loading ? (
         <EmptyState message="불러오는 중..." />
@@ -82,7 +88,7 @@ export default function TicketListLayout({
           message={
             searchTerm
               ? `"${searchTerm}"에 대한 검색 결과가 없습니다`
-              : "등록된 리뷰 티켓이 없습니다"
+              : "등록된 티켓이 없습니다"
           }
         />
       )}

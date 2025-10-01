@@ -1,107 +1,93 @@
 "use client";
 
 import { useState } from "react";
-import { FaInfoCircle, FaTimes } from "react-icons/fa";
-import { ActivityLevel } from "lib/utils/getActivityLevel";
+import { FaInfoCircle, FaTimes, FaCog } from "react-icons/fa";
+import {
+  ActivityLevel,
+  gradeInfoData,
+  getCurrentGradeInfo,
+  getNextGradeInfo,
+  getProgressToNext,
+} from "lib/utils/getActivityLevel";
 
 interface UserGradeInfoProps {
   currentLevel: ActivityLevel;
   currentReviewCount: number;
+  onGradeChange?: (newGrade: string) => Promise<void>; // 개발용 등급 변경 핸들러
 }
-
-const gradeInfo = [
-  {
-    label: "NEWBIE",
-    color: "bg-yellow-100 text-yellow-700",
-    bgGradient: "from-yellow-50 to-yellow-100",
-    range: "0-4개",
-    minThreshold: 0,
-    description: "영화 리뷰를 시작한 신입 리뷰어입니다.",
-    nextGoal: "5개의 리뷰를 작성하면 REGULAR 등급으로 승급됩니다!",
-  },
-  {
-    label: "REGULAR",
-    color: "bg-green-100 text-green-700",
-    bgGradient: "from-green-50 to-green-100",
-    range: "5-19개",
-    minThreshold: 5,
-    description: "꾸준히 리뷰를 작성하는 일반 리뷰어입니다.",
-    nextGoal: "20개의 리뷰를 작성하면 ACTIVE 등급으로 승급됩니다!",
-  },
-  {
-    label: "ACTIVE",
-    color: "bg-blue-100 text-blue-700",
-    bgGradient: "from-blue-50 to-blue-100",
-    range: "20-49개",
-    minThreshold: 20,
-    description: "활발하게 리뷰 활동을 하는 액티브 리뷰어입니다.",
-    nextGoal: "50개의 리뷰를 작성하면 EXPERT 등급으로 승급됩니다!",
-  },
-  {
-    label: "EXPERT",
-    color: "bg-purple-100 text-purple-700",
-    bgGradient: "from-purple-50 to-purple-100",
-    range: "50개+",
-    minThreshold: 50,
-    description: "최고 등급의 전문 리뷰어입니다. 축하합니다!",
-    nextGoal: "최고 등급에 도달했습니다! 계속해서 훌륭한 리뷰를 작성해주세요.",
-  },
-];
 
 export default function UserGradeInfo({
   currentLevel,
   currentReviewCount,
+  onGradeChange,
 }: UserGradeInfoProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChangingGrade, setIsChangingGrade] = useState(false);
 
-  const getCurrentGradeInfo = () => {
-    return gradeInfo.find((info) => info.label === currentLevel.label);
+  // 포트폴리오 기능 활성화 (모든 환경에서 사용 가능)
+  const isPortfolioMode = true;
+
+  // 중앙화된 유틸리티 함수들 사용
+  const currentGradeInfo = getCurrentGradeInfo(currentLevel);
+  const nextGradeInfo = getNextGradeInfo(currentLevel);
+  const progressPercentage = getProgressToNext(
+    currentLevel,
+    currentReviewCount,
+  );
+
+  // 개발용 등급 변경 핸들러
+  const handleGradeChange = async (newGrade: string) => {
+    if (!onGradeChange || isChangingGrade) return;
+
+    setIsChangingGrade(true);
+    try {
+      await onGradeChange(newGrade);
+    } catch (error) {
+      console.error("등급 변경 실패:", error);
+      alert("등급 변경에 실패했습니다.");
+    } finally {
+      setIsChangingGrade(false);
+    }
   };
 
-  const getNextGradeInfo = () => {
-    const currentIndex = gradeInfo.findIndex(
-      (info) => info.label === currentLevel.label,
-    );
-    return currentIndex < gradeInfo.length - 1
-      ? gradeInfo[currentIndex + 1]
-      : null;
+  // 안전한 스타일 적용을 위한 등급별 클래스 맵핑
+  const getBadgeStyle = (
+    level: ActivityLevel | { label: string },
+    size: "small" | "medium" | "default" = "default",
+  ) => {
+    const sizeClasses = {
+      small: "rounded-full px-2 py-1 text-xs font-medium",
+      medium: "rounded-full px-3 py-1 text-sm font-medium",
+      default: "rounded-full px-3 py-1 text-xs font-medium",
+    };
+
+    const baseClasses = sizeClasses[size];
+
+    switch (level.label) {
+      case "NEWBIE":
+        return `${baseClasses} bg-yellow-100 text-yellow-700`;
+      case "REGULAR":
+        return `${baseClasses} bg-green-100 text-green-700`;
+      case "ACTIVE":
+        return `${baseClasses} bg-blue-100 text-blue-700`;
+      case "EXPERT":
+        return `${baseClasses} bg-purple-100 text-purple-700`;
+      default:
+        return `${baseClasses} bg-gray-100 text-gray-600`;
+    }
   };
-
-  const getProgressToNext = () => {
-    const currentGrade = getCurrentGradeInfo();
-    const nextGrade = getNextGradeInfo();
-
-    if (!nextGrade || !currentGrade) return 100;
-
-    const currentThreshold = currentGrade.minThreshold;
-    const nextThreshold = nextGrade.minThreshold;
-
-    const progress =
-      ((currentReviewCount - currentThreshold) /
-        (nextThreshold - currentThreshold)) *
-      100;
-    return Math.min(Math.max(progress, 0), 100);
-  };
-
-  const currentGradeInfo = getCurrentGradeInfo();
-  const nextGradeInfo = getNextGradeInfo();
-  const progressPercentage = getProgressToNext();
 
   return (
     <>
       {/* 등급 정보 버튼 */}
       <div className="flex items-center gap-2">
-        <div
-          className={`rounded-full px-3 py-1 text-xs font-medium ${currentLevel.badgeColor}`}
-        >
-          {currentLevel.label}
-        </div>
+        <div className={getBadgeStyle(currentLevel)}>{currentLevel.label}</div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="text-gray-400 transition-colors hover:text-gray-600"
+          className="text-gray-300 transition-colors hover:text-gray-500"
           aria-label="등급 정보 보기"
         >
-          <FaInfoCircle size={12} />
+          <FaInfoCircle size={16} />
         </button>
       </div>
 
@@ -131,9 +117,7 @@ export default function UserGradeInfo({
                     현재 등급
                   </h3>
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`rounded-full px-3 py-1 text-sm font-medium ${currentLevel.badgeColor}`}
-                    >
+                    <div className={getBadgeStyle(currentLevel, "medium")}>
                       {currentLevel.label}
                     </div>
                     <div className="text-sm text-gray-600">
@@ -181,7 +165,7 @@ export default function UserGradeInfo({
                     등급별 상세 정보
                   </h3>
                   <div className="space-y-3">
-                    {gradeInfo.map((grade) => (
+                    {gradeInfoData.map((grade) => (
                       <div
                         key={grade.label}
                         className={`rounded-lg border-2 p-3 ${
@@ -193,7 +177,10 @@ export default function UserGradeInfo({
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`rounded-full px-2 py-1 text-xs font-medium ${grade.color}`}
+                              className={getBadgeStyle(
+                                { label: grade.label },
+                                "small",
+                              )}
                             >
                               {grade.label}
                             </div>
@@ -201,11 +188,26 @@ export default function UserGradeInfo({
                               {grade.range} 리뷰
                             </span>
                           </div>
-                          {grade.label === currentLevel.label && (
-                            <span className="text-xs font-medium text-blue-600">
-                              현재 등급
-                            </span>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {grade.label === currentLevel.label && (
+                              <span className="text-xs font-medium text-blue-600">
+                                현재 등급
+                              </span>
+                            )}
+                            {/* 포트폴리오 데모용 등급 변경 버튼 */}
+                            {isPortfolioMode &&
+                              onGradeChange &&
+                              grade.label !== currentLevel.label && (
+                                <button
+                                  onClick={() => handleGradeChange(grade.label)}
+                                  disabled={isChangingGrade}
+                                  className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-200 disabled:opacity-50"
+                                  title="이 등급으로 변경해보기"
+                                >
+                                  {isChangingGrade ? "변경중..." : "체험"}
+                                </button>
+                              )}
+                          </div>
                         </div>
                         <p className="mt-2 text-xs text-gray-700">
                           {grade.description}
@@ -214,6 +216,27 @@ export default function UserGradeInfo({
                     ))}
                   </div>
                 </div>
+
+                {/* 포트폴리오 데모 안내 */}
+                {isPortfolioMode && onGradeChange && (
+                  <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                    <div className="flex items-center gap-2">
+                      <FaCog className="text-amber-600" size={14} />
+                      <h4 className="text-sm font-semibold text-amber-800">
+                        포트폴리오 데모 기능
+                      </h4>
+                    </div>
+                    <p className="mt-1 text-xs text-amber-700">
+                      등급 시스템을 체험해보세요! 각 등급의 &quot;체험&quot;
+                      버튼을 클릭하면 실제로 등급이 변경되어 UI 변화를 확인할 수
+                      있습니다.
+                    </p>
+                    <p className="mt-1 text-xs text-amber-600">
+                      💡 실제 서비스에서는 리뷰 작성 개수에 따라 자동으로 등급이
+                      상승합니다.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

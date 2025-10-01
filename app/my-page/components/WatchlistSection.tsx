@@ -27,14 +27,14 @@ export default function WatchlistSection({ uid }: WatchlistSectionProps) {
   }, [uid, dispatch]);
 
   return (
-    <section className="my-8">
-      <div className="flex items-center justify-between">
-        <h2 className="mb-4 text-lg font-bold text-white">보고 싶은 영화</h2>
+    <section className="mb-8 mt-16">
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-white">보고 싶은 영화</h2>
         {/* 더보기 링크 - 로딩 중이 아닐 때만 표시 */}
         {!loading && (
           <Link
             href="/my-page/watchlist"
-            className="mt-4 block text-right text-sm text-accent-300 hover:underline"
+            className="block text-right text-sm text-accent-300 hover:underline md:text-xs"
           >
             더보기
           </Link>
@@ -54,9 +54,9 @@ export default function WatchlistSection({ uid }: WatchlistSectionProps) {
         </div>
       )}
 
-      {/* 성공 상태 - 데이터가 있는 경우 (최대 5개 표시) */}
+      {/* 성공 상태 - 데이터가 있는 경우 */}
       {!loading && !error && watchlist.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 md:grid-cols-5">
+        <div className="grid grid-cols-3 gap-2 md:grid-cols-5 xl:grid-cols-7">
           {watchlist.slice(0, 5).map((movie) => (
             <WatchlistMovieCard key={movie.id} movie={movie} />
           ))}

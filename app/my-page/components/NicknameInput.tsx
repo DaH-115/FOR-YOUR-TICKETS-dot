@@ -1,6 +1,6 @@
 import { useFormContext, useWatch } from "react-hook-form";
 import DuplicateCheckButton from "app/components/ui/buttons/DuplicateCheckButton";
-import { useDuplicateCheck } from "app/my-page/hooks/useDuplicateCheck";
+import { useDuplicateCheckState } from "app/my-page/hooks/useDuplicateCheckState";
 
 interface NicknameInputProps {
   originalValue?: string | null;
@@ -20,7 +20,7 @@ export default function NicknameInput({
   const watchedNickname = useWatch({ name: "displayName", control });
 
   const { isChecking, isChecked, isAvailable, message, check } =
-    useDuplicateCheck({
+    useDuplicateCheckState({
       type: "displayName",
       value: watchedNickname,
       originalValue: originalValue ?? undefined,
@@ -79,8 +79,12 @@ export default function NicknameInput({
         </>
       ) : (
         <div className="mt-1">
-          <p className="border-b border-gray-500 py-2 text-gray-800">
-            {originalValue || "없음"}
+          <p
+            className={`border-b border-gray-500 py-2 ${
+              originalValue ? "text-gray-800" : "text-gray-400"
+            }`}
+          >
+            {originalValue || "닉네임을 설정해주세요"}
           </p>
         </div>
       )}
