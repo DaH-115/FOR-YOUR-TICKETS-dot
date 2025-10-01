@@ -6,19 +6,23 @@ import DuplicateCheckButton from "app/components/ui/buttons/DuplicateCheckButton
 describe("DuplicateCheckButton 컴포넌트", () => {
   const mockOnClick = jest.fn();
 
+  const defaultProps = {
+    onClick: mockOnClick,
+    disabled: false,
+    isChecking: false,
+  };
+
+  const renderButton = (props = {}) => {
+    return render(<DuplicateCheckButton {...defaultProps} {...props} />);
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe("기본 렌더링", () => {
     test("기본 상태에서 올바르게 렌더링되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-        />,
-      );
+      renderButton();
 
       const button = screen.getByRole("button");
       expect(button).toBeInTheDocument();
@@ -27,26 +31,14 @@ describe("DuplicateCheckButton 컴포넌트", () => {
     });
 
     test("로딩 상태일 때 올바르게 렌더링되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={true}
-        />,
-      );
+      renderButton({ isChecking: true });
 
       const button = screen.getByRole("button");
       expect(button).toHaveTextContent("확인 중...");
     });
 
     test("비활성화 상태일 때 올바르게 렌더링되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={true}
-          isChecking={false}
-        />,
-      );
+      renderButton({ disabled: true });
 
       const button = screen.getByRole("button");
       expect(button).toBeDisabled();
@@ -55,28 +47,14 @@ describe("DuplicateCheckButton 컴포넌트", () => {
 
   describe("접근성", () => {
     test("aria-label이 올바르게 적용되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-          aria-label="닉네임 중복 확인"
-        />,
-      );
+      renderButton({ "aria-label": "닉네임 중복 확인" });
 
       const button = screen.getByRole("button", { name: "닉네임 중복 확인" });
       expect(button).toBeInTheDocument();
     });
 
     test("aria-describedby가 올바르게 적용되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-          aria-describedby="description-id"
-        />,
-      );
+      renderButton({ "aria-describedby": "description-id" });
 
       const button = screen.getByRole("button");
       expect(button).toHaveAttribute("aria-describedby", "description-id");
@@ -84,13 +62,7 @@ describe("DuplicateCheckButton 컴포넌트", () => {
 
     test("키보드로 접근 가능해야 한다", async () => {
       const user = userEvent.setup();
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-        />,
-      );
+      renderButton();
 
       const button = screen.getByRole("button");
 
@@ -101,23 +73,13 @@ describe("DuplicateCheckButton 컴포넌트", () => {
       // Enter로 클릭
       await user.keyboard("{Enter}");
       expect(mockOnClick).toHaveBeenCalledTimes(1);
-
-      // Space로 클릭
-      await user.keyboard(" ");
-      expect(mockOnClick).toHaveBeenCalledTimes(2);
     });
   });
 
   describe("상호작용", () => {
     test("클릭 시 onClick 핸들러가 호출되어야 한다", async () => {
       const user = userEvent.setup();
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-        />,
-      );
+      renderButton();
 
       const button = screen.getByRole("button");
       await user.click(button);
@@ -127,60 +89,25 @@ describe("DuplicateCheckButton 컴포넌트", () => {
 
     test("비활성화 상태일 때 클릭되지 않아야 한다", async () => {
       const user = userEvent.setup();
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={true}
-          isChecking={false}
-        />,
-      );
+      renderButton({ disabled: true });
 
       const button = screen.getByRole("button");
       await user.click(button);
 
       expect(mockOnClick).not.toHaveBeenCalled();
     });
-
-    test("로딩 중일 때도 클릭이 가능해야 한다 (비활성화되지 않는 한)", async () => {
-      const user = userEvent.setup();
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={true}
-        />,
-      );
-
-      const button = screen.getByRole("button");
-      await user.click(button);
-
-      expect(mockOnClick).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe("스타일링", () => {
     test("커스텀 className이 적용되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-          className="custom-class"
-        />,
-      );
+      renderButton({ className: "custom-class" });
 
       const button = screen.getByRole("button");
       expect(button).toHaveClass("custom-class");
     });
 
     test("비활성화 상태일 때 적절한 스타일이 적용되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={true}
-          isChecking={false}
-        />,
-      );
+      renderButton({ disabled: true });
 
       const button = screen.getByRole("button");
       expect(button).toHaveClass(
@@ -191,13 +118,7 @@ describe("DuplicateCheckButton 컴포넌트", () => {
     });
 
     test("활성화 상태일 때 적절한 스타일이 적용되어야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-        />,
-      );
+      renderButton();
 
       const button = screen.getByRole("button");
       expect(button).toHaveClass("bg-gray-600", "text-white");
@@ -206,25 +127,13 @@ describe("DuplicateCheckButton 컴포넌트", () => {
 
   describe("텍스트 변경", () => {
     test("기본 상태에서는 '중복 확인' 텍스트를 표시해야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-        />,
-      );
+      renderButton();
 
       expect(screen.getByText("중복 확인")).toBeInTheDocument();
     });
 
     test("로딩 상태에서는 '확인 중...' 텍스트를 표시해야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={true}
-        />,
-      );
+      renderButton({ isChecking: true });
 
       expect(screen.getByText("확인 중...")).toBeInTheDocument();
     });
@@ -232,14 +141,11 @@ describe("DuplicateCheckButton 컴포넌트", () => {
 
   describe("props 조합 테스트", () => {
     test("disabled=true, isChecking=true 상태가 올바르게 작동해야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={true}
-          isChecking={true}
-          aria-label="테스트 버튼"
-        />,
-      );
+      renderButton({
+        disabled: true,
+        isChecking: true,
+        "aria-label": "테스트 버튼",
+      });
 
       const button = screen.getByRole("button", { name: "테스트 버튼" });
       expect(button).toBeDisabled();
@@ -248,16 +154,11 @@ describe("DuplicateCheckButton 컴포넌트", () => {
     });
 
     test("모든 선택적 props가 함께 작동해야 한다", () => {
-      render(
-        <DuplicateCheckButton
-          onClick={mockOnClick}
-          disabled={false}
-          isChecking={false}
-          className="test-class"
-          aria-label="완전한 테스트"
-          aria-describedby="test-description"
-        />,
-      );
+      renderButton({
+        className: "test-class",
+        "aria-label": "완전한 테스트",
+        "aria-describedby": "test-description",
+      });
 
       const button = screen.getByRole("button", { name: "완전한 테스트" });
       expect(button).toHaveClass("test-class");

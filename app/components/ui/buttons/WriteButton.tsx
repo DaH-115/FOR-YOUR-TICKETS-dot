@@ -13,14 +13,20 @@ export default function WriteButton({
   return (
     <Link
       href={`/write-review/new?movieId=${movieId}`}
-      className={`relative z-50 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary-500 text-white ${
-        size === "large" ? "p-4" : "p-3"
+      className={`relative flex items-center justify-center gap-1 rounded-xl border border-white bg-primary-500 text-white transition-colors duration-300 hover:border-primary-300 ${
+        size === "large" ? "p-5" : "p-4"
       }`}
     >
-      <span className={`${size === "large" ? "text-sm" : "text-xs"}`}>
+      <button
+        type="button"
+        className={`${size === "large" ? "text-base" : "text-xs"} tracking-tight`}
+      >
         티켓 만들기
-      </span>
-      <IoTicket aria-hidden />
+      </button>
+      <IoTicket
+        className={`${size === "large" ? "text-base" : "text-xs"}`}
+        aria-hidden
+      />
     </Link>
   );
 }

@@ -10,6 +10,7 @@ interface InputFieldProps<TFormValues extends FieldValues> {
   touched?: boolean;
   disabled?: boolean;
   autoComplete?: string;
+  "aria-describedby"?: string;
 }
 
 export default function InputField<TFormValues extends FieldValues>({
@@ -22,10 +23,11 @@ export default function InputField<TFormValues extends FieldValues>({
   touched,
   disabled,
   autoComplete,
+  "aria-describedby": ariaDescribedBy,
 }: InputFieldProps<TFormValues>) {
   return (
     <div className="space-y-2">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="block text-xs font-medium text-gray-700">
         {label}
       </label>
       <input
@@ -42,6 +44,8 @@ export default function InputField<TFormValues extends FieldValues>({
             : ""
         }`}
         autoComplete={autoComplete}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={touched && error ? "true" : "false"}
       />
       {touched && error && (
         <p className="flex items-center space-x-1 text-sm text-red-600">
