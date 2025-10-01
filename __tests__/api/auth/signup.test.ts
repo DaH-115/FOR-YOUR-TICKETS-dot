@@ -1,4 +1,4 @@
-import { POST } from "app/api/auth/signup/route";
+import { POST } from "@/api/auth/signup/route";
 import {
   createMockRequest,
   createMockSignupData,

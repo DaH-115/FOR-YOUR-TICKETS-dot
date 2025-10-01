@@ -65,8 +65,12 @@ export async function GET(
       biography: userData?.biography,
       photoKey: userData?.photoKey,
       activityLevel: userData?.activityLevel,
-      createdAt: userData?.createdAt?.toDate().toISOString() || null,
-      updatedAt: userData?.updatedAt?.toDate().toISOString() || null,
+      createdAt: userData?.createdAt?.toDate
+        ? userData.createdAt.toDate().toISOString()
+        : userData?.createdAt || null,
+      updatedAt: userData?.updatedAt?.toDate
+        ? userData.updatedAt.toDate().toISOString()
+        : userData?.updatedAt || null,
       myTicketsCount: myReviewsCount,
       likedTicketsCount: likedReviewsCount,
     };

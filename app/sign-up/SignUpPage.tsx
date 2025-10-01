@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import DuplicateCheckButton from "app/components/ui/buttons/DuplicateCheckButton";
 import InputField from "app/components/ui/forms/InputField";
-import { useDuplicateCheck } from "app/my-page/hooks/useDuplicateCheck";
+import { useDuplicateCheckState } from "app/my-page/hooks/useDuplicateCheckState";
 import { firebaseErrorHandler } from "app/utils/firebaseError";
 import { isAuth } from "firebase-config";
 import { useAlert } from "store/context/alertContext";
@@ -70,15 +70,17 @@ export default function SignUpPage() {
     isAvailable: isDisplayNameAvailable,
     message: displayNameMessage,
     check: checkNickname,
-  } = useDuplicateCheck({ type: "displayName", value: displayNameValue });
+  } = useDuplicateCheckState({ type: "displayName", value: displayNameValue });
 
   const {
     isChecking: isCheckingEmail,
+    isChecked: isEmailChecked,
     isAvailable: isEmailAvailable,
+    message: emailMessage,
     check: checkEmail,
-  } = useDuplicateCheck({ type: "email", value: emailValue });
+  } = useDuplicateCheckState({ type: "email", value: emailValue });
 
-  // 닉네임 중복 체크 성공/실패 시 알림 표시
+  // 중복 체크 결과에 따른 알림 표시 (통합 처리)
   useEffect(() => {
     if (isNameChecked && displayNameMessage) {
       if (isDisplayNameAvailable) {
@@ -91,6 +93,22 @@ export default function SignUpPage() {
     isNameChecked,
     isDisplayNameAvailable,
     displayNameMessage,
+    showErrorHandler,
+    showSuccessHandler,
+  ]);
+
+  useEffect(() => {
+    if (isEmailChecked && emailMessage) {
+      if (isEmailAvailable) {
+        showSuccessHandler("성공", emailMessage);
+      } else {
+        showErrorHandler("실패", emailMessage);
+      }
+    }
+  }, [
+    isEmailChecked,
+    isEmailAvailable,
+    emailMessage,
     showErrorHandler,
     showSuccessHandler,
   ]);
@@ -138,23 +156,17 @@ export default function SignUpPage() {
   );
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-accent-900 via-black to-accent-800 px-4 py-10">
-      <div className="w-full max-w-md">
+    <main className="p-8 lg:p-0">
+      <div className="mx-auto w-full max-w-md">
         {/* 회원가입 카드 */}
         <div className="relative" role="region" aria-labelledby="signup-title">
           {/* 티켓 메인 부분 */}
-          <div className="relative rounded-3xl border-2 border-accent-300/30 bg-white p-8 shadow-2xl">
+          <div className="relative rounded-3xl border-2 border-accent-300/30 bg-white px-6 pb-10 pt-8 shadow-2xl">
             {/* 회원가입 헤더 */}
-            <header className="mb-8 border-b-2 border-dashed border-accent-300/50 pb-6 text-center">
-              <div
-                className="mb-2 font-mono text-xs font-bold tracking-wider text-accent-600"
-                aria-hidden="true"
-              >
-                ADMIT ONE
-              </div>
+            <header className="mb-8 text-center">
               <h1
                 id="signup-title"
-                className="mb-1 text-2xl font-bold text-gray-800"
+                className="mb-1 text-xl font-bold text-gray-800"
               >
                 회원가입
               </h1>
@@ -221,15 +233,7 @@ export default function SignUpPage() {
                       disabled={isCheckingName || !displayNameValue}
                       isChecking={isCheckingName}
                       aria-label="닉네임 중복 확인"
-                      aria-describedby={
-                        isCheckingName ? "nickname-checking" : undefined
-                      }
                     />
-                    {isCheckingName && (
-                      <span id="nickname-checking" className="sr-only">
-                        닉네임 중복 확인 중입니다. 잠시만 기다려주세요.
-                      </span>
-                    )}
                   </div>
 
                   <div className="flex items-end space-x-2">
@@ -266,15 +270,7 @@ export default function SignUpPage() {
                       disabled={isCheckingEmail || !emailValue}
                       isChecking={isCheckingEmail}
                       aria-label="이메일 중복 확인"
-                      aria-describedby={
-                        isCheckingEmail ? "email-checking" : undefined
-                      }
                     />
-                    {isCheckingEmail && (
-                      <span id="email-checking" className="sr-only">
-                        이메일 중복 확인 중입니다. 잠시만 기다려주세요.
-                      </span>
-                    )}
                   </div>
 
                   <InputField
@@ -302,51 +298,45 @@ export default function SignUpPage() {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={
-                    isLoading ||
-                    isDisplayNameAvailable !== true ||
-                    isEmailAvailable !== true
-                  }
-                  className={`w-full rounded-2xl bg-accent-400 p-4 text-sm font-semibold text-white transition-all duration-300 ${
-                    isLoading ||
-                    isDisplayNameAvailable !== true ||
-                    isEmailAvailable !== true
-                      ? "cursor-not-allowed opacity-50"
-                      : "hover:bg-accent-500 hover:shadow-lg"
-                  }`}
-                  aria-describedby={
-                    isLoading ? "signup-loading" : "signup-requirements"
-                  }
-                >
-                  {isLoading ? "가입 중..." : "회원가입"}
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    disabled={
+                      isLoading ||
+                      isDisplayNameAvailable !== true ||
+                      isEmailAvailable !== true
+                    }
+                    className={`w-full rounded-2xl bg-accent-400 p-4 text-sm text-white transition-all duration-300 ${
+                      isLoading ||
+                      isDisplayNameAvailable !== true ||
+                      isEmailAvailable !== true
+                        ? "cursor-not-allowed opacity-50"
+                        : "hover:bg-accent-500 hover:shadow-lg"
+                    }`}
+                    aria-describedby={
+                      isLoading ? "signup-loading" : "signup-requirements"
+                    }
+                  >
+                    {isLoading ? "가입 중..." : "회원가입"}
+                  </button>
                   {isLoading && (
-                    <span id="signup-loading" className="sr-only">
+                    <span id="signup-loading" className="text-xs text-gray-600">
                       회원가입을 처리하고 있습니다. 잠시만 기다려주세요.
                     </span>
                   )}
                   {!isLoading &&
                     (isDisplayNameAvailable !== true ||
                       isEmailAvailable !== true) && (
-                      <span id="signup-requirements" className="sr-only">
-                        회원가입하려면 닉네임과 이메일 중복 확인을 완료해주세요.
+                      <span
+                        id="signup-requirements"
+                        className="text-xs text-red-600"
+                      >
+                        닉네임과 이메일 중복 확인을 완료해주세요.
                       </span>
                     )}
-                </button>
+                </div>
               </form>
             </section>
-
-            {/* 티켓 하단 정보 */}
-            <div className="mt-8 border-t-2 border-dashed border-accent-300/50 pt-6 text-center">
-              <div className="space-y-1 font-mono text-xs text-gray-600">
-                <div>NEW MEMBER REGISTRATION</div>
-                <div>TERMS & CONDITIONS APPLY</div>
-                <div className="font-bold text-accent-600">
-                  ★ WELCOME ABOARD ★
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

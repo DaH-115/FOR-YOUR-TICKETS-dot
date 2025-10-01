@@ -77,27 +77,18 @@ export default function LoginPage() {
     [router, showErrorHandler],
   );
 
-  // 로딩 상태는 Redux store의 user 상태가 로딩 중일 때만 표시
-  // user가 null이면 로그인되지 않은 상태이므로 로그인 폼을 표시
-
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-accent-900 via-black to-accent-800 px-4 py-10 pt-32 md:pt-36 lg:pt-28">
-      <div className="w-full max-w-md">
+    <main className="p-8 lg:p-0">
+      <div className="mx-auto w-full max-w-md">
         {/* 로그인 카드 */}
         <div className="relative" role="region" aria-labelledby="login-title">
           {/* 티켓 메인 부분 */}
-          <div className="relative rounded-3xl border-2 border-accent-300/30 bg-white p-8 shadow-2xl">
+          <div className="relative rounded-3xl border-2 border-accent-300/30 bg-white px-6 py-8 shadow-2xl">
             {/* 로그인 헤더 */}
-            <header className="mb-8 border-b-4 border-dotted border-accent-300/50 pb-6 text-center">
-              <div
-                className="mb-2 font-mono text-xs font-bold tracking-wider text-accent-600"
-                aria-hidden="true"
-              >
-                ADMIT ONE
-              </div>
+            <header className="mb-8 text-center">
               <h1
                 id="login-title"
-                className="mb-1 text-2xl font-bold text-gray-800"
+                className="mb-1 text-xl font-bold text-gray-800"
               >
                 로그인
               </h1>
@@ -142,18 +133,18 @@ export default function LoginPage() {
                 </div>
 
                 {/* 로그인 상태 유지 */}
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     id="rememberMe"
                     {...register("rememberMe")}
-                    className="h-5 w-5 rounded-md border-2 border-gray-300 bg-white text-accent-500 transition-all duration-200 checked:border-accent-500 checked:bg-accent-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/20"
+                    className="h-4 w-4 rounded-md border-2 border-gray-300 bg-white text-accent-500 transition-all duration-200 checked:border-accent-500 checked:bg-accent-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/20"
                     disabled={isLoading}
                     aria-describedby="rememberMe-description"
                   />
                   <label
                     htmlFor="rememberMe"
-                    className="cursor-pointer select-none text-sm font-medium text-gray-700"
+                    className="cursor-pointer select-none text-xs text-gray-700"
                   >
                     로그인 상태 유지
                   </label>
@@ -165,7 +156,7 @@ export default function LoginPage() {
                 <div>
                   <button
                     type="submit"
-                    className={`w-full rounded-2xl bg-accent-400 p-4 text-sm font-semibold text-white transition-all duration-300 ${
+                    className={`w-full rounded-2xl bg-accent-400 p-4 text-sm text-white transition-all duration-300 ${
                       isLoading
                         ? "cursor-not-allowed opacity-50"
                         : "hover:bg-accent-500 hover:shadow-lg"
@@ -174,17 +165,17 @@ export default function LoginPage() {
                     aria-describedby={isLoading ? "login-loading" : undefined}
                   >
                     {isLoading ? "로그인 중..." : "로그인"}
-                    {isLoading && (
-                      <span id="login-loading" className="sr-only">
-                        로그인을 처리하고 있습니다. 잠시만 기다려주세요.
-                      </span>
-                    )}
                   </button>
+                  {isLoading && (
+                    <span id="login-loading" className="text-xs text-gray-600">
+                      로그인을 처리하고 있습니다. 잠시만 기다려주세요.
+                    </span>
+                  )}
 
                   <Link href="/sign-up" className="mt-4 block">
                     <button
                       type="button"
-                      className={`flex w-full items-center justify-center rounded-2xl border border-gray-300 bg-gray-50 p-4 text-sm font-semibold text-gray-700 transition-all duration-300 ${
+                      className={`flex w-full items-center justify-center rounded-2xl border border-gray-300 bg-gray-50 p-4 text-sm text-gray-700 transition-all duration-300 ${
                         isLoading
                           ? "cursor-not-allowed opacity-50"
                           : "hover:border-gray-400 hover:bg-gray-100"
@@ -206,17 +197,6 @@ export default function LoginPage() {
               </h2>
               <SocialLogin rememberMe={isRememberMe} />
             </section>
-
-            {/* 티켓 하단 정보 */}
-            <div className="mt-8 border-t-4 border-dotted border-accent-300/50 pt-6 text-center">
-              <div className="space-y-1 font-mono text-xs text-gray-600">
-                <div>VALID FOR ONE SESSION</div>
-                <div>NO REFUND • NO EXCHANGE</div>
-                <div className="font-bold text-accent-600">
-                  ★ PREMIUM ACCESS ★
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

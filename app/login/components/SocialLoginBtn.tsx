@@ -19,7 +19,7 @@ export default function SocialLoginButton({
     <button
       onClick={() => onSocialLogin(provider)}
       disabled={isLoading}
-      className={`relative flex w-full items-center justify-center space-x-3 rounded-2xl border p-4 font-medium text-gray-700 transition-all duration-300 ${
+      className={`relative flex w-full items-center justify-center space-x-3 rounded-2xl border p-4 text-gray-700 transition-all duration-300 ${
         isLoading
           ? "cursor-not-allowed opacity-50"
           : "hover:border-gray-300 hover:bg-gray-100"

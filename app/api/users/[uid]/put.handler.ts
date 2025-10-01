@@ -6,9 +6,10 @@ import {
   updateCommentsDisplayName,
   updateReviewsPhotoKey,
   updateCommentsPhotoKey,
-} from "app/api/users/[uid]/route.helper";
+} from "@/api/users/[uid]/route.helper";
 import { adminAuth, adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
+import { FieldValue } from "firebase-admin/firestore";
 
 // PUT /api/users/[uid] - 사용자 프로필 업데이트
 export async function PUT(
@@ -73,7 +74,7 @@ export async function PUT(
     if (biography !== undefined) {
       await userRef.update({
         biography: biography.trim(),
-        updatedAt: new Date(),
+        updatedAt: FieldValue.serverTimestamp(),
       });
       responseData.biography = biography.trim();
     }
@@ -109,13 +110,13 @@ export async function PUT(
           // 새 닉네임을 usernames 컬렉션에 등록
           transaction.set(newDisplayNameRef, {
             uid: params.uid,
-            createdAt: new Date(),
+            createdAt: FieldValue.serverTimestamp(),
           });
 
           // users 컬렉션의 updatedAt 필드 업데이트
           transaction.update(userRef, {
             displayName,
-            updatedAt: new Date(),
+            updatedAt: FieldValue.serverTimestamp(),
           });
         });
 
@@ -153,7 +154,7 @@ export async function PUT(
       try {
         await userRef.update({
           photoKey,
-          updatedAt: new Date(),
+          updatedAt: FieldValue.serverTimestamp(),
         });
 
         // photoURL 생성 (클라이언트에서 사용)
