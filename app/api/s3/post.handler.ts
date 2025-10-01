@@ -3,8 +3,8 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { verifyAuthToken } from "lib/auth/verifyToken";
 import s3 from "lib/aws/s3";
 import { NextRequest, NextResponse } from "next/server";
-import { MAX_FILE_SIZE } from "app/utils/file/validateFileSize";
-import { ALLOWED_CONTENT_TYPES } from "app/utils/file/validateFileType";
+import { MAX_FILE_SIZE } from "@/utils/file/validateFileSize";
+import { ALLOWED_CONTENT_TYPES } from "@/utils/file/validateFileType";
 
 export async function POST(req: NextRequest) {
   try {

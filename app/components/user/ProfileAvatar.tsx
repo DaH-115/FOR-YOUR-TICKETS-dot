@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { memo, useEffect, useRef, useState } from "react";
-import { usePresignedUrl } from "app/components/user/hooks/usePresignedUrl";
+import { usePresignedUrl } from "@/components/user/hooks/usePresignedUrl";
 
 // 헬퍼 함수들
 const getImageSrc = (
@@ -27,7 +27,6 @@ const getFirstLetter = (displayName?: string) => {
  * @param size 아바타 크기(px)
  * @param className 추가 클래스
  * @param showLoading 로딩 스피너 표시 여부
- * @param isPublic S3 공개 여부
  * @param onImageError 이미지 로딩 실패 시 콜백
  */
 interface ProfileAvatarProps {
@@ -37,7 +36,6 @@ interface ProfileAvatarProps {
   size?: number;
   className?: string;
   showLoading?: boolean;
-  isPublic?: boolean;
   onImageError?: () => void;
 }
 
@@ -48,7 +46,6 @@ function ProfileAvatar({
   size = 48,
   className = "",
   showLoading = true,
-  isPublic = false,
   onImageError,
 }: ProfileAvatarProps) {
   const [imageError, setImageError] = useState(false);
@@ -59,7 +56,6 @@ function ProfileAvatar({
   const shouldFetchUrl = isVisible && s3photoKey && !previewSrc;
   const { url: presignedUrl, loading } = usePresignedUrl({
     key: shouldFetchUrl ? s3photoKey : null,
-    isPublic,
   });
 
   const src = getImageSrc(previewSrc, s3photoKey, presignedUrl);

@@ -3,9 +3,9 @@
 // - 인증/공개 여부, 캐시, 에러 처리 등 모든 부수효과를 훅 내부에서 처리
 // - UI 컴포넌트는 url, loading, error만 사용하면 됨
 import { useEffect, useState, useRef } from "react";
-import { isAuth } from "firebase-config";
-import { useAuth } from "store/context/auth/authContext";
-import { fetchPresignedUrl } from "app/utils/api/fetchPresignedUrl";
+// import { isAuth } from "firebase-config"; // 사용하지 않음
+// import { useAuth } from "store/context/auth/authContext"; // 사용하지 않음
+import { fetchPresignedUrl } from "@/utils/api/fetchPresignedUrl";
 
 // 메모리 내 캐시 (key: S3 key, value: { url, expiresAt })
 // - expiresAt: presigned URL 만료 시각(UNIX timestamp, ms)
@@ -42,10 +42,10 @@ function cleanupExpiredCache() {
 
 /**
  * 캐시 키 생성 헬퍼
- * - 공개 여부를 포함하여 동일 key라도 공개/비공개가 다르면 분리
+ * - 모든 프로필 이미지는 공개로 처리
  */
-function buildCacheKey(key: string, isPublic: boolean) {
-  return `${isPublic ? "public" : "private"}:${key}`;
+function buildCacheKey(key: string) {
+  return `public:${key}`;
 }
 
 /**
@@ -92,15 +92,10 @@ function getValidCachedItem(cacheKey: string) {
 interface UsePresignedUrlProps {
   key?: string | null; // S3에 저장된 파일의 경로
   fallbackUrl?: string; // 로딩 중이거나 에러 시 표시할 기본 URL
-  isPublic?: boolean; // 공개 리소스 여부. true이면 인증 없이 요청
 }
 
-export function usePresignedUrl({
-  key,
-  fallbackUrl,
-  isPublic = false,
-}: UsePresignedUrlProps) {
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+export function usePresignedUrl({ key, fallbackUrl }: UsePresignedUrlProps) {
+  // const { isAuthenticated, isLoading: isAuthLoading } = useAuth(); // 사용하지 않음
   const abortControllerRef = useRef<AbortController | null>(null);
   // 상태를 useState로 관리
   const [url, setUrl] = useState<string>(fallbackUrl || "");
@@ -124,26 +119,15 @@ export function usePresignedUrl({
    * - 인증 필요/불필요, 캐시, 에러 등 모든 분기 처리
    */
   useEffect(() => {
-    // 인증 상태 로딩 대기
-    if (!isPublic && isAuthLoading) {
-      setLoading(true);
-      return;
-    }
     if (!key || typeof key !== "string" || key.trim().length === 0) {
       setUrl(fallbackUrl || "");
       setLoading(false);
       setError(null);
       return;
     }
-    if (!isPublic && !isAuthenticated) {
-      setUrl(fallbackUrl || "");
-      setLoading(false);
-      setError("인증이 필요합니다.");
-      return;
-    }
 
     // presigned URL 캐시 조회 및 만료 체크 (개선된 방식)
-    const cacheKey = buildCacheKey(key, isPublic);
+    const cacheKey = buildCacheKey(key);
     const cached = getValidCachedItem(cacheKey);
     if (cached) {
       setUrl(cached.url);
@@ -161,19 +145,11 @@ export function usePresignedUrl({
     setError(null);
     (async () => {
       try {
-        const idToken =
-          !isPublic && isAuth.currentUser
-            ? await isAuth.currentUser.getIdToken()
-            : null;
-        if (!isPublic && !idToken) {
-          throw new Error("인증 토큰을 가져올 수 없습니다.");
-        }
-        // fetchPresignedUrl에서 { url, expiresIn } 반환
-        // expiresAt: 현재 시각 + expiresIn(초) * 1000
+        // 모든 프로필 이미지는 공개로 처리
         const { url, expiresIn } = await fetchPresignedUrl({
           key,
-          isPublic,
-          idToken,
+          isPublic: true,
+          idToken: null,
           signal: abortController.signal,
         });
         if (!abortController.signal.aborted) {
@@ -188,14 +164,10 @@ export function usePresignedUrl({
         }
       } catch (err) {
         if (!abortController.signal.aborted) {
-          let errorMsg =
+          const errorMsg =
             err instanceof Error
               ? err.message
               : "알 수 없는 에러가 발생했습니다.";
-          // 인증 관련 에러 메시지 변환
-          if (errorMsg.includes("인증")) {
-            errorMsg = "로그인이 필요합니다.";
-          }
           setUrl(fallbackUrl || "");
           setLoading(false);
           setError(errorMsg);
@@ -207,7 +179,7 @@ export function usePresignedUrl({
         abortControllerRef.current.abort();
       }
     };
-  }, [key, fallbackUrl, isAuthenticated, isAuthLoading, isPublic]);
+  }, [key, fallbackUrl]);
 
   // UI에서 사용할 상태 반환
   return { url, loading, error };
