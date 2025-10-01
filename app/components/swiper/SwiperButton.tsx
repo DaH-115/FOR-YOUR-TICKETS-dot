@@ -1,28 +1,26 @@
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useSwiper } from "swiper/react";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 export default function SwiperButton({
   direction,
+  onClick,
 }: {
   direction: "next" | "prev";
+  onClick: () => void;
 }) {
-  const swiper = useSwiper();
   const ariaLabel = direction === "next" ? "다음 슬라이드" : "이전 슬라이드";
 
   return (
     <button
-      onClick={() =>
-        direction === "next" ? swiper.slideNext() : swiper.slidePrev()
-      }
-      className={`absolute top-1/2 z-50 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900/80 p-2 text-sm text-white shadow-md transition-all duration-300 ease-in-out hover:scale-110 focus:border-none focus:outline-none focus:ring-1 focus:ring-accent-300 md:p-3 md:text-base ${
-        direction === "prev" ? "left-2 md:left-4" : "right-2 md:right-4"
+      onClick={onClick}
+      className={`absolute top-1/2 z-50 hidden text-3xl text-white/80 opacity-0 transition-all duration-150 ease-out hover:scale-110 group-hover:opacity-100 xl:block ${
+        direction === "prev" ? "-left-12" : "-right-12"
       }`}
       aria-label={ariaLabel}
     >
       {direction === "next" ? (
-        <FaArrowRight aria-hidden />
+        <IoChevronForward aria-hidden />
       ) : (
-        <FaArrowLeft aria-hidden />
+        <IoChevronBack aria-hidden />
       )}
     </button>
   );

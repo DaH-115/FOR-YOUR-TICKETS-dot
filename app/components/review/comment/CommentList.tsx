@@ -4,14 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import ActivityBadge from "app/components/ui/feedback/ActivityBadge";
-import ProfileAvatar from "app/components/user/ProfileAvatar";
-import formatDate from "app/utils/formatDate";
-import { apiCallWithTokenRefresh } from "app/utils/getIdToken/apiCallWithTokenRefresh";
+import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
+import ProfileAvatar from "@/components/user/ProfileAvatar";
+import formatDate from "@/utils/formatDate";
+import { apiCallWithTokenRefresh } from "@/utils/getIdToken/apiCallWithTokenRefresh";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import { useAppSelector } from "store/redux-toolkit/hooks";
 import { selectUser } from "store/redux-toolkit/slice/userSlice";
-import { firebaseErrorHandler } from "app/utils/firebaseError";
+import { firebaseErrorHandler } from "@/utils/firebaseError";
 import { isAuth } from "firebase-config";
 import { useAlert } from "store/context/alertContext";
 
@@ -319,7 +319,6 @@ export default function CommentList({
                 s3photoKey={userState.photoKey || undefined}
                 userDisplayName={userState.displayName || "사용자"}
                 size={24}
-                isPublic
               />
               <p className="min-w-0 truncate text-sm">
                 {userState.displayName || "사용자"}

@@ -16,7 +16,13 @@ export default function AddWatchlistButton({ movieId }: { movieId: number }) {
   const savedList = movies.some((movie) => movie.id === movieId);
 
   const handleClick = () => {
-    if (!user?.uid || status === "loading") return;
+    if (!user?.uid) {
+      return;
+    }
+
+    if (status === "loading") {
+      return;
+    }
 
     if (savedList) {
       dispatch(removeWatchlist({ uid: user.uid, movieId }));
@@ -25,13 +31,20 @@ export default function AddWatchlistButton({ movieId }: { movieId: number }) {
     }
   };
 
+  const isDisabled = !user?.uid || status === "loading";
+
   return (
     <button
       onClick={handleClick}
+      disabled={isDisabled}
       aria-label={
         savedList ? "보고 싶은 영화에서 제거" : "보고 싶은 영화에 추가"
       }
-      className="text-xl text-accent-300"
+      className={`text-xl ${
+        isDisabled
+          ? "cursor-not-allowed text-gray-300"
+          : "text-accent-300 hover:text-accent-500"
+      }`}
     >
       {savedList ? <FaBookmark /> : <FaRegBookmark />}
     </button>

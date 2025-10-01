@@ -4,13 +4,14 @@ export default function GenreList({ genres }: { genres: string[] }) {
   }
 
   return (
-    <ul className="flex w-full items-center justify-center overflow-x-scroll scrollbar-hide">
+    <ul className="flex w-full items-center space-x-1 overflow-x-scroll scrollbar-hide">
       {genres.map((genre: string, idx: number) => (
-        <li key={idx} className="flex items-center">
-          <p className="text-nowrap text-sm">
-            {genre}
-            {/* 마지막 아이템이 아니면 점 표시 */}
-            {idx < genres.length - 1 && <span className="mx-2">·</span>}
+        <li
+          key={idx}
+          className="flex items-center rounded-full border border-gray-300 px-3 py-1.5 transition-all hover:border-gray-500"
+        >
+          <p className="text-nowrap text-xs text-gray-800">
+            {genre.slice(0, 4)}
           </p>
         </li>
       ))}
