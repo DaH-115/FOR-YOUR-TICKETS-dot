@@ -9,6 +9,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import * as z from "zod";
 import SwiperItem from "app/components/swiper/SwiperItem";
 import SearchResultList from "app/search/components/SearchResultList";
+import TrendingSearchSection from "app/search/components/TrendingSearchSection";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 
 const searchSchema = z.object({ searchQuery: z.string() });
@@ -16,8 +17,10 @@ type SearchSchema = z.infer<typeof searchSchema>;
 
 export default function SearchPage({
   nowPlayingMovies,
+  trendingMovies,
 }: {
   nowPlayingMovies: MovieList[];
+  trendingMovies: MovieList[];
 }) {
   const resultsRef = useRef<HTMLElement>(null);
   const nowPlayingRef = useRef<HTMLElement>(null);
@@ -35,7 +38,7 @@ export default function SearchPage({
     defaultValues: { searchQuery: searchTerm },
   });
 
-  // 검색 결과 섹션 Observer
+  // 검색 결과 섹션 Observer 설정
   useEffect(() => {
     const currentResults = resultsRef.current;
 
@@ -58,10 +61,24 @@ export default function SearchPage({
         observer.unobserve(currentResults);
       }
     };
-  }, []);
+  }, [searchTerm]); // searchTerm이 변경될 때마다 Observer 재설정
 
-  // Now Playing 섹션 Observer
+  // 검색어 상태에 따른 섹션 가시성 관리
   useEffect(() => {
+    if (searchTerm) {
+      setIsResultsVisible(true);
+      setIsNowPlayingVisible(false); // 검색어가 있으면 상영 중인 영화 섹션 숨김
+    } else {
+      setIsResultsVisible(false); // 검색어가 없으면 검색 결과 섹션 숨김
+      // 상영 중인 영화 섹션은 Observer가 처리하도록 함
+    }
+  }, [searchTerm]);
+
+  // 상영 중인 영화 섹션 Observer 설정
+  useEffect(() => {
+    // 검색어가 있을 때는 Observer를 설정하지 않음
+    if (searchTerm) return;
+
     const currentNowPlaying = nowPlayingRef.current;
 
     const observer = new IntersectionObserver(
@@ -83,7 +100,7 @@ export default function SearchPage({
         observer.unobserve(currentNowPlaying);
       }
     };
-  }, []);
+  }, [searchTerm]); // searchTerm이 변경될 때마다 Observer 재설정
 
   useEffect(() => {
     reset({ searchQuery: searchTerm });
@@ -111,16 +128,11 @@ export default function SearchPage({
   }, [watchedQuery, debounceHandler]);
 
   return (
-    <main className="p-6">
+    <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
       {/* 헤더 영역 */}
-      <div className="mb-8 transition-all duration-700 ease-out">
-        <h1 className="mb-2 text-2xl font-bold tracking-tight text-white">
-          Search
-        </h1>
-        <p className="text-sm text-gray-300">
-          찾고 싶은 영화가 있다면 검색해 보세요
-        </p>
-      </div>
+      <header className="sr-only">
+        <h1 className="text-xl font-bold tracking-tight text-white">검색</h1>
+      </header>
 
       {/* 검색 입력폼 */}
       <section className="mx-auto mb-16 w-3/4 lg:w-1/3">
@@ -137,7 +149,15 @@ export default function SearchPage({
         </div>
       </section>
 
-      {/* 결과 또는 Now Playing */}
+      {/* 인기 검색어 TOP 10 */}
+      {!searchTerm && (
+        <TrendingSearchSection
+          trendingMovies={trendingMovies}
+          onSearch={(query) => reset({ searchQuery: query })}
+        />
+      )}
+
+      {/* 검색 결과 또는 상영 중인 영화 */}
       {searchTerm ? (
         <section ref={resultsRef}>
           <div
@@ -147,12 +167,9 @@ export default function SearchPage({
                 : "translate-y-12 opacity-0"
             }`}
           >
-            <h2 className="mb-2 text-2xl font-bold tracking-tight text-white">
-              Search Results
+            <h2 className="text-xl font-bold tracking-tight text-white">
+              검색 결과
             </h2>
-            <p className="text-sm text-gray-300">
-              {`"${searchTerm}" 검색 결과입니다`}
-            </p>
           </div>
           <div
             className={`transition-all duration-700 ease-out ${
@@ -167,21 +184,18 @@ export default function SearchPage({
       ) : (
         <section ref={nowPlayingRef} className="mb-16">
           <div
-            className={`mb-8 transition-all duration-700 ease-out ${
+            className={`mb-4 transition-all duration-700 ease-out ${
               isNowPlayingVisible
                 ? "translate-y-0 opacity-100"
                 : "translate-y-12 opacity-0"
             }`}
           >
-            <h2 className="mb-2 text-2xl font-bold tracking-tight text-white">
-              Now Playing
+            <h2 className="text-xl font-bold tracking-tight text-white">
+              상영 중인 영화
             </h2>
-            <p className="text-sm text-gray-300">
-              지금 상영 중인 영화들을 확인하고 리뷰를 작성하세요
-            </p>
           </div>
           <div
-            className={`grid grid-cols-3 gap-x-2 gap-y-6 transition-all duration-700 ease-out sm:grid-cols-4 sm:gap-x-3 sm:gap-y-8 md:grid-cols-5 md:gap-x-3 md:gap-y-8 lg:grid-cols-8 lg:gap-x-4 lg:gap-y-10 xl:grid-cols-10 xl:gap-x-4 xl:gap-y-12 ${
+            className={`grid grid-cols-2 gap-x-2 gap-y-6 transition-all delay-200 duration-700 ease-out sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 ${
               isNowPlayingVisible
                 ? "translate-y-0 opacity-100"
                 : "translate-y-12 opacity-0"

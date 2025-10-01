@@ -90,7 +90,7 @@ export default function SearchResultList({
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-x-2 gap-y-6 sm:grid-cols-4 sm:gap-x-3 sm:gap-y-8 md:grid-cols-5 md:gap-x-3 md:gap-y-8 lg:grid-cols-8 lg:gap-x-4 lg:gap-y-10 xl:grid-cols-10 xl:gap-x-4 xl:gap-y-12">
+      <div className="grid grid-cols-3 gap-x-2 gap-y-6 sm:grid-cols-4 sm:gap-x-3 sm:gap-y-8 md:grid-cols-5 md:gap-x-3 md:gap-y-8 lg:grid-cols-7 lg:gap-x-4 lg:gap-y-10 xl:gap-x-4 xl:gap-y-12">
         {searchResults.map((movie, idx) => (
           <SwiperItem key={movie.id} movie={movie} idx={idx} />
         ))}
