@@ -4,7 +4,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import Link from "next/link";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdPerson, MdLogout } from "react-icons/md";
-import ProfileAvatar from "app/components/user/ProfileAvatar";
+import ProfileAvatar from "@/components/user/ProfileAvatar";
 
 interface HeaderDropDownMenuProps {
   userDisplayName: string | undefined;
@@ -24,9 +24,8 @@ export default function HeaderDropDownMenu({
           s3photoKey={userPhotoURL || undefined}
           userDisplayName={userDisplayName || "사용자"}
           size={32}
-          isPublic
         />
-        <span className="text-sm font-medium text-white transition-opacity hover:opacity-80">
+        <span className="text-sm font-medium text-white transition-opacity">
           {userDisplayName ? userDisplayName : "사용자"} 님
         </span>
         <IoIosArrowDown
@@ -43,10 +42,10 @@ export default function HeaderDropDownMenu({
         <MenuItem>
           <Link
             href="/my-page"
-            className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-700 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-gray-900"
+            className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-gray-900"
           >
             <MdPerson className="mr-2 text-sm" />
-            My Page
+            나의 프로필
           </Link>
         </MenuItem>
 
@@ -54,10 +53,10 @@ export default function HeaderDropDownMenu({
           <MenuItem>
             <button
               onClick={logoutHandler}
-              className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-700 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-red-600"
+              className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-red-600"
             >
               <MdLogout className="mr-2 text-sm" />
-              Logout
+              로그아웃
             </button>
           </MenuItem>
         </div>

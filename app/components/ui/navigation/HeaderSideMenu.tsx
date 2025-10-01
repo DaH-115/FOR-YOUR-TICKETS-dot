@@ -17,22 +17,22 @@ interface HeaderSideMenuProps {
   onClose: () => void;
 }
 
-interface MenuItem {
+export interface MenuItem {
   href: string;
   label: string;
 }
 
 const menuItems: MenuItem[] = [
-  { href: "/", label: "HOME" },
-  { href: "/search", label: "SEARCH" },
-  { href: "/ticket-list", label: "TICKETS" },
+  { href: "/", label: "홈" },
+  { href: "/search", label: "검색" },
+  { href: "/ticket-list", label: "티켓 리스트" },
 ];
 
 const userMenuItems: MenuItem[] = [
-  { href: "/my-page", label: "MY PROFILE" },
-  { href: "/my-page/my-ticket-list", label: "MY TICKETS" },
-  { href: "/my-page/liked-ticket-list", label: "LIKED TICKETS" },
-  { href: "/my-page/watchlist", label: "WATCHLIST" },
+  { href: "/my-page", label: "나의 프로필" },
+  { href: "/my-page/my-ticket-list", label: "나의 티켓" },
+  { href: "/my-page/liked-ticket-list", label: "좋아요한 티켓" },
+  { href: "/my-page/watchlist", label: "보고 싶은 영화" },
 ];
 
 export default function HeaderSideMenu({
@@ -73,17 +73,17 @@ export default function HeaderSideMenu({
       }`}
     >
       {/* 배경 오버레이 */}
-      <div className="fixed inset-0 bg-black" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
       {/* 메뉴 패널 */}
       <div
-        className={`fixed right-0 top-0 h-full w-full bg-black transition-transform duration-300 ease-out ${
+        className={`fixed right-0 top-0 h-full w-full bg-black transition-transform duration-300 ease-out md:w-2/3 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* 헤더 */}
-        <div className="flex items-center justify-between border-b border-white/20 p-6">
-          <h2 className="text-2xl font-semibold text-white">메뉴</h2>
+        <div className="flex items-center justify-between px-6 py-4">
+          <h2 className="font-semibold text-white">메뉴</h2>
           <button
             onClick={onClose}
             className="rounded-full p-2 text-white hover:bg-white/20"
@@ -93,7 +93,7 @@ export default function HeaderSideMenu({
         </div>
 
         {/* 사용자 프로필 */}
-        <div className="border-b border-white/20 p-6">
+        <div className="border-y border-white/20 p-6">
           {user?.uid ? (
             <div className="flex items-center space-x-4">
               <ProfileAvatar
@@ -103,17 +103,15 @@ export default function HeaderSideMenu({
                 showLoading={true}
               />
               <div>
-                <p className="text-lg font-medium text-white">
-                  {userDisplayName}
-                </p>
-                <p className="text-xs text-gray-300">{userEmail}</p>
+                <p className="font-medium text-white">{userDisplayName}</p>
+                <p className="text-gray-300">{userEmail}</p>
               </div>
             </div>
           ) : (
             <Link
               href="/login"
               onClick={onClose}
-              className="block w-full rounded-full bg-primary-600 py-4 text-center text-lg font-medium text-white hover:bg-primary-700"
+              className="block w-full font-medium text-white"
             >
               로그인
             </Link>
@@ -123,7 +121,7 @@ export default function HeaderSideMenu({
         {/* 메인 메뉴 */}
         <div className="p-6">
           <nav>
-            <ul className="space-y-2">
+            <ul>
               {menuItems.map(({ href, label }) => {
                 const isActive = pathname === href;
                 return (
@@ -131,7 +129,7 @@ export default function HeaderSideMenu({
                     <Link
                       href={href}
                       onClick={onClose}
-                      className={`block w-full rounded-full px-6 py-4 text-left text-lg ${
+                      className={`block w-full rounded-full px-6 py-3 text-left ${
                         isActive
                           ? "bg-white/20 text-white"
                           : "text-gray-300 hover:bg-white/10 hover:text-white"
@@ -148,10 +146,10 @@ export default function HeaderSideMenu({
           {/* 사용자 메뉴 */}
           {user?.uid && (
             <div className="mt-8 border-t border-white/20 pt-6">
-              <h3 className="mb-4 text-base font-medium text-gray-400">
-                My Menu
+              <h3 className="mb-2 text-sm font-medium text-gray-400">
+                나의 메뉴
               </h3>
-              <ul className="space-y-2">
+              <ul>
                 {userMenuItems.map(({ href, label }) => {
                   const isActive = pathname === href;
                   return (
@@ -159,10 +157,10 @@ export default function HeaderSideMenu({
                       <Link
                         href={href}
                         onClick={onClose}
-                        className={`block w-full rounded-full px-6 py-3 text-left text-base ${
+                        className={`block w-full rounded-full px-6 py-3 text-left ${
                           isActive
-                            ? "bg-white/20 text-white"
-                            : "text-gray-300 hover:bg-white/10 hover:text-white"
+                            ? "font-semibold text-accent-300"
+                            : "text-gray-300 hover:text-accent-300"
                         }`}
                       >
                         {label}

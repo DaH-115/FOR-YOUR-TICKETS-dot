@@ -18,9 +18,9 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/search", label: "Search" },
-  { href: "/ticket-list", label: "Ticket List" },
+  { href: "/", label: "홈" },
+  { href: "/search", label: "검색" },
+  { href: "/ticket-list", label: "티켓 리스트" },
 ];
 
 export default function Header() {
@@ -96,82 +96,75 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between bg-gradient-to-b from-black via-black/80 to-transparent px-6 pb-4 pt-8 text-xs transition-all duration-500 ease-in-out ${
+      className={`fixed left-0 right-0 top-0 z-50 w-full pb-4 pt-8 transition-all duration-500 ease-in-out lg:pt-4 ${
         // 스크롤 다운 시 헤더를 위로 숨김
         isHeaderHidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      {/* LOGO */}
-      <h1 className="mr-2 text-lg font-bold tracking-tighter text-white sm:mr-4 md:text-xl">
-        Just Your Tickets
-      </h1>
+      <div className="mx-6 flex items-center justify-between lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+        {/* LOGO */}
+        <Link href="/" className="max-w-24 lg:max-w-48">
+          <p className="text-lg font-bold tracking-tighter text-white transition-colors duration-200 hover:text-accent-300 md:text-xl">
+            Just Your Tickets
+          </p>
+        </Link>
 
-      {/* DESKTOP NAVIGATION - 중앙 배치 */}
-      <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block">
-        <div
-          className={`flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-6 py-3 transition-all duration-300 hover:border-white/50 hover:bg-white/20 ${
-            !isSideMenuOpen ? "backdrop-blur-sm" : ""
-          }`}
-        >
-          <nav>
-            <ul className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-between space-x-2">
+          {/* DESKTOP 메뉴 */}
+          <nav className="hidden px-4 lg:block">
+            <ul className="flex items-center justify-center gap-4">
               {navItems.map(({ href, label }) => (
-                <li key={href} className="group relative">
-                  <Link
-                    href={href}
-                    className="rounded-full px-3 py-2 font-medium text-white/90 transition-all duration-300 ease-in-out hover:bg-white/20 hover:text-white"
-                  >
-                    {label}
-                  </Link>
+                <li
+                  key={href}
+                  className="text-white transition-all duration-100 hover:border-b-2 hover:border-white hover:pb-1 hover:font-semibold"
+                >
+                  <Link href={href}>{label}</Link>
                 </li>
               ))}
             </ul>
           </nav>
+          {/* 프로필/로그인 섹션 */}
+          <div
+            className={`hidden transition-all duration-300 md:flex ${isSearchOpen ? "invisible opacity-0" : "visible opacity-100"}`}
+          >
+            {userDisplayName ? (
+              <div className="px-4 py-3">
+                <HeaderDropDownMenu
+                  userDisplayName={userDisplayName}
+                  userPhotoURL={userPhotoURL}
+                  logoutHandler={logoutHandler}
+                />
+              </div>
+            ) : (
+              <Link href="/login">
+                <button
+                  type="button"
+                  className="rounded-full border border-white bg-white px-3 py-2 text-sm text-black shadow-lg transition-all duration-200 hover:bg-gray-100 hover:shadow-xl"
+                >
+                  로그인
+                </button>
+              </Link>
+            )}
+          </div>
+
+          {/* 검색 바 */}
+          <HeaderSearchBar
+            isSideMenuOpen={isSideMenuOpen}
+            onSearchOpenChange={setIsSearchOpen}
+          />
+
+          {/* 모바일 메뉴 */}
+          <button
+            onClick={() => setIsSideMenuOpen((prev) => !prev)}
+            className="rounded-full p-2 text-white transition-colors duration-300 hover:bg-white/20 lg:hidden"
+            aria-label="메뉴 열기"
+          >
+            <IoIosMenu size={32} aria-hidden />
+          </button>
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
-        {/* USER PROFILE/LOGIN SECTION */}
-        <div
-          className={`hidden transition-all duration-300 md:flex ${isSearchOpen ? "invisible opacity-0" : "visible opacity-100"}`}
-        >
-          {userDisplayName ? (
-            <div className="px-6 py-3">
-              <HeaderDropDownMenu
-                userDisplayName={userDisplayName}
-                userPhotoURL={userPhotoURL}
-                logoutHandler={logoutHandler}
-              />
-            </div>
-          ) : (
-            <Link href="/login">
-              <button
-                type="button"
-                className="rounded-full border-2 border-white bg-white px-6 py-3 font-bold text-black shadow-lg transition-all duration-300 hover:bg-gray-100 hover:shadow-xl"
-              >
-                로그인
-              </button>
-            </Link>
-          )}
-        </div>
-
-        {/* SEARCH BAR */}
-        <HeaderSearchBar
-          isSideMenuOpen={isSideMenuOpen}
-          onSearchOpenChange={setIsSearchOpen}
-        />
-
-        {/* MOBILE HAMBURGER MENU - 오른쪽 끝 배치 */}
-        <button
-          onClick={() => setIsSideMenuOpen((prev) => !prev)}
-          className="rounded-full p-2 text-white transition-colors duration-300 hover:bg-white/20 md:hidden"
-          aria-label="메뉴 열기"
-        >
-          <IoIosMenu size={32} aria-hidden />
-        </button>
-      </div>
-
-      {/* MOBILE SIDE MENU */}
+      {/* 모바일 사이드 메뉴 */}
       <HeaderSideMenu
         userDisplayName={userDisplayName || "사용자"}
         userPhotoURL={userPhotoURL}

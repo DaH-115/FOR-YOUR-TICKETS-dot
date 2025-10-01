@@ -107,7 +107,7 @@ export default function HeaderSearchBar({
   }, [isSearchOpen, resetSearch]);
 
   return (
-    <div className="ml-4 hidden lg:flex" ref={searchBarRef}>
+    <div className="hidden lg:block" ref={searchBarRef}>
       <Combobox value={null} onChange={movieSelect}>
         <div className="relative flex items-center justify-end">
           <div
