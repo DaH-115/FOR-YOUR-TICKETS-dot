@@ -4,92 +4,53 @@ import {
   createContext,
   useContext,
   useEffect,
-  useState,
+  useCallback,
   ReactNode,
 } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { isAuth } from "firebase-config";
-import { useAppDispatch } from "store/redux-toolkit/hooks";
+import { useAppDispatch, useAppSelector } from "store/redux-toolkit/hooks";
 import {
-  clearUser,
+  setAuthState,
   fetchUserProfile,
-  setUser,
+  selectIsAuthenticated,
+  selectAuthLoading,
 } from "store/redux-toolkit/slice/userSlice";
-import { useRouter } from "next/navigation";
-import { useAlert } from "store/context/alertContext";
-import {
-  getCurrentPersistence,
-  clearAuthPersistence,
-} from "app/utils/authPersistence";
-import Loading from "app/loading";
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  isLoading: boolean;
+  initializeAuth: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
-  const [authState, setAuthState] = useState<AuthContextType>({
-    isAuthenticated: false,
-    isLoading: true,
-  });
 
-  useEffect(() => {
-    // 페이지 로드 시 persistence 설정 확인
-    const checkPersistence = () => {
-      const persistence = getCurrentPersistence();
-
-      // 세션 기반 로그인이었는데 브라우저가 재시작된 경우
-      if (
-        persistence === "session" &&
-        !sessionStorage.getItem("authPersistence")
-      ) {
-        // 세션 스토리지가 비어있다면 브라우저가 재시작된 것으로 간주
-        signOut(isAuth);
-        clearAuthPersistence();
-        return;
-      }
-    };
-
-    checkPersistence();
-
+  const initializeAuth = useCallback(() => {
+    // Firebase Auth 상태 변경 감지
+    // Firebase Auth가 자동으로 persistence를 관리하므로 별도 처리 불필요
     const unsubscribe = onAuthStateChanged(isAuth, (user) => {
+      // Redux에서 인증 상태 관리
+      dispatch(setAuthState(user));
+
+      // 로그인된 경우 프로필 정보 가져오기
       if (user) {
-        // Firebase Auth의 기본 정보로 즉시 사용자 정보 설정
-        const basicUserInfo = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoKey: null, // 기본값
-          biography: null, // 기본값
-          provider: user.providerData[0]?.providerId || null,
-          activityLevel: "NEWBIE", // 기본값
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          myTicketsCount: 0, // 기본값
-          likedTicketsCount: 0, // 기본값
-        };
-
-        // 기본 정보로 즉시 설정
-        dispatch(setUser(basicUserInfo));
-        setAuthState({ isAuthenticated: true, isLoading: false });
-
-        // 백그라운드에서 완전한 프로필 정보 가져오기
         dispatch(fetchUserProfile(user.uid));
-      } else {
-        dispatch(clearUser());
-        setAuthState({ isAuthenticated: false, isLoading: false });
       }
     });
 
     return unsubscribe;
   }, [dispatch]);
 
+  useEffect(() => {
+    const unsubscribe = initializeAuth();
+    return unsubscribe;
+  }, [initializeAuth]);
+
   return (
-    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ initializeAuth }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 
@@ -99,28 +60,38 @@ export function useAuth() {
   return ctx;
 }
 
-// 인증이 필요한 페이지용 컴포넌트
+// Redux 기반 인증 상태 훅
+export function useAuthState() {
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const authLoading = useAppSelector(selectAuthLoading);
+
+  return {
+    isAuthenticated,
+    isLoading: authLoading,
+  };
+}
+
+// 인증이 필요한 페이지용 컴포넌트 - Redux 기반
 export function PrivateRoute({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
-  const { showSuccessHandler } = useAlert();
+  const { isAuthenticated, isLoading } = useAuthState();
 
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      showSuccessHandler("로그인 필요", "로그인이 필요합니다.", () => {
-        router.replace("/login");
-      });
+  // 로딩 중이면 로딩 표시
+  if (isLoading) {
+    return <div>인증 확인 중...</div>;
+  }
+
+  // 인증되지 않았으면 로그인 페이지로 리다이렉트
+  if (!isAuthenticated) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
     }
-  }, [isLoading, isAuthenticated, router, showSuccessHandler]);
-
-  if (isLoading || !isAuthenticated) {
-    return <Loading />;
+    return null;
   }
 
   return <>{children}</>;
 }
 
-// 비로그인 상태에서만 접근 가능한 페이지용 컴포넌트
+// 비로그인 상태에서만 접근 가능한 페이지용 컴포넌트 - Redux 기반
 export function PublicRoute({
   children,
   redirectTo = "/",
@@ -128,16 +99,18 @@ export function PublicRoute({
   children: ReactNode;
   redirectTo?: string;
 }) {
-  const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthState();
 
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.replace(redirectTo);
+  // 로딩 중이면 아무것도 표시하지 않음
+  if (isLoading) {
+    return null;
+  }
+
+  // 인증된 상태면 리다이렉트
+  if (isAuthenticated) {
+    if (typeof window !== "undefined") {
+      window.location.href = redirectTo;
     }
-  }, [isLoading, isAuthenticated, router, redirectTo]);
-
-  if (isLoading || isAuthenticated) {
     return null;
   }
 

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { isAuth } from "firebase-config";
 import { getAuthHeaders } from "app/utils/getIdToken/getAuthHeaders";
+import { User as FirebaseUser } from "firebase/auth";
 
 // 사용자 정보 타입 정의
 export interface User {
@@ -27,6 +28,8 @@ type UserState = {
   user: User | null; // 사용자 정보 (null = 로그아웃 상태)
   status: "idle" | "loading" | "succeeded" | "failed"; // 로딩 상태
   error: string | null; // 에러 메시지
+  isAuthenticated: boolean; // 인증 상태 (Firebase Auth 기반)
+  authLoading: boolean; // 인증 초기화 로딩 상태
 };
 
 // 초기 상태
@@ -34,7 +37,43 @@ const initialState: UserState = {
   user: null,
   status: "idle",
   error: null,
+  isAuthenticated: false,
+  authLoading: true,
 };
+
+/**
+ * Firebase Auth 상태 변경 처리
+ * @param user - Firebase User 객체 (null이면 로그아웃)
+ * @returns 사용자 정보 또는 null
+ */
+export const setAuthState = createAsyncThunk<
+  User | null,
+  FirebaseUser | null,
+  { rejectValue: string }
+>("user/setAuthState", async (firebaseUser, { rejectWithValue }) => {
+  try {
+    if (firebaseUser) {
+      // Firebase Auth의 기본 정보로 사용자 정보 생성
+      const basicUserInfo: User = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        photoKey: null,
+        biography: null,
+        provider: firebaseUser.providerData[0]?.providerId || null,
+        activityLevel: "NEWBIE",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        myTicketsCount: 0,
+        likedTicketsCount: 0,
+      };
+      return basicUserInfo;
+    }
+    return null;
+  } catch {
+    return rejectWithValue("인증 상태 설정에 실패했습니다.");
+  }
+});
 
 /**
  * 사용자 프로필 데이터 조회
@@ -141,6 +180,8 @@ const userSlice = createSlice({
     // 로그인 시 사용자 정보 설정
     setUser(state, action: PayloadAction<User>) {
       state.user = action.payload;
+      state.isAuthenticated = true;
+      state.authLoading = false;
       state.status = "succeeded";
       state.error = null;
     },
@@ -148,8 +189,15 @@ const userSlice = createSlice({
     // 로그아웃 시 모든 정보 초기화
     clearUser(state) {
       state.user = null;
+      state.isAuthenticated = false;
+      state.authLoading = false;
       state.status = "idle";
       state.error = null;
+    },
+
+    // 인증 로딩 상태 설정
+    setAuthLoading(state, action: PayloadAction<boolean>) {
+      state.authLoading = action.payload;
     },
 
     // 프로필 이미지만 빠르게 업데이트 (로컬 상태)
@@ -209,6 +257,27 @@ const userSlice = createSlice({
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "프로필 업데이트에 실패했습니다.";
+      })
+
+      // Firebase Auth 상태 변경 처리
+      .addCase(setAuthState.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user = action.payload;
+          state.isAuthenticated = true;
+          state.authLoading = false;
+          state.status = "succeeded";
+          state.error = null;
+        } else {
+          state.user = null;
+          state.isAuthenticated = false;
+          state.authLoading = false;
+          state.status = "idle";
+          state.error = null;
+        }
+      })
+      .addCase(setAuthState.rejected, (state, action) => {
+        state.authLoading = false;
+        state.error = action.payload || "인증 상태 설정에 실패했습니다.";
       });
   },
 });
@@ -217,6 +286,7 @@ const userSlice = createSlice({
 export const {
   setUser,
   clearUser,
+  setAuthLoading,
   updatePhotoKey,
   clearError,
   updateActivityLevel,
@@ -230,7 +300,11 @@ export const selectUserStatus = (state: { userData: UserState }) =>
   state.userData.status;
 export const selectUserError = (state: { userData: UserState }) =>
   state.userData.error;
+export const selectIsAuthenticated = (state: { userData: UserState }) =>
+  state.userData.isAuthenticated;
+export const selectAuthLoading = (state: { userData: UserState }) =>
+  state.userData.authLoading;
 export const selectIsLoggedIn = (state: { userData: UserState }) =>
-  !!state.userData.user;
+  state.userData.isAuthenticated && !!state.userData.user;
 export const selectIsLoading = (state: { userData: UserState }) =>
   state.userData.status === "loading";
