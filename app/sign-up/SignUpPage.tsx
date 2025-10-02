@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import DuplicateCheckButton from "app/components/ui/buttons/DuplicateCheckButton";
@@ -66,52 +66,15 @@ export default function SignUpPage() {
   // 닉네임/이메일 중복 체크 훅 사용
   const {
     isChecking: isCheckingName,
-    isChecked: isNameChecked,
     isAvailable: isDisplayNameAvailable,
-    message: displayNameMessage,
     check: checkNickname,
   } = useDuplicateCheckState({ type: "displayName", value: displayNameValue });
 
   const {
     isChecking: isCheckingEmail,
-    isChecked: isEmailChecked,
     isAvailable: isEmailAvailable,
-    message: emailMessage,
     check: checkEmail,
   } = useDuplicateCheckState({ type: "email", value: emailValue });
-
-  // 중복 체크 결과에 따른 알림 표시 (통합 처리)
-  useEffect(() => {
-    if (isNameChecked && displayNameMessage) {
-      if (isDisplayNameAvailable) {
-        showSuccessHandler("성공", displayNameMessage);
-      } else {
-        showErrorHandler("실패", displayNameMessage);
-      }
-    }
-  }, [
-    isNameChecked,
-    isDisplayNameAvailable,
-    displayNameMessage,
-    showErrorHandler,
-    showSuccessHandler,
-  ]);
-
-  useEffect(() => {
-    if (isEmailChecked && emailMessage) {
-      if (isEmailAvailable) {
-        showSuccessHandler("성공", emailMessage);
-      } else {
-        showErrorHandler("실패", emailMessage);
-      }
-    }
-  }, [
-    isEmailChecked,
-    isEmailAvailable,
-    emailMessage,
-    showErrorHandler,
-    showSuccessHandler,
-  ]);
 
   // 회원가입 처리
   const onSubmit = useCallback(
@@ -197,80 +160,84 @@ export default function SignUpPage() {
                     autoComplete={"name"}
                   />
 
-                  <div className="flex items-end space-x-2">
-                    <div className="flex-1">
-                      <InputField
-                        id="displayName"
-                        label="닉네임"
-                        type="text"
-                        placeholder="사용하실 닉네임을 입력해 주세요"
-                        register={register}
-                        error={errors.displayName?.message}
-                        touched={touchedFields.displayName}
-                        disabled={isLoading}
-                        autoComplete={"displayName"}
-                        aria-describedby="displayName-status"
+                  <div>
+                    <div className="flex items-end justify-between space-x-2">
+                      <div className="flex-1">
+                        <InputField
+                          id="displayName"
+                          label="닉네임"
+                          type="text"
+                          placeholder="사용하실 닉네임을 입력해 주세요"
+                          register={register}
+                          error={errors.displayName?.message}
+                          touched={touchedFields.displayName}
+                          disabled={isLoading}
+                          autoComplete={"displayName"}
+                          aria-describedby="displayName-status"
+                        />
+                      </div>
+                      <DuplicateCheckButton
+                        onClick={checkNickname}
+                        disabled={isCheckingName || !displayNameValue}
+                        isChecking={isCheckingName}
+                        aria-label="닉네임 중복 확인"
                       />
-                      {isDisplayNameAvailable !== null && (
-                        <p
-                          id="displayName-status"
-                          className={`mt-1 text-xs ${
-                            isDisplayNameAvailable
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                          role="status"
-                          aria-live="polite"
-                        >
-                          {isDisplayNameAvailable
-                            ? "사용 가능한 닉네임입니다."
-                            : "이미 사용 중인 닉네임입니다."}
-                        </p>
-                      )}
                     </div>
-                    <DuplicateCheckButton
-                      onClick={checkNickname}
-                      disabled={isCheckingName || !displayNameValue}
-                      isChecking={isCheckingName}
-                      aria-label="닉네임 중복 확인"
-                    />
+                    {isDisplayNameAvailable !== null && (
+                      <p
+                        id="displayName-status"
+                        className={`mt-1 text-xs ${
+                          isDisplayNameAvailable
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                        role="status"
+                        aria-live="polite"
+                      >
+                        {isDisplayNameAvailable
+                          ? "사용 가능한 닉네임입니다."
+                          : "이미 사용 중인 닉네임입니다."}
+                      </p>
+                    )}
                   </div>
 
-                  <div className="flex items-end space-x-2">
-                    <div className="flex-1">
-                      <InputField
-                        id="email"
-                        label="이메일"
-                        type="email"
-                        placeholder="이메일을 입력해 주세요"
-                        register={register}
-                        error={errors.email?.message}
-                        touched={touchedFields.email}
-                        disabled={isLoading}
-                        autoComplete={"email"}
-                        aria-describedby="email-status"
+                  <div>
+                    <div className="flex items-end justify-between space-x-2">
+                      <div className="flex-1">
+                        <InputField
+                          id="email"
+                          label="이메일"
+                          type="email"
+                          placeholder="이메일을 입력해 주세요"
+                          register={register}
+                          error={errors.email?.message}
+                          touched={touchedFields.email}
+                          disabled={isLoading}
+                          autoComplete={"email"}
+                          aria-describedby="email-status"
+                        />
+                      </div>
+                      <DuplicateCheckButton
+                        onClick={checkEmail}
+                        disabled={isCheckingEmail || !emailValue}
+                        isChecking={isCheckingEmail}
+                        aria-label="이메일 중복 확인"
                       />
-                      {isEmailAvailable !== null && (
-                        <p
-                          id="email-status"
-                          className={`mt-1 text-xs ${
-                            isEmailAvailable ? "text-green-600" : "text-red-600"
-                          }`}
-                          role="status"
-                          aria-live="polite"
-                        >
-                          {isEmailAvailable
-                            ? "사용 가능한 이메일입니다."
-                            : "이미 사용 중인 이메일입니다."}
-                        </p>
-                      )}
                     </div>
-                    <DuplicateCheckButton
-                      onClick={checkEmail}
-                      disabled={isCheckingEmail || !emailValue}
-                      isChecking={isCheckingEmail}
-                      aria-label="이메일 중복 확인"
-                    />
+                    {isEmailAvailable !== null && (
+                      <p
+                        id="email-status"
+                        className={`mt-1 text-xs ${
+                          isEmailAvailable ? "text-green-600" : "text-red-600"
+                        }`}
+                        role="status"
+                        aria-live="polite"
+                      >
+                        {isEmailAvailable
+                          ? "사용 가능한 이메일입니다."
+                          : "이미 사용 중인 이메일입니다."}
+                      </p>
+                    )}
                   </div>
 
                   <InputField

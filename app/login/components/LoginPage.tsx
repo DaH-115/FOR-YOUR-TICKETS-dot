@@ -63,7 +63,7 @@ export default function LoginPage() {
         await signInWithEmailAndPassword(isAuth, data.email, data.password);
 
         // 2. 로그인 상태 유지 설정 저장
-        setRememberMe(data.rememberMe);
+        await setRememberMe(data.rememberMe);
 
         // 3. 로그인 성공시 리다이렉트
         router.push("/");

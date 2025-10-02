@@ -34,7 +34,7 @@ export default function SocialLogin({ rememberMe }: { rememberMe: boolean }) {
         await signInWithPopup(isAuth, authProvider);
 
         // 2. 로그인 상태 유지 설정 저장
-        setRememberMe(rememberMe);
+        await setRememberMe(rememberMe);
 
         // 3. Firebase ID Token 가져오기
         const idToken = await getIdToken();

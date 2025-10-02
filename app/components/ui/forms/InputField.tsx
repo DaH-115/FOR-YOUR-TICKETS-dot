@@ -48,7 +48,7 @@ export default function InputField<TFormValues extends FieldValues>({
         aria-invalid={touched && error ? "true" : "false"}
       />
       {touched && error && (
-        <p className="flex items-center space-x-1 text-sm text-red-600">
+        <p className="flex items-center space-x-1 text-xs text-red-600">
           <span>{error}</span>
         </p>
       )}
