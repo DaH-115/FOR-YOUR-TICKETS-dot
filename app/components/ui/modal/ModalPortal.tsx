@@ -47,7 +47,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-full"
           >
-            <DialogPanel className="relative max-h-[90vh] w-full max-w-lg transform overflow-y-auto rounded-2xl bg-white p-6 shadow-xl scrollbar-hide">
+            <DialogPanel className="relative w-full max-w-sm transform overflow-y-auto rounded-2xl bg-white p-4 shadow-xl scrollbar-hide">
               {children}
             </DialogPanel>
           </TransitionChild>

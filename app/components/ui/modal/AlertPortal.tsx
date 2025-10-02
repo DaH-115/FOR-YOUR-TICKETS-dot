@@ -1,61 +1,29 @@
 "use client";
 
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  Transition,
-  TransitionChild,
-} from "@headlessui/react";
+import { Transition, TransitionChild } from "@headlessui/react";
 import { Fragment, ReactNode } from "react";
 
 interface AlertProps {
-  onConfirm: () => void;
   children: ReactNode;
-  show?: boolean; // 모달 표시 여부를 외부에서 제어할 수 있도록 추가
+  show?: boolean; // 알림 표시 여부를 외부에서 제어할 수 있도록 추가
 }
 
-export default function Alert({
-  onConfirm,
-  children,
-  show = true,
-}: AlertProps) {
+export default function Alert({ children, show = true }: AlertProps) {
   return (
     <Transition appear show={show} as={Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-50"
-        onClose={onConfirm}
-        static // AlertPortal handles mount/unmount
-      >
-        {/* 백드롭: 페이드 인/아웃 */}
+      <div className="fixed left-0 right-0 top-0 z-50 flex justify-center p-4">
         <TransitionChild
           as={Fragment}
-          enter="transition-opacity duration-200"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity duration-150"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter="transition-all duration-500 ease-out"
+          enterFrom="opacity-0 -translate-y-full"
+          enterTo="opacity-100 translate-y-0"
+          leave="transition-all duration-300 ease-in"
+          leaveFrom="opacity-100 translate-y-0"
+          leaveTo="opacity-0 -translate-y-full"
         >
-          <DialogBackdrop className="fixed inset-0 bg-black/80 backdrop-blur-md" />
+          <div className="w-full max-w-md">{children}</div>
         </TransitionChild>
-
-        {/* 컨텐츠: Scale + fade */}
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <TransitionChild
-            as={Fragment}
-            enter="transition-all duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="transition-all duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            <DialogPanel>{children}</DialogPanel>
-          </TransitionChild>
-        </div>
-      </Dialog>
+      </div>
     </Transition>
   );
 }
