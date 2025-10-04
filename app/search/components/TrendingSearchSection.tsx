@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { IoChevronDown } from "react-icons/io5";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 import { getTrendingMoviesUpdateTime } from "app/utils/formatUpdateTime";
+import TrendingMovieItem from "./TrendingMovieItem";
 
 interface TrendingSearchSectionProps {
   trendingMovies: MovieList[];
@@ -27,33 +28,20 @@ export default function TrendingSearchSection({
   };
 
   return (
-    <section className="mx-auto mb-16 w-3/4 lg:w-1/2">
-      <h3 className="mb-4 text-lg font-semibold text-white">
+    <section className="mx-auto mb-8 lg:w-1/2">
+      <h3 className="mb-4 text-xl font-semibold text-white">
         인기 검색어 TOP 10
       </h3>
       <div className="flex flex-col space-y-2 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
         {/* 1~5위 */}
         <div className="space-y-2">
           {trendingMovies.slice(0, 5).map((movie, index) => (
-            <button
+            <TrendingMovieItem
               key={movie.id}
-              onClick={() => handleMovieClick(movie.title)}
-              className="group flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all duration-200 hover:scale-[1.02]"
-            >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent-500 text-xs font-bold text-white">
-                {index + 1}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-white group-hover:text-accent-300">
-                  {movie.title}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {movie.release_date
-                    ? new Date(movie.release_date).getFullYear()
-                    : "개봉년도 미상"}
-                </p>
-              </div>
-            </button>
+              movie={movie}
+              rank={index + 1}
+              onMovieClick={handleMovieClick}
+            />
           ))}
         </div>
 
@@ -78,24 +66,11 @@ export default function TrendingSearchSection({
                   transitionDelay: isExpanded ? `${index * 100}ms` : "0ms",
                 }}
               >
-                <button
-                  onClick={() => handleMovieClick(movie.title)}
-                  className="group flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all duration-200 hover:scale-[1.02]"
-                >
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent-500 text-xs font-bold text-white">
-                    {index + 6}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white group-hover:text-accent-300">
-                      {movie.title}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {movie.release_date
-                        ? new Date(movie.release_date).getFullYear()
-                        : "개봉년도 미상"}
-                    </p>
-                  </div>
-                </button>
+                <TrendingMovieItem
+                  movie={movie}
+                  rank={index + 6}
+                  onMovieClick={handleMovieClick}
+                />
               </div>
             ))}
           </div>
