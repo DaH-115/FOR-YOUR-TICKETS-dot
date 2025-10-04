@@ -19,26 +19,32 @@ const getFirstLetter = (displayName?: string) => {
   return displayName ? displayName.charAt(0).toUpperCase() : "U";
 };
 
-/**
- * 프로필 아바타 컴포넌트
- * @param userDisplayName 사용자 이름(필수)
- * @param s3photoKey S3 이미지 키(선택)
- * @param previewSrc 외부 이미지 URL(선택)
- * @param size 아바타 크기(px)
- * @param className 추가 클래스
- * @param showLoading 로딩 스피너 표시 여부
- * @param onImageError 이미지 로딩 실패 시 콜백
- */
-interface ProfileAvatarProps {
+export interface ProfileAvatarProps {
+  /** 사용자 이름(필수) */
   userDisplayName: string;
+  /** S3 이미지 키(선택) */
   s3photoKey?: string | null;
+  /** 외부 이미지 URL(선택) */
   previewSrc?: string;
+  /** 아바타 크기(px, 기본값: 48) */
   size?: number;
+  /** 추가 CSS 클래스 */
   className?: string;
+  /** 로딩 스피너 표시 여부(기본값: true) */
   showLoading?: boolean;
+  /** 이미지 로딩 실패 시 콜백 */
   onImageError?: () => void;
 }
 
+/**
+ * 프로필 아바타 컴포넌트
+ *
+ * 사용자 프로필 이미지를 표시하는 컴포넌트입니다.
+ * S3 이미지, 외부 URL, 또는 사용자 이름의 첫 글자를 표시할 수 있습니다.
+ *
+ * @param props ProfileAvatarProps
+ * @returns JSX.Element
+ */
 function ProfileAvatar({
   userDisplayName,
   s3photoKey,
@@ -60,39 +66,26 @@ function ProfileAvatar({
 
   const src = getImageSrc(previewSrc, s3photoKey, presignedUrl);
 
-  // S3 presignedUrl이 필요한 경우에만 Intersection Observer 사용
+  // S3 이미지 지연 로딩을 위한 Intersection Observer
   useEffect(() => {
-    // previewSrc가 있거나 s3photoKey가 없으면 observer 불필요
-    if (!s3photoKey || previewSrc) return;
-
-    // 이미 보이면 observer 생성할 필요 없음 (한 번 로드되면 끝)
-    if (isVisible) return;
+    if (!s3photoKey || previewSrc || isVisible) return;
 
     const currentRef = containerRef.current;
     if (!currentRef) return;
 
-    // rootMargin을 통해 뷰포트 진입 전에 미리 로딩하여 사용자 경험 향상
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.unobserve(entry.target);
-          }
-        });
+        if (entries[0]?.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(currentRef);
+        }
       },
-      { threshold: 0, rootMargin: "600px 0px" },
+      { rootMargin: "300px 0px" }, // 600px에서 300px로 단순화
     );
 
     observer.observe(currentRef);
-
-    return () => {
-      observer.unobserve(currentRef);
-    };
-
-    // isVisible을 의존성에 포함하면 observer가 재생성되어 성능 문제 발생
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s3photoKey, previewSrc]);
+    return () => observer.unobserve(currentRef);
+  }, [s3photoKey, previewSrc, isVisible]);
 
   // 이미지 소스가 바뀔 때 에러 상태 초기화
   useEffect(() => {
@@ -107,8 +100,8 @@ function ProfileAvatar({
   return (
     <div
       ref={containerRef}
-      className={`isolation-isolate relative transform-gpu overflow-hidden rounded-full will-change-[transform] ${className}`}
-      style={{ width: size, height: size, contain: "paint" }}
+      className={`relative overflow-hidden rounded-full ${className}`}
+      style={{ width: size, height: size }}
       aria-label={
         userDisplayName ? `${userDisplayName} 프로필 이미지` : "프로필 이미지"
       }
@@ -134,9 +127,9 @@ function ProfileAvatar({
           }}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-gray-500">
+        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600">
           <span
-            className="select-none font-bold text-white"
+            className="select-none font-bold text-white drop-shadow-sm"
             style={{ fontSize: size * 0.4 }}
           >
             {firstLetter}

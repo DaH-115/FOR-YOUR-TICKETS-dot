@@ -134,7 +134,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
   return (
     <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
-      <div className="mx-auto max-w-lg">
+      <div className="mx-auto max-w-md">
         {/* 영화 포스터 */}
         <MoviePoster
           posterPath={content.moviePosterPath || ""}
@@ -143,7 +143,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
       </div>
 
       {/* 리뷰 정보 */}
-      <div className="mx-auto max-w-lg rounded-2xl border bg-white p-4">
+      <div className="mx-auto max-w-md rounded-2xl border bg-white p-4">
         {/* 별점, 제목, 영화 정보, 좋아요 버튼 */}
         <header className="mb-4 flex items-center justify-between">
           <div className="flex items-center">
@@ -152,7 +152,14 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
               <p className="font-bold">{content.rating}</p>
             </div>
             <div>
-              <h3 className="font-bold">{content.reviewTitle}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold">{content.reviewTitle}</h3>
+                {review.orderNumber && (
+                  <span className="rounded-full bg-accent-100 px-2 py-1 text-xs font-medium text-accent-600">
+                    #{review.orderNumber}
+                  </span>
+                )}
+              </div>
               <div className="text-sm text-gray-500">
                 <Link
                   href={`/movie-details/${content.movieId}`}
@@ -168,7 +175,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
           <button
             onClick={likeToggleHandler}
             disabled={isLikeLoading}
-            className={`flex items-center text-red-500 transition-colors hover:text-red-600 disabled:opacity-50 ${
+            className={`flex items-center rounded-full border border-gray-300 px-4 py-2 text-red-500 transition-colors hover:text-red-600 disabled:opacity-50 ${
               !isLoggedIn ? "cursor-not-allowed" : ""
             }`}
             title={!isLoggedIn ? "로그인이 필요합니다" : ""}
@@ -190,7 +197,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
             <p className="min-w-0 truncate text-sm">
               {user.displayName || "사용자"}
             </p>
-            <ActivityBadge activityLevel={user.activityLevel} size="tiny" />
+            <ActivityBadge activityLevel={user.activityLevel} />
           </div>
 
           {/* 수정/삭제 버튼(본인만) */}
@@ -244,9 +251,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
       </div>
 
       {/* 댓글 리스트 */}
-      <div className="mx-auto mt-4 max-w-lg">
-        <CommentList id={reviewId} reviewAuthorId={user.uid || ""} />
-      </div>
+      <CommentList id={reviewId} reviewAuthorId={user.uid || ""} />
     </main>
   );
 }

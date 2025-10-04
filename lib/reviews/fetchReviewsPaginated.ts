@@ -27,6 +27,7 @@ export interface ReviewDoc {
     likeCount: number;
     isLiked: boolean; // 리스트/상세 모두 포함
   };
+  orderNumber?: number; // 전체 리뷰 중 순서 (오래된 순 기준, 1부터 시작)
 }
 
 // 'Firestore'에서 가져온 원본 리뷰 데이터 타입 (날짜는 Timestamp)

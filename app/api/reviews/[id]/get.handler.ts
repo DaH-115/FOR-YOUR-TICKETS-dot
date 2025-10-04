@@ -39,6 +39,21 @@ export async function GET(
       isLiked = likeDoc.exists;
     }
 
+    // 리뷰 순서 계산 (해당 리뷰보다 오래된 리뷰 개수 + 1)
+    const createdAt = data.review.createdAt;
+    let orderNumber = 1;
+
+    if (createdAt && typeof createdAt.toDate === "function") {
+      // 해당 리뷰보다 오래된 리뷰 개수 조회
+      const olderReviewsQuery = await adminFirestore
+        .collection("movie-reviews")
+        .where("review.createdAt", "<", createdAt)
+        .count()
+        .get();
+
+      orderNumber = olderReviewsQuery.data().count + 1;
+    }
+
     const reviewData: ReviewDoc = {
       id: doc.id,
       user: data.user,
@@ -55,6 +70,7 @@ export async function GET(
             : "",
         isLiked, // 동적으로 계산한 값
       },
+      orderNumber, // 리뷰 순서 추가
     };
 
     return NextResponse.json(reviewData);

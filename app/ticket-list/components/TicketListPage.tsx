@@ -8,7 +8,7 @@ import SearchSection from "app/components/search/SearchSection";
 import EmptyState from "app/my-page/components/EmptyState";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import Link from "next/link";
-import Loading from "app/loading";
+import Loading from "@/loading";
 
 interface TicketListPageProps {
   initialReviews: ReviewDoc[];
@@ -77,6 +77,8 @@ export default function TicketListPage({
     router.replace(`?${params.toString()}`);
   };
 
+  if (loading) return <Loading />;
+
   return (
     <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
       {/* 헤더 */}
@@ -91,9 +93,7 @@ export default function TicketListPage({
         </div>
       </header>
       {/* 리뷰 목록 */}
-      {loading ? (
-        <Loading />
-      ) : reviews.length > 0 ? (
+      {reviews.length > 0 ? (
         <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
           {reviews.map((review) => (
             <Link key={review.id} href={`/ticket-list/${review.id}`}>

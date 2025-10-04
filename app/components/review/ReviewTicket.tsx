@@ -1,5 +1,3 @@
-"use client";
-
 import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
 import MoviePoster from "@/components/movie/MoviePoster";
@@ -24,7 +22,7 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
         title={review.review.movieTitle}
       />
       {/* 정보 카드 - 고정 높이 설정 */}
-      <section className="relative z-10 flex h-[140px] flex-col rounded-xl border-2 bg-white p-3 px-2 pt-2 text-black transition-colors duration-200 group-hover:bg-gray-100">
+      <section className="relative z-10 flex h-[140px] flex-col rounded-xl border-2 bg-white px-2 py-2 text-black transition-colors duration-200 group-hover:bg-gray-100">
         {/* 프로필 사진 & 닉네임 & 등급 */}
         <div className="flex items-center justify-between">
           <div className="flex flex-1 items-center gap-1.5">
@@ -37,10 +35,7 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
               {review.user.displayName || "사용자"}
             </p>
           </div>
-          <ActivityBadge
-            activityLevel={review.user.activityLevel}
-            size="tiny"
-          />
+          <ActivityBadge activityLevel={review.user.activityLevel} />
         </div>
         {/* 리뷰 제목 */}
         <div className="flex-1 px-1 py-3">
@@ -57,8 +52,8 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
             </span>
           </div>
           {/* 좋아요 버튼 */}
-          <div className="flex items-center">
-            <span className="text-red-500 transition-transform duration-200 group-hover:scale-110">
+          <div className="flex items-center rounded-full border border-gray-300 px-2 py-1">
+            <span className="text-sm text-red-500">
               {review.review.isLiked ? <FaHeart /> : <FaRegHeart />}
             </span>
             <span className="ml-1 text-center text-sm">
