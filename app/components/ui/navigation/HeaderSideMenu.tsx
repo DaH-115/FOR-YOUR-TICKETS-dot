@@ -131,8 +131,8 @@ export default function HeaderSideMenu({
                       onClick={onClose}
                       className={`block w-full rounded-full px-6 py-3 text-left ${
                         isActive
-                          ? "bg-white/20 text-white"
-                          : "text-gray-300 hover:bg-white/10 hover:text-white"
+                          ? "font-semibold text-accent-300"
+                          : "text-gray-300 hover:text-accent-300"
                       }`}
                     >
                       {label}
@@ -145,7 +145,7 @@ export default function HeaderSideMenu({
 
           {/* 사용자 메뉴 */}
           {user?.uid && (
-            <div className="mt-8 border-t border-white/20 pt-6">
+            <div className="mt-6 border-t border-white/20 pt-6">
               <h3 className="mb-2 text-sm font-medium text-gray-400">
                 나의 메뉴
               </h3>

@@ -13,18 +13,18 @@ export default function WriteButton({
   return (
     <Link
       href={`/write-review/new?movieId=${movieId}`}
-      className={`relative flex items-center justify-center gap-1 rounded-xl border border-white bg-primary-500 text-white transition-colors duration-300 hover:border-primary-300 ${
+      className={`relative flex items-center justify-center gap-1 rounded-xl bg-primary-500 text-white transition-colors duration-300 hover:border-primary-300 ${
         size === "large" ? "p-5" : "p-4"
       }`}
     >
       <button
         type="button"
-        className={`${size === "large" ? "text-base" : "text-xs"} tracking-tight`}
+        className={`${size === "large" ? "text-base" : "text-sm"} tracking-tight`}
       >
         티켓 만들기
       </button>
       <IoTicket
-        className={`${size === "large" ? "text-base" : "text-xs"}`}
+        className={`${size === "large" ? "text-base" : "text-sm"}`}
         aria-hidden
       />
     </Link>

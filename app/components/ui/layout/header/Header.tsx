@@ -60,19 +60,33 @@ export default function Header() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // 스크롤 위치가 100px 이상일 때만 헤더 숨김/보임 처리
-      if (currentScrollY > 100) {
-        // 아래로 스크롤: 헤더 숨김
+      // 모바일과 데스크톱에 따른 다른 동작
+      const isMobile = window.innerWidth < 1024; // lg 브레이크포인트
+
+      if (isMobile) {
+        // 모바일: 스크롤하는 순간 바로 반응
         if (currentScrollY > lastScrollY) {
+          // 아래로 스크롤: 헤더 숨김
           setIsHeaderHidden(true);
-        }
-        // 위로 스크롤: 헤더 보임
-        else if (currentScrollY < lastScrollY) {
+        } else if (currentScrollY < lastScrollY) {
+          // 위로 스크롤: 헤더 보임
           setIsHeaderHidden(false);
         }
       } else {
-        // 최상단 근처에서는 항상 헤더 보임
-        setIsHeaderHidden(false);
+        // 데스크톱: 기존 로직 유지
+        if (currentScrollY > 100) {
+          // 아래로 스크롤: 헤더 숨김
+          if (currentScrollY > lastScrollY) {
+            setIsHeaderHidden(true);
+          }
+          // 위로 스크롤: 헤더 보임
+          else if (currentScrollY < lastScrollY) {
+            setIsHeaderHidden(false);
+          }
+        } else {
+          // 최상단 근처에서는 항상 헤더 보임
+          setIsHeaderHidden(false);
+        }
       }
 
       lastScrollY = currentScrollY;
@@ -101,18 +115,18 @@ export default function Header() {
         isHeaderHidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="mx-6 flex items-center justify-between lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+      <div className="mx-4 flex items-center justify-between lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
         {/* LOGO */}
         <Link href="/" className="max-w-24 lg:max-w-48">
-          <p className="text-lg font-bold tracking-tighter text-white transition-colors duration-200 hover:text-accent-300 md:text-xl">
+          <p className="px-2 text-lg font-bold leading-tight tracking-tighter text-white transition-colors duration-200 hover:text-accent-300 md:px-0 md:text-xl">
             Just Your Tickets
           </p>
         </Link>
 
-        <div className="flex items-center justify-between space-x-2">
+        <div className="flex items-center justify-between space-x-3">
           {/* DESKTOP 메뉴 */}
           <nav className="hidden px-4 lg:block">
-            <ul className="flex items-center justify-center gap-4">
+            <ul className="flex items-center justify-center gap-6">
               {navItems.map(({ href, label }) => (
                 <li
                   key={href}
@@ -156,10 +170,10 @@ export default function Header() {
           {/* 모바일 메뉴 */}
           <button
             onClick={() => setIsSideMenuOpen((prev) => !prev)}
-            className="rounded-full p-2 text-white transition-colors duration-300 hover:bg-white/20 lg:hidden"
+            className="px-2 text-white lg:hidden"
             aria-label="메뉴 열기"
           >
-            <IoIosMenu size={32} aria-hidden />
+            <IoIosMenu size={28} aria-hidden />
           </button>
         </div>
       </div>
