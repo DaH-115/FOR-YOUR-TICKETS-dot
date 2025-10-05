@@ -45,7 +45,7 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
   return (
     <section
       ref={sectionRef}
-      className="mx-4 mt-16 lg:mx-12 lg:mt-20 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]"
+      className="mx-4 lg:mx-12 lg:mt-20 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]"
     >
       {/* 헤더 영역 애니메이션 */}
       <header
@@ -68,7 +68,7 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
 
       {/* 티켓 목록 애니메이션 - CSS Grid로 반응형 처리 */}
       <div
-        className={`mx-auto grid grid-cols-3 gap-x-4 gap-y-4 transition-all duration-500 ease-out md:grid-cols-4 lg:gap-y-8 xl:grid-cols-8 ${
+        className={`mx-auto grid grid-cols-3 gap-x-2 gap-y-6 transition-all duration-500 ease-out xl:grid-cols-5 ${
           isClient && isVisible
             ? "translate-y-0 opacity-100 transition-delay-300"
             : "translate-y-8 opacity-0"

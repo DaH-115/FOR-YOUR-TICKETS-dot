@@ -20,7 +20,7 @@ function LatestReviewTicket({ review }: { review: ReviewDoc }) {
   }, [router, review.id]);
 
   return (
-    <article className="flex items-stretch shadow-lg transition-shadow duration-300 hover:shadow-xl">
+    <article className="relative flex items-stretch shadow-lg transition-shadow duration-300 hover:shadow-xl">
       {/* 영화 포스터 */}
       <MoviePoster
         posterPath={content.moviePosterPath || ""}
@@ -33,8 +33,8 @@ function LatestReviewTicket({ review }: { review: ReviewDoc }) {
         className="group flex h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-300 bg-white px-3 py-2 hover:bg-gray-100"
       >
         {isNavigating && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-l-xl bg-black bg-opacity-30">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black bg-opacity-30">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent"></div>
           </div>
         )}
 
