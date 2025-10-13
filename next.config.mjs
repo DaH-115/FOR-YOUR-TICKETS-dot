@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
@@ -72,7 +74,7 @@ const nextConfig = {
             priority: 20,
           },
           utils: {
-            test: /[\\/]node_modules[\\/](lodash|zod)[\\/]/,
+            test: /[\\/]node_modules[\\/](zod)[\\/]/,
             name: "utils",
             chunks: "all",
             priority: 15,
@@ -85,4 +87,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+export default withBundleAnalyzer(nextConfig);

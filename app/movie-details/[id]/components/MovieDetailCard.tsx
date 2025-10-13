@@ -60,7 +60,11 @@ export default function MovieDetailCard({
       <div className="flex flex-col justify-center md:w-2/3 md:flex-row md:gap-6">
         {/* 영화 포스터 */}
         <section className="mx-auto w-full md:w-3/4">
-          <MoviePoster posterPath={poster_path || ""} title={title} />
+          <MoviePoster
+            posterPath={poster_path || ""}
+            title={title}
+            importance="hero"
+          />
         </section>
         <div className="mx-auto w-full overflow-hidden">
           {/* 영화 정보 */}
@@ -96,7 +100,7 @@ export default function MovieDetailCard({
                 <div className="flex items-center">
                   <FaStar className="text-2xl text-accent-300" />
                   <p className="ml-2 text-3xl font-bold">
-                    {Math.round(vote_average * 10) / 10}
+                    {Math.round(vote_average * 10) / 10 || 0}
                   </p>
                 </div>
               </div>

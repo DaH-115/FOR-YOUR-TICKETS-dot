@@ -16,14 +16,17 @@ export default function MovieInfoCard({ movie }: { movie: MovieList }) {
   const { genres, uniqueDirectors } = useMovieDetails();
 
   return (
-    <section className="rounded-lg bg-white">
-      <div className="p-4">
+    <section className="mt-2 rounded-2xl bg-white">
+      <div className="px-4 py-6">
         {/* 헤더: 영화 제목, 상세정보 아이콘, 원제목, 개봉년도, 등급 */}
         <header>
           <div className="flex justify-between">
-            <h2 className="text-2xl font-bold leading-tight tracking-tight">
-              {title}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold leading-tight tracking-tight">
+                {title}
+              </h2>
+              <MovieCertification certification={movie.certification ?? null} />
+            </div>
             {/* 상세정보 아이콘 및 툴팁 */}
             <div className="relative">
               <Link
@@ -39,21 +42,18 @@ export default function MovieInfoCard({ movie }: { movie: MovieList }) {
               </Tooltip>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <h2 className="leading-tight tracking-tight text-gray-500">
-              {`${original_title}(${release_date ? release_date.slice(0, 4) : "개봉일 미정"})`}
-            </h2>
-            <MovieCertification certification={movie.certification ?? null} />
-          </div>
+          <h2 className="leading-tight tracking-tight text-gray-500">
+            {`${original_title}(${release_date ? release_date.slice(0, 4) : "개봉일 미정"})`}
+          </h2>
         </header>
 
         {/* 장르 리스트 */}
-        <section className="pb-6 pt-2">
+        <section className="mb-4 py-4">
           <GenreList genres={genres} />
         </section>
 
         {/* 개봉일, 감독, 평점 */}
-        <section className="flex items-center justify-between p-3">
+        <section className="flex items-center justify-between space-x-4 py-3">
           <div className="flex-1">
             <p className="sr-only">개봉일</p>
             <p className="text-center text-sm">
@@ -83,16 +83,16 @@ export default function MovieInfoCard({ movie }: { movie: MovieList }) {
                   );
                 })
               ) : (
-                <li className="text-gray-300">감독 정보 없음</li>
+                <li className="text-sm text-gray-300">감독 정보 없음</li>
               )}
             </ul>
           </div>
           <div className="flex-1">
             <p className="sr-only">평점</p>
-            <div className="flex flex-1 items-center justify-center rounded-full border border-gray-300 px-4 py-2">
-              <FaStar className="mr-1 text-accent-300" size={24} />
-              <div className="text-2xl font-bold">
-                {Math.round(vote_average * 10) / 10 || "평점 정보 없음"}
+            <div className="flex items-center justify-center rounded-full border border-gray-300 p-2">
+              <FaStar className="mr-1 text-accent-300" size={20} />
+              <div className="text-lg font-bold tracking-tight">
+                {Math.round(vote_average * 10) / 10 || 0}
               </div>
             </div>
           </div>
