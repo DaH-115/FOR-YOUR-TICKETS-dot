@@ -74,7 +74,6 @@ describe("DELETE /api/comments/[reviewId]/[commentId]", () => {
     expect(mockTransaction.delete).toHaveBeenCalledTimes(1);
     expect(mockTransaction.update).toHaveBeenCalledTimes(1);
     expect(mockedRevalidatePath).toHaveBeenCalledWith("/ticket-list");
-    expect(mockedUpdateUserActivityLevel).toHaveBeenCalledWith(mockUid);
   });
 
   test("인증에 실패하면 401 에러를 반환해야 합니다", async () => {

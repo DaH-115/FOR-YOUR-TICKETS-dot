@@ -8,12 +8,20 @@ jest.mock("firebase-admin-config", () => {
   const mockLikeCollection = {
     doc: jest.fn(() => mockLikeDoc),
   };
+  const mockCountQuery = {
+    get: jest.fn().mockResolvedValue({
+      data: () => ({ count: 0 }),
+    }),
+  };
   const mockDoc = {
     get: jest.fn(),
     collection: jest.fn(() => mockLikeCollection),
   };
   const mockCollection = {
     doc: jest.fn(() => mockDoc),
+    where: jest.fn().mockReturnValue({
+      count: jest.fn().mockReturnValue(mockCountQuery),
+    }),
   };
   return {
     adminFirestore: {
@@ -21,6 +29,7 @@ jest.mock("firebase-admin-config", () => {
     },
     mockDoc,
     mockLikeDoc,
+    mockCountQuery,
   };
 });
 
@@ -82,6 +91,9 @@ describe("GET /api/reviews/[id]", () => {
           get: jest.fn().mockReturnValue("user1"),
         },
       },
+      headers: {
+        get: jest.fn().mockReturnValue(null), // 인증 헤더 없음 (공개 조회)
+      },
     } as unknown as NextRequest;
 
     const response = await GET(mockRequest, {
@@ -111,6 +123,9 @@ describe("GET /api/reviews/[id]", () => {
           get: jest.fn().mockReturnValue(null),
         },
       },
+      headers: {
+        get: jest.fn().mockReturnValue(null),
+      },
     } as unknown as NextRequest;
 
     const response = await GET(mockRequest, {
@@ -131,6 +146,9 @@ describe("GET /api/reviews/[id]", () => {
         searchParams: {
           get: jest.fn().mockReturnValue(null),
         },
+      },
+      headers: {
+        get: jest.fn().mockReturnValue(null),
       },
     } as unknown as NextRequest;
 

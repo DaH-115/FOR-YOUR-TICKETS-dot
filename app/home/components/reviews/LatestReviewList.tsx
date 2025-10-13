@@ -4,6 +4,7 @@ import Link from "next/link";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import LatestReviewTicket from "app/home/components/reviews/LatestReviewTicket";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
+import { IoChevronForward } from "react-icons/io5";
 
 function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -58,17 +59,20 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
         <h2 className="text-xl font-bold tracking-tight text-white">
           새로운 티켓
         </h2>
-        <Link
-          href="/ticket-list"
-          className="text-sm text-accent-300 transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
-        >
-          모든 티켓 보기
-        </Link>
+        <div className="flex items-center">
+          <Link
+            href="/ticket-list"
+            className="text-sm text-accent-300 transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
+          >
+            모든 티켓 보기
+          </Link>
+          <IoChevronForward className="text-sm text-accent-300" aria-hidden />
+        </div>
       </header>
 
-      {/* 티켓 목록 애니메이션 - CSS Grid로 반응형 처리 */}
+      {/* 티켓 목록 애니메이션 */}
       <div
-        className={`mx-auto grid grid-cols-3 gap-x-2 gap-y-6 transition-all duration-500 ease-out xl:grid-cols-5 ${
+        className={`mx-auto grid grid-cols-1 gap-x-2 gap-y-2 transition-all duration-500 ease-out md:grid-cols-2 md:gap-y-4 lg:grid-cols-3 lg:gap-y-6 xl:grid-cols-4 ${
           isClient && isVisible
             ? "translate-y-0 opacity-100 transition-delay-300"
             : "translate-y-8 opacity-0"

@@ -94,7 +94,7 @@ describe("DELETE /api/reviews/[id]", () => {
     expect(mockBatch.delete).toHaveBeenCalledTimes(5);
     expect(mockedRevalidateTag).toHaveBeenCalledWith("reviews");
     expect(mockedRevalidatePath).toHaveBeenCalledWith("/ticket-list");
-    expect(mockedUpdateUserActivityLevel).toHaveBeenCalledWith(mockUid);
+    expect(mockedUpdateUserActivityLevel).toHaveBeenCalledWith(mockUid, -1);
   });
 
   test("인증에 실패하면 401 에러를 반환해야 합니다", async () => {

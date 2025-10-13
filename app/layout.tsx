@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import "@/globals.css";
 import { AlertProvider } from "store/context/alertContext";
 import { AuthProvider } from "store/context/auth/authContext";
+import { LevelUpProvider } from "store/context/levelUp/LevelUpContext";
 import Providers from "store/redux-toolkit/Providers";
 import Header from "@/components/ui/layout/header/Header";
 import Footer from "@/components/ui/layout/Footer";
@@ -111,10 +112,14 @@ export default function RootLayout({
         <Providers>
           <AuthProvider>
             <AlertProvider>
-              <Header />
-              <div className="mx-auto mt-36 min-w-80">{children}</div>
-              <Footer />
-              <ScrollToTopButton />
+              <LevelUpProvider>
+                <Header />
+                <div className="mx-auto mt-32 min-w-80 lg:mt-36">
+                  {children}
+                </div>
+                <Footer />
+                <ScrollToTopButton />
+              </LevelUpProvider>
             </AlertProvider>
           </AuthProvider>
         </Providers>

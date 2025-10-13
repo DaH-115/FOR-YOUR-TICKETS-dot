@@ -30,7 +30,7 @@ function LatestReviewTicket({ review }: { review: ReviewDoc }) {
       {/* 리뷰 컨텐츠 */}
       <section
         onClick={handleReviewClick}
-        className="group flex h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-300 bg-white px-3 py-2 hover:bg-gray-100"
+        className="group flex h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-xl border border-gray-300 bg-white px-3 py-2 hover:bg-gray-100"
       >
         {isNavigating && (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black bg-opacity-30">

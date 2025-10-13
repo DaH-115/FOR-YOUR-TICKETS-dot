@@ -1,24 +1,27 @@
 import { renderHook, act } from "@testing-library/react";
 import { useComments } from "@/components/review/comment/hooks/useComments";
 import { useAlert } from "store/context/alertContext";
+import { apiCallWithTokenRefresh } from "@/utils/getIdToken/apiCallWithTokenRefresh";
+import { firebaseErrorHandler } from "@/utils/firebaseError";
+import { isAuth } from "firebase-config";
 
 // Mock dependencies
 jest.mock("@/utils/getIdToken/apiCallWithTokenRefresh");
 jest.mock("@/utils/firebaseError");
 jest.mock("firebase-config");
-jest.mock("store/context/alertContext");
-
-const mockApiCallWithTokenRefresh =
-  require("@/utils/getIdToken/apiCallWithTokenRefresh").apiCallWithTokenRefresh;
-const mockFirebaseErrorHandler =
-  require("@/utils/firebaseError").firebaseErrorHandler;
-const mockIsAuth = require("firebase-config").isAuth;
-const mockUseAlert = useAlert as jest.MockedFunction<typeof useAlert>;
-
-// Mock the useAlert hook
 jest.mock("store/context/alertContext", () => ({
   useAlert: jest.fn(),
 }));
+
+const mockApiCallWithTokenRefresh =
+  apiCallWithTokenRefresh as jest.MockedFunction<
+    typeof apiCallWithTokenRefresh
+  >;
+const mockFirebaseErrorHandler = firebaseErrorHandler as jest.MockedFunction<
+  typeof firebaseErrorHandler
+>;
+const mockIsAuth = isAuth as jest.Mocked<typeof isAuth>;
+const mockUseAlert = useAlert as jest.MockedFunction<typeof useAlert>;
 
 describe("useComments", () => {
   const mockUserState = {
@@ -29,20 +32,34 @@ describe("useComments", () => {
   };
 
   const mockShowErrorHandler = jest.fn();
+  const mockShowSuccessHandler = jest.fn();
+  const mockHideErrorHandler = jest.fn();
+  const mockHideSuccessHandler = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useAlert as jest.Mock).mockReturnValue({
+
+    // useAlert mock 설정
+    mockUseAlert.mockReturnValue({
       showErrorHandler: mockShowErrorHandler,
+      showSuccessHandler: mockShowSuccessHandler,
+      hideErrorHandler: mockHideErrorHandler,
+      hideSuccessHandler: mockHideSuccessHandler,
     });
-    mockIsAuth.currentUser = { uid: "user123" };
+
+    // currentUser를 읽기 전용 속성이므로 Object.defineProperty 사용
+    Object.defineProperty(mockIsAuth, "currentUser", {
+      value: { uid: "user123" },
+      writable: true,
+      configurable: true,
+    });
 
     // Mock fetch
     global.fetch = jest.fn();
   });
 
   describe("댓글 생성", () => {
-    it("댓글 생성 성공 시 낙관적 업데이트가 작동해야 함", async () => {
+    test("댓글 생성 성공 시 낙관적 업데이트가 작동해야 함", async () => {
       const { result } = renderHook(() =>
         useComments({ reviewId: "review123", userState: mockUserState }),
       );
@@ -65,20 +82,23 @@ describe("useComments", () => {
       expect(result.current.comments[0].id).toBe("comment456"); // 실제 ID로 교체됨
     });
 
-    it("댓글 생성 실패 시 롤백이 작동해야 함", async () => {
+    test("댓글 생성 실패 시 롤백이 작동해야 함", async () => {
       const { result } = renderHook(() =>
         useComments({ reviewId: "review123", userState: mockUserState }),
       );
 
       // Mock API 실패
       mockApiCallWithTokenRefresh.mockRejectedValue(new Error("API 오류"));
-      mockFirebaseErrorHandler.mockReturnValue({ message: "댓글 생성 실패" });
+      mockFirebaseErrorHandler.mockReturnValue({
+        title: "오류",
+        message: "댓글 생성 실패",
+      });
 
       // 댓글 생성 실행
       await act(async () => {
         try {
           await result.current.createComment("테스트 댓글");
-        } catch (error) {
+        } catch {
           // 에러는 예상됨
         }
       });
@@ -93,7 +113,7 @@ describe("useComments", () => {
   });
 
   describe("댓글 수정", () => {
-    it("댓글 수정 시 낙관적 업데이트가 작동해야 함", async () => {
+    test("댓글 수정 시 낙관적 업데이트가 작동해야 함", async () => {
       const { result } = renderHook(() =>
         useComments({ reviewId: "review123", userState: mockUserState }),
       );
@@ -129,7 +149,7 @@ describe("useComments", () => {
   });
 
   describe("댓글 삭제", () => {
-    it("댓글 삭제 시 낙관적 업데이트가 작동해야 함", async () => {
+    test("댓글 삭제 시 낙관적 업데이트가 작동해야 함", async () => {
       const { result } = renderHook(() =>
         useComments({ reviewId: "review123", userState: mockUserState }),
       );

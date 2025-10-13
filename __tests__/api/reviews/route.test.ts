@@ -85,7 +85,7 @@ describe("리뷰 API 라우트 (/api/reviews)", () => {
       );
       // 등급 업데이트, 댓글 등급 업데이트, 캐시 무효화 함수 호출 확인
       await new Promise(process.nextTick);
-      expect(mockedUpdateUserActivityLevel).toHaveBeenCalledWith(mockUid);
+      expect(mockedUpdateUserActivityLevel).toHaveBeenCalledWith(mockUid, 1);
       expect(mockedUpdateCommentsActivityLevel).toHaveBeenCalledWith(
         mockUid,
         "새싹",

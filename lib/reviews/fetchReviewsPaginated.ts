@@ -25,7 +25,8 @@ export interface ReviewDoc {
     createdAt: string; // ISO 문자열
     updatedAt: string;
     likeCount: number;
-    isLiked: boolean; // 리스트/상세 모두 포함
+    // 목록에서는 사용자 컨텍스트가 없어 미확정 상태일 수 있음
+    isLiked?: boolean;
   };
   orderNumber?: number; // 전체 리뷰 중 순서 (오래된 순 기준, 1부터 시작)
 }
@@ -301,11 +302,11 @@ async function addUserInfoToReviews(
       user,
       review: {
         ...review.review,
-        // 최상위 likeCount를 review 안에 복사 (API 업데이트와 호환성 유지)
+        // 최상위 likeCount를 review 안에 복사
         likeCount: review.likeCount || review.review.likeCount || 0,
         createdAt: review.review.createdAt.toDate().toISOString(),
         updatedAt: review.review.updatedAt.toDate().toISOString(),
-        isLiked: false, // 리스트에서는 항상 false
+        // 목록 응답에서는 isLiked를 포함하지 않음(미확정)
       },
     };
   });

@@ -12,10 +12,7 @@ import { selectUser } from "store/redux-toolkit/slice/userSlice";
 import Link from "next/link";
 
 interface TicketListLayoutProps {
-  header: {
-    title: string;
-    content: string;
-  };
+  title: string;
   reviews: ReviewDoc[];
   totalPages: number;
   loading: boolean;
@@ -23,7 +20,7 @@ interface TicketListLayoutProps {
 }
 
 export default function TicketListLayout({
-  header,
+  title,
   reviews,
   totalPages,
   loading,
@@ -57,14 +54,13 @@ export default function TicketListLayout({
       {/* 헤더 */}
       <header className="mb-4">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold tracking-tight text-white">
-            {header.title}
+          <h1 className="text-xl font-bold tracking-tight text-white">
+            {title}
           </h1>
           <span className="ml-2 text-lg font-bold text-accent-300">
             {reviews.length}
           </span>
         </div>
-        <p className="text-sm text-gray-300">{header.content}</p>
       </header>
 
       {/* 리뷰 목록 */}
@@ -76,7 +72,7 @@ export default function TicketListLayout({
           <p className="mt-1 text-sm text-red-500">{error}</p>
         </div>
       ) : reviews.length > 0 ? (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-2 gap-y-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {reviews.map((review) => (
             <Link key={review.id} href={`/ticket-list/${review.id}`}>
               <ReviewTicket review={review} />

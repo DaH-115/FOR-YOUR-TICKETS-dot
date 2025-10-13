@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminFirestore } from "firebase-admin-config";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
+import { verifyAuthToken } from "lib/auth/verifyToken";
 
 // GET /api/reviews/[id] - 개별 리뷰 조회
 export async function GET(
@@ -9,7 +10,14 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-    const uid = req.nextUrl.searchParams.get("uid"); // 쿼리 파라미터에서 uid 가져오기
+    // 1순위: Authorization 헤더로 인증 → uid 획득, 2순위: 쿼리 파라미터 uid 폴백
+    let uid: string | null = null;
+    const authResult = await verifyAuthToken(req);
+    if (authResult.success && authResult.uid) {
+      uid = authResult.uid;
+    } else {
+      uid = req.nextUrl.searchParams.get("uid");
+    }
 
     const doc = await adminFirestore.collection("movie-reviews").doc(id).get();
     if (!doc.exists) {

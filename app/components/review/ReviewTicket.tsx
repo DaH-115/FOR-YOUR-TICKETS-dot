@@ -54,7 +54,14 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
           {/* 좋아요 버튼 */}
           <div className="flex items-center rounded-full border border-gray-300 px-2 py-1">
             <span className="text-sm text-red-500">
-              {review.review.isLiked ? <FaHeart /> : <FaRegHeart />}
+              {review.review.isLiked === undefined ? (
+                // 미확정: 로딩 상태 느낌의 빈 하트
+                <FaRegHeart />
+              ) : review.review.isLiked ? (
+                <FaHeart />
+              ) : (
+                <FaRegHeart />
+              )}
             </span>
             <span className="ml-1 text-center text-sm">
               {review.review.likeCount}

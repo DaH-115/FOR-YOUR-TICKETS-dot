@@ -1,14 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchLikedReviewsPaginated } from "lib/reviews/fetchLikedReviewsPaginated";
+import { verifyAuthToken } from "lib/auth/verifyToken";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const url = new URL(req.url);
-  const uid = url.searchParams.get("uid");
-
+  // 인증 헤더 우선: 요청자 본인의 uid만 허용
+  const authLike = await verifyAuthToken(req);
+  const uid = authLike.success && authLike.uid ? authLike.uid : null;
   if (!uid) {
     return NextResponse.json(
-      { error: "uid 쿼리 파라미터를 반드시 넘겨주세요" },
-      { status: 400 },
+      { error: "로그인이 필요합니다." },
+      { status: authLike.statusCode || 401 },
     );
   }
 

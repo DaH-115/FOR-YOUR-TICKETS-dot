@@ -75,8 +75,7 @@ export async function POST(
       });
     });
 
-    // 트랜잭션 후 실제 데이터베이스에서 값 재확인
-    await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms 대기
+    // 트랜잭션 커밋 후 최신 likeCount 재조회
     const updatedReviewSnap = await reviewRef.get();
     const updatedData = updatedReviewSnap.data();
     const updatedLikeCount = updatedData?.likeCount || 0;

@@ -286,10 +286,16 @@ jest.mock("swiper/modules", () => ({
   Autoplay: jest.fn(),
 }));
 
-// React Hook Form의 zodResolver는 실제 구현을 사용 (모킹 제거)
-
-// Mock Lodash
-jest.mock("lodash/debounce", () => jest.fn((fn) => fn));
+// Mock use-debounce
+jest.mock("use-debounce", () => ({
+  useDebounce: (value) => [value],
+  useDebouncedCallback: (fn) => {
+    const wrapped = (...args) => fn(...args);
+    wrapped.cancel = () => {};
+    wrapped.flush = () => {};
+    return wrapped;
+  },
+}));
 
 // Mock React Icons
 jest.mock("react-icons", () => ({

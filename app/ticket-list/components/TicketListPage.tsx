@@ -9,6 +9,8 @@ import EmptyState from "app/my-page/components/EmptyState";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import Link from "next/link";
 import Loading from "@/loading";
+import { getAuthHeaders } from "@/utils/getIdToken";
+import { mergeLikeStatuses } from "@/utils/api";
 
 interface TicketListPageProps {
   initialReviews: ReviewDoc[];
@@ -50,8 +52,39 @@ export default function TicketListPage({
           `/api/reviews?page=${page}&search=${encodeURIComponent(search)}`,
         );
         const data = await res.json();
-        setReviews(data.reviews);
-        setTotalPages(data.totalPages);
+
+        let nextReviews: ReviewDoc[] = data.reviews || [];
+        setTotalPages(data.totalPages || 1);
+
+        // 로그인 상태라면 like-statuses로 좋아요 상태 동기화
+        try {
+          if (nextReviews.length > 0) {
+            const reviewIds = nextReviews.map((r: ReviewDoc) => r.id);
+            const authHeaders = await getAuthHeaders();
+            const likeRes = await fetch(`/api/reviews/like-statuses`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...authHeaders,
+              },
+              body: JSON.stringify({ reviewIds }),
+            });
+
+            if (likeRes.ok) {
+              const likeData = (await likeRes.json()) as {
+                likes: Record<string, boolean>;
+              };
+              if (likeData?.likes) {
+                nextReviews = mergeLikeStatuses(nextReviews, likeData.likes);
+              }
+            }
+          }
+        } catch {
+          // 인증 실패/네트워크 오류는 초기 렌더 UX를 위해 무시
+          console.error("like-statuses 동기화 실패");
+        }
+
+        setReviews(nextReviews);
       } catch (error) {
         console.error("fetchReviews error", error);
         setReviews([]);

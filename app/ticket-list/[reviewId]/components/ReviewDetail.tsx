@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProfileAvatar from "@/components/user/ProfileAvatar";
@@ -38,6 +38,46 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
   // 로그인 상태 확인
   const isLoggedIn = !!isAuth.currentUser;
+
+  // 마운트 시 좋아요 상태 동기화
+  useEffect(() => {
+    // 로그인하지 않은 경우 서버 동기화 불필요
+    if (!isAuth.currentUser) return;
+
+    let isCancelled = false;
+
+    (async () => {
+      try {
+        // 인증 헤더 생성 후 like-statuses API 호출
+        const authHeaders = await getAuthHeaders();
+        const response = await fetch("/api/reviews/like-statuses", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...authHeaders,
+          },
+          body: JSON.stringify({ reviewIds: [reviewId] }),
+        });
+
+        if (!response.ok) return; // 실패 시 조용히 무시 (UX 유지)
+
+        const data = (await response.json()) as {
+          likes: Record<string, boolean>;
+        };
+
+        if (!isCancelled && data?.likes && reviewId in data.likes) {
+          setIsLiked(data.likes[reviewId]);
+        }
+      } catch {
+        // 네트워크/인증 오류는 초기 렌더 UX를 해치지 않기 위해 무시
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+    // 리뷰 ID가 바뀌면 재동기화
+  }, [reviewId]);
 
   // 좋아요 토글 핸들러
   const likeToggleHandler = useCallback(async () => {

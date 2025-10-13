@@ -66,28 +66,27 @@ export async function POST(req: NextRequest) {
       .collection("movie-reviews")
       .add(newReview);
 
-    // 사용자 등급 업데이트 (백그라운드에서 실행, API 응답을 기다리지 않음)
-    (async () => {
-      try {
-        const newActivityLevel = await updateUserActivityLevel(
-          reviewData.user.uid,
-        );
+    try {
+      // reviewCount를 +1 증가시키고 등급 계산
+      const newActivityLevel = await updateUserActivityLevel(
+        reviewData.user.uid,
+        1, // 리뷰 작성 시 +1
+      );
 
-        // 댓글의 활동 등급도 업데이트 (새 등급이 있는 경우)
-        if (newActivityLevel) {
-          await updateCommentsActivityLevel(
-            reviewData.user.uid,
-            newActivityLevel,
-          );
-        }
-      } catch (error) {
-        console.error(
-          `리뷰 생성 후 사용자 등급 업데이트 실패 (uid: ${reviewData.user.uid}):`,
-          error,
+      // 댓글의 활동 등급도 업데이트 (새 등급이 있는 경우)
+      if (newActivityLevel) {
+        await updateCommentsActivityLevel(
+          reviewData.user.uid,
+          newActivityLevel,
         );
-        // 등급 업데이트 실패는 리뷰 생성에 영향을 주지 않음
       }
-    })();
+    } catch (error) {
+      // 등급 업데이트 실패는 리뷰 생성에 영향을 주지 않음
+      console.error(
+        `리뷰 생성 후 사용자 등급 업데이트 실패 (uid: ${reviewData.user.uid}):`,
+        error,
+      );
+    }
 
     // 캐시 재검증
     revalidatePath("/ticket-list");

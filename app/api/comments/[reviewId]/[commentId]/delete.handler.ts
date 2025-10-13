@@ -3,7 +3,6 @@ import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
-import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
 
 // DELETE /api/comments/[reviewId]/[commentId] - 댓글 삭제
 export async function DELETE(
@@ -26,8 +25,6 @@ export async function DELETE(
       .doc(params.reviewId);
     const commentRef = reviewRef.collection("comments").doc(params.commentId);
 
-    let authorId = "";
-
     await adminFirestore.runTransaction(async (transaction) => {
       // 댓글 문서가 존재하는지 확인
       const commentDoc = await transaction.get(commentRef);
@@ -40,7 +37,6 @@ export async function DELETE(
 
       // 댓글 작성자 권한 확인
       const commentData = commentDoc.data();
-      authorId = commentData!.authorId; // 트랜잭션 외부에서 사용하기 위해 authorId 저장
       const ownershipResult = verifyResourceOwnership(
         authResult.uid!,
         commentData!.authorId,
@@ -60,9 +56,6 @@ export async function DELETE(
         commentsCount: FieldValue.increment(-1),
       });
     });
-
-    // 사용자 활동 등급 업데이트
-    await updateUserActivityLevel(authorId);
 
     // 캐시 재검증
     revalidatePath("/ticket-list");

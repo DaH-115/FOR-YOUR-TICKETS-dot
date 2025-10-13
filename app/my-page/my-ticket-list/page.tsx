@@ -25,10 +25,7 @@ function MyTicketListContainer() {
 
   return (
     <TicketListLayout
-      header={{
-        title: "내가 작성한 티켓",
-        content: "내가 작성한 티켓을 확인해 보세요",
-      }}
+      title={"내가 작성한 티켓"}
       reviews={reviews}
       totalPages={totalPages}
       loading={loading}

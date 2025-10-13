@@ -67,7 +67,8 @@ export async function DELETE(
     // 리뷰 삭제 후에 사용자 UID를 사용하여 등급 업데이트
     const userUid = reviewData!.user.uid;
     try {
-      await updateUserActivityLevel(userUid);
+      // reviewCount를 -1 감소시키고 등급 계산
+      await updateUserActivityLevel(userUid, -1); // 리뷰 삭제 시 -1
     } catch (error) {
       console.error("사용자 등급 업데이트 실패:", error);
       // 등급 업데이트 실패는 리뷰 삭제에 영향을 주지 않음
