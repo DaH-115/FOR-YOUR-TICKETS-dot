@@ -77,13 +77,13 @@ export default function TrendingSearchSection({
         </div>
       </div>
 
-      {/* 모바일에서만 보이는 더보기/접기 버튼 */}
+      {/* 모바일에서만 보이는 더 보기/접기 버튼 */}
       <div className="mt-4 flex justify-center md:hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-105"
         >
-          <span>{isExpanded ? "접기" : "더보기"}</span>
+          <span>{isExpanded ? "접기" : "더 보기"}</span>
           <IoChevronDown
             className={`h-4 w-4 transition-transform duration-200 ${
               isExpanded ? "rotate-180" : ""

@@ -27,7 +27,6 @@
     "dotenv": "^16.0.3",
     "firebase": "^10.13.0",
     "firebase-admin": "^13.4.0",
-    "lodash": "^4.17.21",
     "next": "^14.2.3",
     "plaiceholder": "^3.0.0",
     "react": "18.2.0",
@@ -40,6 +39,7 @@
     "sharp": "^0.33.5",
     "swiper": "^11.2.0",
     "tailwind-scrollbar-hide": "^4.0.0",
+    "use-debounce": "^10.0.6",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -49,7 +49,6 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
-    "@types/lodash": "^4.17.13",
     "@types/next": "^9.0.0",
     "@types/serve-static": "^1.15.8",
     "autoprefixer": "^10.4.19",

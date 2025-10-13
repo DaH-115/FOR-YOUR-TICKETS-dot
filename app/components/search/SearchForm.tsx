@@ -40,7 +40,7 @@ export default function SearchForm({
     setValue("search", initialValue);
   }, [initialValue, setValue]);
 
-  // watch로 검색어 변화 감지
+  // 입력이 비워졌을 때만 즉시 초기화
   useEffect(() => {
     if (searchValue === "") {
       onSearch("");

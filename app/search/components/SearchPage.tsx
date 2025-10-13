@@ -1,9 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import debounce from "lodash/debounce";
+import { useDebounce } from "use-debounce";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { IoSearchOutline } from "react-icons/io5";
 import * as z from "zod";
@@ -40,24 +40,16 @@ export default function SearchPage({
 
   const watchedQuery = watch("searchQuery");
 
-  const debounceHandler = useMemo(
-    () =>
-      debounce((query: string) => {
-        const cleaned = query.trim().replace(/\s+/g, " ");
-        const queryString = cleaned
-          ? `?query=${encodeURIComponent(cleaned)}&page=1`
-          : "";
-        router.replace(`${pathname}${queryString}`);
-      }, 300),
-    [router, pathname],
-  );
+  const [debouncedQuery] = useDebounce(watchedQuery, 300);
 
   useEffect(() => {
-    debounceHandler(watchedQuery);
-    return () => {
-      debounceHandler.cancel();
-    };
-  }, [watchedQuery, debounceHandler]);
+    const query = debouncedQuery ?? "";
+    const cleaned = query.trim().replace(/\s+/g, " ");
+    const queryString = cleaned
+      ? `?query=${encodeURIComponent(cleaned)}&page=1`
+      : "";
+    router.replace(`${pathname}${queryString}`);
+  }, [debouncedQuery, router, pathname]);
 
   return (
     <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
