@@ -7,6 +7,7 @@ import { FaStar } from "react-icons/fa";
 import { IoInformationCircle } from "react-icons/io5";
 import WriteButton from "@/components/ui/buttons/WriteButton";
 import MoviePoster from "@/components/movie/MoviePoster";
+import GenreList from "@/components/movie/GenreList";
 
 export default function SwiperItem({
   idx,
@@ -30,13 +31,13 @@ export default function SwiperItem({
       <MoviePoster posterPath={poster_path} title={displayTitle} />
 
       {/* 영화 정보 카드 - 제목, 등급, 평점, 장르 */}
-      <section className="rounded-lg bg-white px-3 pb-4 pt-3">
+      <section className="mt-2 rounded-2xl bg-white">
         {/* 평점 & 등급 */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-2 pt-3">
           {/* 평점 */}
           <div className="flex items-center justify-center gap-1 rounded-full border border-gray-300 px-2 py-1">
             <FaStar className="text-sm text-accent-300" />
-            <span className="text-sm font-semibold lg:text-base">
+            <span className="text-sm font-semibold">
               {vote_average ? Math.round(vote_average * 10) / 10 : 0}
             </span>
           </div>
@@ -64,7 +65,7 @@ export default function SwiperItem({
         </div>
 
         {/* 영화 제목 */}
-        <div className="pt-3">
+        <div className="p-3 pb-4">
           <div className="flex items-center gap-1 md:gap-2">
             <div className="flex-1">
               <h3 className="line-clamp-1 text-base font-bold leading-tight tracking-tight">
@@ -75,6 +76,11 @@ export default function SwiperItem({
               </p>
             </div>
           </div>
+        </div>
+
+        {/* 장르 */}
+        <div className="px-3 pb-4">
+          <GenreList genres={movie.genres || []} />
         </div>
       </section>
       {/* 티켓 만들기 버튼 */}

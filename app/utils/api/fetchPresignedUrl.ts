@@ -1,33 +1,45 @@
-// presigned URL 요청 유틸
+// presigned URL API 응답 타입
+interface PresignedUrlResponse {
+  url: string;
+  expiresIn: number;
+}
+
+interface PresignedUrlError {
+  error: true;
+  message: string;
+}
+
+/**
+ * S3 presigned URL을 요청하는 함수
+ * @param key - S3 객체 키
+ * @param signal - 요청 취소를 위한 AbortSignal
+ * @returns presigned URL과 만료 시간(초)
+ */
 export async function fetchPresignedUrl({
   key,
-  isPublic = true,
-  idToken,
   signal,
 }: {
   key: string;
-  isPublic?: boolean;
-  idToken?: string | null;
   signal?: AbortSignal;
-}): Promise<{ url: string; expiresIn: number }> {
-  const headers: HeadersInit = idToken
-    ? { Authorization: `Bearer ${idToken}` }
-    : {};
-  const apiUrl = isPublic
-    ? `/api/s3?key=${encodeURIComponent(key)}&isPublic=true`
-    : `/api/s3?key=${encodeURIComponent(key)}`;
+}): Promise<PresignedUrlResponse> {
+  const apiUrl = `/api/s3?key=${encodeURIComponent(key)}`;
+
   const response = await fetch(apiUrl, {
     method: "GET",
-    headers,
     signal,
   });
+
+  const data: PresignedUrlResponse | PresignedUrlError = await response.json();
+
+  // API 에러 응답 처리
+  if ("error" in data && data.error) {
+    throw new Error(data.message);
+  }
+
+  // HTTP 에러 처리 (백엔드가 JSON을 반환하지 않는 경우)
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`presigned URL 요청 실패 (${response.status})`);
   }
-  const data = await response.json();
-  if (data.error) {
-    // 서버에서 내려준 한글 메시지를 그대로 사용
-    throw new Error(data.message || "Presigned URL 발급에 실패했습니다.");
-  }
-  return { url: data.url, expiresIn: data.expiresIn };
+
+  return data as PresignedUrlResponse;
 }

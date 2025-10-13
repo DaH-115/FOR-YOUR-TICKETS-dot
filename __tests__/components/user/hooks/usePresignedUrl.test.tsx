@@ -90,8 +90,6 @@ describe("usePresignedUrl", () => {
       expect(result.current.error).toBe(null);
       expect(mockFetchPresignedUrl).toHaveBeenCalledWith({
         key: "public-photos/123.jpg",
-        isPublic: true,
-        idToken: null,
         signal: expect.any(AbortSignal),
       });
     });
@@ -218,8 +216,6 @@ describe("usePresignedUrl", () => {
       // fetchPresignedUrl이 호출되었는지 확인
       expect(mockFetchPresignedUrl).toHaveBeenCalledWith({
         key: uniqueKey,
-        isPublic: true,
-        idToken: null,
         signal: expect.any(AbortSignal),
       });
 
@@ -264,8 +260,6 @@ describe("usePresignedUrl", () => {
       // 첫 번째 요청이 호출되었는지 확인
       expect(mockFetchPresignedUrl).toHaveBeenCalledWith({
         key: uniqueKey1,
-        isPublic: true,
-        idToken: null,
         signal: expect.any(AbortSignal),
       });
 
@@ -281,8 +275,6 @@ describe("usePresignedUrl", () => {
       // 두 번째 요청도 호출되었는지 확인
       expect(mockFetchPresignedUrl).toHaveBeenCalledWith({
         key: uniqueKey2,
-        isPublic: true,
-        idToken: null,
         signal: expect.any(AbortSignal),
       });
     });

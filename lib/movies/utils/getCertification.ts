@@ -1,22 +1,10 @@
-interface ReleaseDate {
-  certification: string;
-  meaning: string;
-  release_date: string;
-}
-
-interface ReleaseDatesResult {
-  iso_3166_1: string;
-  release_dates: ReleaseDate[];
-}
-
-interface MovieReleaseDates {
-  id: number;
-  results: ReleaseDatesResult[];
-}
+import { MovieReleaseDates } from "lib/movies/types/movieReleaseDates";
 
 // 등급 정규화
-export function normalizeCertification(certification: string): string {
-  if (!certification) return "18";
+export const normalizeCertification = (
+  certification: string,
+): string | null => {
+  if (!certification) return null;
 
   const certificationMap: Record<string, string> = {
     all: "ALL",
@@ -33,10 +21,13 @@ export function normalizeCertification(certification: string): string {
     "18세관람가": "18",
   };
 
-  return certificationMap[certification.trim().toLowerCase()] || "18";
-}
+  return certificationMap[certification.trim().toLowerCase()] || null;
+};
 
-// 최적 등급 추출
+/** 최적 등급 추출
+ * @param releaseDates 영화 등급 정보
+ * @returns 최적 등급
+ */
 export function getCertification(
   releaseDates: MovieReleaseDates,
 ): string | null {
@@ -56,3 +47,5 @@ export function getCertification(
 
   return null;
 }
+
+export default getCertification;

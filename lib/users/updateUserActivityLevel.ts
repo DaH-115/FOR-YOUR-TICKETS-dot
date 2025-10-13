@@ -1,35 +1,48 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { adminFirestore } from "firebase-admin-config";
-import { fetchUserReviewCount } from "lib/users/fetchUserReviewCount";
 import { getActivityLevel } from "lib/utils/getActivityLevel";
 
 /**
  * 사용자의 활동 등급과 리뷰 개수를 업데이트합니다.
+ *
  * @param uid 사용자 UID
+ * @param incrementValue 증감값 (+1: 리뷰 작성, -1: 리뷰 삭제)
  * @returns 업데이트된 활동 등급 라벨
  */
 export async function updateUserActivityLevel(
   uid: string,
+  incrementValue: number = 0,
 ): Promise<string | null> {
   if (!uid) {
     throw new Error("uid가 필요합니다.");
   }
 
   try {
-    // 현재 사용자의 리뷰 개수 조회
-    const reviewCount = await fetchUserReviewCount(uid);
-
-    // 리뷰 개수에 따른 활동 등급 계산
-    const activityLevel = getActivityLevel(reviewCount);
-
-    // 사용자 문서 업데이트
     const userRef = adminFirestore.collection("users").doc(uid);
 
-    await userRef.update({
-      reviewCount,
-      activityLevel: activityLevel.label,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    // 1. reviewCount 증감 (리뷰 작성: +1, 리뷰 삭제: -1)
+    if (incrementValue !== 0) {
+      await userRef.update({
+        reviewCount: FieldValue.increment(incrementValue),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    }
+
+    // 2. 업데이트된 문서 읽기
+    const userDoc = await userRef.get();
+    const userData = userDoc.data();
+    const reviewCount = userData?.reviewCount ?? 0;
+
+    // 3. 리뷰 개수에 따른 활동 등급 계산
+    const activityLevel = getActivityLevel(reviewCount);
+
+    // 4. 등급이 변경된 경우에만 업데이트
+    if (userData?.activityLevel !== activityLevel.label) {
+      await userRef.update({
+        activityLevel: activityLevel.label,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    }
 
     return activityLevel.label;
   } catch (error) {

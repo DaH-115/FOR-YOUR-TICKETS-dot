@@ -25,7 +25,7 @@ export default function ActivityBadge({
 
   // 최종 스타일 클래스 계산 (중앙화된 badgeColor 사용)
   const badgeClassName = useMemo(() => {
-    const baseClasses = `inline-flex items-center justify-center rounded-full px-1.5 py-1 text-xs leading-none`;
+    const baseClasses = `inline-flex items-center justify-center rounded-full px-1.5 py-1 text-[10px] leading-none`;
     return `${baseClasses} ${computedActivityLevel.badgeColor} ${className}`.trim();
   }, [computedActivityLevel.badgeColor, className]);
 
