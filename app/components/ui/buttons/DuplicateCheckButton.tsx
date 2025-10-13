@@ -22,8 +22,8 @@ export default function DuplicateCheckButton({
       disabled={disabled}
       className={`flex-shrink-0 rounded-2xl px-3 py-2 text-xs transition-colors duration-200 ${
         disabled
-          ? "cursor-not-allowed bg-gray-200 text-gray-500"
-          : "bg-gray-500 text-white hover:bg-gray-700"
+          ? "cursor-not-allowed bg-gray-200 text-gray-400"
+          : "bg-gray-600 text-white hover:bg-gray-400"
       } ${className}`}
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedBy}

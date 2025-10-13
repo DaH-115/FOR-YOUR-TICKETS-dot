@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { IoIosMenu } from "react-icons/io";
 import HeaderDropDownMenu from "app/components/ui/navigation/HeaderDropDownMenu";
-import HeaderSearchBar from "app/components/ui/navigation/HeaderSearchBar";
-import HeaderSideMenu from "app/components/ui/navigation/HeaderSideMenu";
+import HeaderSearchBar from "@/components/ui/navigation/HeaderSearchBar";
+import HeaderSideMenu from "@/components/ui/navigation/HeaderSideMenu";
 import { isAuth } from "firebase-config";
 import { useAppDispatch, useAppSelector } from "store/redux-toolkit/hooks";
 import { clearUser, selectUser } from "store/redux-toolkit/slice/userSlice";
@@ -30,7 +30,6 @@ export default function Header() {
   const userDisplayName = user?.displayName;
   const userPhotoURL = user?.photoKey;
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   // 헤더 숨김 상태 (스크롤 다운 시 true)
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
@@ -96,18 +95,6 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (isSideMenuOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [isSideMenuOpen]);
-
   return (
     <header
       className={`fixed left-0 right-0 top-0 z-50 w-full pb-4 pt-8 transition-all duration-500 ease-in-out lg:pt-4 ${
@@ -115,7 +102,7 @@ export default function Header() {
         isHeaderHidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="mx-4 flex items-center justify-between lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+      <div className="mx-4 flex items-center justify-between md:mx-6 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
         {/* LOGO */}
         <Link href="/" className="max-w-24 lg:max-w-48">
           <p className="px-2 text-lg font-bold leading-tight tracking-tighter text-white transition-colors duration-200 hover:text-accent-300 md:px-0 md:text-xl">
@@ -138,9 +125,7 @@ export default function Header() {
             </ul>
           </nav>
           {/* 프로필/로그인 섹션 */}
-          <div
-            className={`hidden transition-all duration-300 md:flex ${isSearchOpen ? "invisible opacity-0" : "visible opacity-100"}`}
-          >
+          <div className="hidden md:flex">
             {userDisplayName ? (
               <div className="px-4 py-3">
                 <HeaderDropDownMenu
@@ -162,10 +147,7 @@ export default function Header() {
           </div>
 
           {/* 검색 바 */}
-          <HeaderSearchBar
-            isSideMenuOpen={isSideMenuOpen}
-            onSearchOpenChange={setIsSearchOpen}
-          />
+          <HeaderSearchBar />
 
           {/* 모바일 메뉴 */}
           <button

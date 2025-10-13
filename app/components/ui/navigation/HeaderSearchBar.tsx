@@ -6,28 +6,21 @@ import {
   ComboboxOptions,
   ComboboxOption,
 } from "@headlessui/react";
-import debounce from "lodash/debounce";
+import { useDebounce } from "use-debounce";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useMemo, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 
-interface HeaderSearchBarProps {
-  isSideMenuOpen: boolean;
-  onSearchOpenChange?: (isOpen: boolean) => void;
-}
-
-export default function HeaderSearchBar({
-  isSideMenuOpen,
-  onSearchOpenChange,
-}: HeaderSearchBarProps) {
+export default function HeaderSearchBar() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState<MovieList[]>([]);
   const [visibleCount, setVisibleCount] = useState(5);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   const searchBarRef = useRef<HTMLDivElement>(null);
 
   const iconClickHandler = useCallback(() => {
@@ -52,40 +45,30 @@ export default function HeaderSearchBar({
     [router, resetSearch],
   );
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce(async (query: string) => {
-        if (query.trim()) {
-          try {
-            const res = await fetch(
-              `/api/tmdb/search?query=${encodeURIComponent(query)}&page=1`,
-            );
-            if (!res.ok) throw new Error("검색 실패");
-            const data = await res.json();
-            setResults(data.movies);
-            setVisibleCount(5);
-          } catch (error) {
-            console.error("검색 실패:", error);
-            setResults([]);
-          }
-        } else {
+  const [debouncedQuery] = useDebounce(searchQuery, 300);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const query = debouncedQuery ?? "";
+      if (query.trim()) {
+        try {
+          const res = await fetch(
+            `/api/tmdb/search?query=${encodeURIComponent(query)}&page=1`,
+          );
+          if (!res.ok) throw new Error("검색 실패");
+          const data = await res.json();
+          setResults(data.movies);
+          setVisibleCount(5);
+        } catch (error) {
+          console.error("검색 실패:", error);
           setResults([]);
         }
-      }, 300),
-    [],
-  );
-
-  useEffect(() => {
-    debouncedSearch(searchQuery);
-    return () => {
-      debouncedSearch.cancel();
+      } else {
+        setResults([]);
+      }
     };
-  }, [searchQuery, debouncedSearch]);
-
-  // isSearchOpen 상태 변경을 부모에게 알림
-  useEffect(() => {
-    onSearchOpenChange?.(isSearchOpen);
-  }, [isSearchOpen, onSearchOpenChange]);
+    fetchData();
+  }, [debouncedQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -111,9 +94,7 @@ export default function HeaderSearchBar({
       <Combobox value={null} onChange={movieSelect}>
         <div className="relative flex items-center justify-end">
           <div
-            className={`relative flex items-center rounded-full border border-white/30 bg-white/10 transition-all duration-300 ease-in-out hover:border-white/50 hover:bg-white/20 ${
-              !isSideMenuOpen ? "backdrop-blur-sm" : ""
-            } ${isSearchOpen ? "h-12 w-64" : "h-12 w-12"}`}
+            className={`relative flex items-center rounded-full border border-white/30 bg-white/10 transition-all duration-300 ease-in-out hover:border-white/50 hover:bg-white/20 ${isSearchOpen ? "h-12 w-64" : "h-12 w-12"}`}
           >
             <ComboboxInput
               value={searchQuery}
@@ -136,9 +117,7 @@ export default function HeaderSearchBar({
             <ComboboxOptions
               modal={false}
               transition
-              className={`absolute right-0 top-full z-10 mt-2 max-h-96 w-64 origin-top-right overflow-auto rounded-xl border border-white/20 bg-black/90 shadow-xl transition duration-200 ease-out scrollbar-hide focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 ${
-                !isSideMenuOpen ? "backdrop-blur-md" : ""
-              }`}
+              className={`absolute right-0 top-full z-10 mt-2 max-h-96 w-64 origin-top-right overflow-auto rounded-xl border border-white/20 bg-black/90 shadow-xl transition duration-200 ease-out scrollbar-hide focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150`}
             >
               {results.slice(0, visibleCount).map((result) => (
                 <ComboboxOption

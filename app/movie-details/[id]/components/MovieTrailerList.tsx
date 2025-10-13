@@ -62,7 +62,7 @@ export default function MovieTrailerList({
     : trailerList.slice(0, currentItemsPerRow);
 
   return (
-    <section className="px-6 py-8">
+    <section className="mx-4 py-8 lg:mx-12 lg:py-16 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
       <header className="mb-4">
         <h2 className="text-xl font-bold tracking-tight text-white">예고편</h2>
       </header>
@@ -89,7 +89,7 @@ export default function MovieTrailerList({
                 ) : (
                   <div className="flex items-center">
                     <span>
-                      더보기 ({trailerList.length - currentItemsPerRow}개 더)
+                      더 보기 ({trailerList.length - currentItemsPerRow}개 더)
                     </span>
                     <IoChevronDown className="ml-1" />
                   </div>
@@ -99,7 +99,7 @@ export default function MovieTrailerList({
           )}
         </>
       ) : (
-        <p className="w-full text-center text-sm text-gray-400">
+        <p className="w-full py-4 text-center text-sm text-gray-400">
           등록된 예고편이 없습니다
         </p>
       )}

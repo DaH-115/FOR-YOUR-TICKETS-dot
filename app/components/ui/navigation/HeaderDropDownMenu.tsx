@@ -42,9 +42,9 @@ export default function HeaderDropDownMenu({
         <MenuItem>
           <Link
             href="/my-page"
-            className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-gray-900"
+            className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-gray-900"
           >
-            <MdPerson className="mr-2 text-sm" />
+            <MdPerson className="mr-2 text-sm text-gray-600" />
             나의 프로필
           </Link>
         </MenuItem>
@@ -53,9 +53,9 @@ export default function HeaderDropDownMenu({
           <MenuItem>
             <button
               onClick={logoutHandler}
-              className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-red-600"
+              className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-red-600"
             >
-              <MdLogout className="mr-2 text-sm" />
+              <MdLogout className="mr-2 text-sm text-gray-600" />
               로그아웃
             </button>
           </MenuItem>

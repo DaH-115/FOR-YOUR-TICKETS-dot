@@ -1,14 +1,14 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import MovieDetailCard from "app/movie-details/[id]/components/MovieDetailCard";
-import MovieTrailerList from "app/movie-details/[id]/components/MovieTrailerList";
-import Background from "app/components/ui/layout/Background";
-import getMovieTitle from "app/utils/getEnrichMovieTitle";
+import MovieDetailCard from "@/movie-details/[id]/components/MovieDetailCard";
+import MovieTrailerList from "@/movie-details/[id]/components/MovieTrailerList";
+import Background from "@/components/ui/layout/Background";
+import getMovieTitle from "@/utils/getEnrichMovieTitle";
 import { fetchMovieCredits } from "lib/movies/fetchMovieCredits";
 import { fetchMovieDetails } from "lib/movies/fetchMovieDetails";
 import { fetchSimilarMovies } from "lib/movies/fetchSimilarMovies";
 import { fetchVideosMovies } from "lib/movies/fetchVideosMovies";
-import SimilarMovieList from "app/movie-details/[id]/components/SimilarMovieList";
+import SimilarMovieList from "@/movie-details/[id]/components/SimilarMovieList";
 
 export async function generateMetadata({
   params,
@@ -77,7 +77,9 @@ export default async function MovieDetailPage({
 
     return (
       <>
-        <Background imageUrl={backdrop_path || ""} height="100vh" />
+        {backdrop_path && (
+          <Background imageUrl={backdrop_path} height="100vh" />
+        )}
         <MovieDetailCard
           movieDetails={movieDetails}
           movieCredits={movieCredits}

@@ -20,9 +20,9 @@ export default function Footer() {
     { href: "/my-page", label: "나의 페이지" },
     {
       href: `/my-page/my-ticket-list?uid=${user?.uid}`,
-      label: "나의 티켓 리스트",
+      label: "나의 티켓",
     },
-    { href: "/my-page/liked-ticket-list", label: "좋아요한 티켓 리스트" },
+    { href: "/my-page/liked-ticket-list", label: "좋아요한 티켓" },
   ];
 
   const authMenuItems = [{ href: "/login", label: "로그인" }];
@@ -41,7 +41,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="mt-16 bg-black/80 px-6 text-white lg:px-0">
+    <footer className="mt-8 bg-black/80 px-6 text-white lg:mt-16">
       <div className="mx-auto max-w-7xl py-8">
         {/* 메인 푸터 콘텐츠 */}
         <div className="mb-12">
