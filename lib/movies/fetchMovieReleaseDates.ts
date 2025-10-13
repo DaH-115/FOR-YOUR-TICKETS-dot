@@ -1,22 +1,8 @@
-interface ReleaseDate {
-  certification: string;
-  meaning: string;
-  release_date: string;
-}
+import { MovieReleaseDates } from "lib/movies/types/movieReleaseDates";
 
-interface ReleaseDatesResult {
-  iso_3166_1: string;
-  release_dates: ReleaseDate[];
-}
-
-interface MovieReleaseDates {
-  id: number;
-  results: ReleaseDatesResult[];
-}
-
-// ✳️ 해당 id에 대한 연령 등급 정보만 가져오는 단일 목적 함수
-// 기본 작업 단위: 특정 영화 하나의 등급 정보를 가져오는 가장 기본적인(atomic) 함수입니다.
-// 재사용성: 이 함수는 다른 곳에서 "영화 하나의 등급 정보가 필요할 때" 언제든지 가져다 쓸 수 있는 부품(building block) 역할을 합니다.
+/**
+ * 해당 id에 대한 연령 등급 정보만 가져오는 단일 목적 함수
+ */
 export async function fetchMovieReleaseDates(
   id: number,
 ): Promise<MovieReleaseDates> {
@@ -34,7 +20,7 @@ export async function fetchMovieReleaseDates(
     const response = await fetch(
       `https://api.themoviedb.org/3/movie/${id}/release_dates?api_key=${TMDB_API_KEY}`,
       {
-        next: { revalidate: 86400 }, // 24시간 캐시
+        cache: "force-cache",
       },
     );
 
@@ -55,10 +41,6 @@ export async function fetchMovieReleaseDates(
     }
 
     const data = await response.json();
-
-    if (!data || !data.results) {
-      throw new Error("영화 등급 정보가 올바르지 않습니다.");
-    }
 
     return data;
   } catch (error) {

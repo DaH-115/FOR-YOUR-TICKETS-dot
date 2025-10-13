@@ -1,9 +1,9 @@
 import { fetchMovieDetails } from "lib/movies/fetchMovieDetails";
 import { fetchMovieReleaseDates } from "lib/movies/fetchMovieReleaseDates";
-import { getCertification } from "lib/movies/utils/normalizeCertification";
+import { getCertification } from "lib/movies/utils/getCertification";
 
 jest.mock("lib/movies/fetchMovieReleaseDates");
-jest.mock("lib/movies/utils/normalizeCertification");
+jest.mock("lib/movies/utils/getCertification");
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch;

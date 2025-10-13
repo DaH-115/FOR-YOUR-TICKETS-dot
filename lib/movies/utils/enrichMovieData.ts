@@ -1,6 +1,6 @@
 import { fetchGenres } from "lib/movies/fetchGenres";
 import { fetchMultipleMovieReleaseDates } from "lib/movies/fetchMultipleMovieReleaseDates";
-import { getCertification } from "lib/movies/utils/normalizeCertification";
+import { getCertification } from "lib/movies/utils/getCertification";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 
 // 영화 목록에 장르와 관람 등급 정보를 추가하는 공통 함수

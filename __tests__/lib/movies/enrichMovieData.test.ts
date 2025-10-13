@@ -1,13 +1,12 @@
 import { enrichMovieData } from "lib/movies/utils/enrichMovieData";
 import { fetchGenres } from "lib/movies/fetchGenres";
 import { fetchMultipleMovieReleaseDates } from "lib/movies/fetchMultipleMovieReleaseDates";
-import { getCertification } from "lib/movies/utils/normalizeCertification";
+import { getCertification } from "lib/movies/utils/getCertification";
+import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 
 jest.mock("lib/movies/fetchGenres");
 jest.mock("lib/movies/fetchMultipleMovieReleaseDates");
-jest.mock("lib/movies/utils/normalizeCertification", () => ({
-  getCertification: jest.fn(),
-}));
+jest.mock("lib/movies/utils/getCertification");
 
 const mockedFetchGenres = fetchGenres as jest.Mock;
 const mockedFetchMultipleMovieReleaseDates =
@@ -64,7 +63,7 @@ describe("enrichMovieData", () => {
   });
 
   test("성공: 영화 목록에 장르와 관람 등급 정보를 추가해야 함", async () => {
-    const enrichedMovies = await enrichMovieData(mockMovies as any);
+    const enrichedMovies = await enrichMovieData(mockMovies as MovieList[]);
 
     expect(enrichedMovies).toHaveLength(2);
     expect(enrichedMovies[0].genres).toEqual(["액션", "모험"]);
