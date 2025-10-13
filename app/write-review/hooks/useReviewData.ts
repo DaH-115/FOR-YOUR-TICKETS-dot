@@ -2,11 +2,13 @@
 
 import { doc, getDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { db } from "firebase-config";
-import type { ReviewContainerProps } from "app/write-review/components/ReviewContainer";
-import type { ReviewFormValues } from "app/write-review/types";
-
-type useReviewDataProps = Pick<ReviewContainerProps, "mode" | "reviewId">;
+import { useAlert } from "store/context/alertContext";
+import type {
+  ReviewFormValues,
+  UseReviewDataParams,
+} from "app/write-review/types";
 
 /**
  * 리뷰 데이터(초기값) 비동기 로딩 커스텀 훅
@@ -15,16 +17,13 @@ type useReviewDataProps = Pick<ReviewContainerProps, "mode" | "reviewId">;
  * @param reviewId - 리뷰 ID (수정 시)
  * @returns initialData, loading
  */
-export function useReviewData({ mode, reviewId }: useReviewDataProps) {
-  // 폼 초기값 상태
+export function useReviewData({ mode, reviewId }: UseReviewDataParams) {
+  const router = useRouter();
+  const { showErrorHandler } = useAlert();
   const [initialData, setInitialData] = useState<ReviewFormValues>();
-  // 로딩 상태
   const [loading, setLoading] = useState(true);
 
-  /**
-   * mode/reviewId 변경 시 Firestore에서 리뷰 데이터 비동기 로딩
-   * - Firestore 문서 구조에서 review 객체 안의 데이터 추출
-   */
+  // mode === "edit" && reviewId가 있을 때 Firestore에서 리뷰 데이터 비동기 로딩
   useEffect(() => {
     (async () => {
       try {
@@ -32,7 +31,6 @@ export function useReviewData({ mode, reviewId }: useReviewDataProps) {
           const snap = await getDoc(doc(db, "movie-reviews", reviewId));
           if (snap.exists()) {
             const data = snap.data();
-            // Firestore 문서 구조에서 review 객체 안의 데이터 추출
             setInitialData({
               reviewTitle: data.review?.reviewTitle || "",
               reviewContent: data.review?.reviewContent || "",
@@ -43,12 +41,17 @@ export function useReviewData({ mode, reviewId }: useReviewDataProps) {
         }
       } catch (error) {
         console.error("리뷰 데이터 로딩 실패:", error);
+        showErrorHandler(
+          "오류",
+          "리뷰 데이터를 불러올 수 없습니다. 다시 시도해주세요.",
+        );
+        // 에러 발생 시 홈으로 이동
+        router.push("/");
       } finally {
         setLoading(false);
       }
     })();
-  }, [mode, reviewId]);
+  }, [mode, reviewId, router, showErrorHandler]);
 
-  // UI에서 사용할 상태 반환
   return { initialData, loading };
 }

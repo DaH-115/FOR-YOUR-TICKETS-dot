@@ -7,7 +7,7 @@ import {
 import { useFormContext, Controller } from "react-hook-form";
 import { IoChevronDown } from "react-icons/io5";
 import { FaExclamationTriangle, FaStar, FaStarHalf } from "react-icons/fa";
-import { ReviewFormValues } from "app/write-review/types";
+import { ReviewFormValues } from "@/write-review/types";
 
 const ratingOptions = [
   { value: 1, label: "1점", stars: 0.5, description: "매우 나쁨" },
@@ -43,7 +43,7 @@ export default function ReviewFormRating() {
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">평점</label>
+      <label className="text-sm text-gray-600">평점</label>
 
       <Controller
         name="rating"
@@ -59,10 +59,10 @@ export default function ReviewFormRating() {
             <div className="relative">
               <Listbox value={field.value} onChange={field.onChange}>
                 <ListboxButton
-                  className={`w-full rounded-xl border-2 px-4 py-3 text-left transition-all focus:outline-none focus:ring-1 focus:ring-accent-300 focus:ring-offset-1 ${
+                  className={`w-full rounded-xl border px-4 py-3 text-left transition-all focus:outline-none focus:ring-1 focus:ring-accent-300 focus:ring-offset-1 ${
                     error
                       ? "border-red-500 bg-red-50 ring-2 ring-red-500/30"
-                      : "border-gray-200 bg-gray-50 focus:border-accent-500 focus:bg-white"
+                      : "bg-gray-white border-gray-200 focus:border-accent-500"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -71,10 +71,10 @@ export default function ReviewFormRating() {
                         <>
                           <Stars count={selected.stars} />
                           <div className="space-x-2 text-gray-800">
-                            <span className="text-xs text-gray-700">
+                            <span className="text-sm text-gray-700">
                               {selected.label}
                             </span>
-                            <span className="ml-2 text-xs text-gray-500">
+                            <span className="ml-2 text-sm text-gray-500">
                               {selected.description && selected.description}
                             </span>
                           </div>
@@ -92,7 +92,7 @@ export default function ReviewFormRating() {
                   </div>
                 </ListboxButton>
 
-                <ListboxOptions className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border-2 border-gray-200 bg-white shadow-lg focus:outline-none">
+                <ListboxOptions className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg focus:outline-none">
                   {ratingOptions.map((option) => (
                     <ListboxOption
                       key={option.value}
@@ -101,10 +101,10 @@ export default function ReviewFormRating() {
                     >
                       <Stars count={option.stars} />
                       <div className="space-x-2 text-gray-800">
-                        <span className="text-xs text-gray-700">
+                        <span className="text-sm text-gray-700">
                           {option.label}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-sm text-gray-500">
                           {option.description && option.description}
                         </span>
                       </div>
