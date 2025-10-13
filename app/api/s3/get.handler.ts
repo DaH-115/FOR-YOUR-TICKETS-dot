@@ -1,25 +1,20 @@
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { verifyAuthToken } from "lib/auth/verifyToken";
 import s3 from "lib/aws/s3";
+import {
+  getS3BucketName,
+  getS3DownloadTTL,
+  isAllowedS3Path,
+} from "lib/aws/s3.constants";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * S3 Presigned URL 다운로드 엔드포인트 (GET)
+ */
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const key = searchParams.get("key");
-    const isPublic = searchParams.get("isPublic") === "true";
-
-    // 공개 리소스가 아닌 경우에만 인증 토큰 확인
-    if (!isPublic) {
-      const authResult = await verifyAuthToken(req);
-      if (!authResult.success) {
-        return NextResponse.json(
-          { error: true, message: "인증이 필요합니다." },
-          { status: 401 },
-        );
-      }
-    }
 
     if (!key) {
       return NextResponse.json(
@@ -28,9 +23,16 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const ttl = parseInt(process.env.S3_DOWNLOAD_URL_TTL || "3600", 10);
+    if (!isAllowedS3Path(key)) {
+      return NextResponse.json(
+        { error: true, message: "허용되지 않는 key 경로입니다." },
+        { status: 400 },
+      );
+    }
+
+    const ttl = getS3DownloadTTL();
     const command = new GetObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET!,
+      Bucket: getS3BucketName(),
       Key: key,
     });
 

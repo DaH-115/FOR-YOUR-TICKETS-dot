@@ -1,93 +1,371 @@
-import { GET } from "app/api/s3/get.handler";
+import { GET } from "@/api/s3/get.handler";
 import { createMockRequest } from "__tests__/utils/test-utils";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { verifyAuthToken } from "lib/auth/verifyToken";
+import { getS3BucketName, getS3DownloadTTL } from "lib/aws/s3.constants";
 
-jest.mock("@aws-sdk/s3-request-presigner", () => ({ getSignedUrl: jest.fn() }));
+// Mock 설정
+jest.mock("@aws-sdk/s3-request-presigner", () => ({
+  getSignedUrl: jest.fn(),
+}));
 jest.mock("@aws-sdk/client-s3", () => ({
   S3Client: jest.fn(() => ({})),
   GetObjectCommand: jest.fn((args) => ({ ...args })),
 }));
-jest.mock("lib/auth/verifyToken", () => ({ verifyAuthToken: jest.fn() }));
+jest.mock("lib/aws/s3", () => ({
+  __esModule: true,
+  default: {},
+}));
+jest.mock("lib/aws/s3.constants", () => ({
+  getS3BucketName: jest.fn(() => "test-bucket"),
+  getS3DownloadTTL: jest.fn(() => 3600),
+  isAllowedS3Path: jest.fn((key: string) => key.startsWith("profile-img/")),
+  ALLOWED_S3_PATHS: ["profile-img/"],
+  S3_PRESIGNED_URL_EXPIRY: {
+    DOWNLOAD: 3600,
+    UPLOAD: 300,
+  },
+}));
 
-describe("GET /api/s3", () => {
+const mockedGetSignedUrl = getSignedUrl as jest.MockedFunction<
+  typeof getSignedUrl
+>;
+const mockedGetS3BucketName = getS3BucketName as jest.MockedFunction<
+  typeof getS3BucketName
+>;
+const mockedGetS3DownloadTTL = getS3DownloadTTL as jest.MockedFunction<
+  typeof getS3DownloadTTL
+>;
+
+describe("GET /api/s3 - Presigned URL 다운로드", () => {
   const mockSignedUrl =
-    "https://s3.amazonaws.com/mock-bucket/mock-presigned-url";
+    "https://s3.amazonaws.com/test-bucket/profile-img/test.jpg?signature=xxx";
   const mockKey = "profile-img/test-user-123/1234567890_test.jpg";
-  const mockUserId = "test-user-123";
+  const mockTTL = 3600;
 
   beforeEach(() => {
-    // 각 테스트 전 mock 및 상태 초기화
     jest.clearAllMocks();
-    (getSignedUrl as jest.Mock).mockResolvedValue(mockSignedUrl);
-    (verifyAuthToken as jest.Mock).mockResolvedValue({
-      success: true,
-      uid: mockUserId,
+
+    // 기본 mock 설정
+    mockedGetSignedUrl.mockResolvedValue(mockSignedUrl);
+    mockedGetS3BucketName.mockReturnValue("test-bucket");
+    mockedGetS3DownloadTTL.mockReturnValue(mockTTL);
+  });
+
+  describe("성공 케이스", () => {
+    test("유효한 key로 presigned URL을 반환한다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body.url).toBe(mockSignedUrl);
+      expect(body.expiresIn).toBe(mockTTL);
+      expect(mockedGetSignedUrl).toHaveBeenCalledTimes(1);
+    });
+
+    test("S3 함수들을 올바르게 호출한다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      await GET(req);
+
+      expect(mockedGetS3BucketName).toHaveBeenCalled();
+      expect(mockedGetS3DownloadTTL).toHaveBeenCalled();
+      expect(mockedGetSignedUrl).toHaveBeenCalledWith(
+        expect.any(Object), // S3 client
+        expect.objectContaining({
+          Bucket: "test-bucket",
+          Key: mockKey,
+        }),
+        expect.objectContaining({
+          expiresIn: mockTTL,
+        }),
+      );
+    });
+
+    test("다양한 프로필 이미지 경로를 허용한다", async () => {
+      const validKeys = [
+        "profile-img/user-1/photo.jpg",
+        "profile-img/user-2/avatar.png",
+        "profile-img/abc123/image123.gif",
+      ];
+
+      for (const key of validKeys) {
+        const req = createMockRequest({
+          method: "GET",
+          url: `http://localhost:3000/api/s3?key=${encodeURIComponent(key)}`,
+        });
+
+        const response = await GET(req);
+        expect(response.status).toBe(200);
+      }
     });
   });
 
-  test("성공: 유효한 요청 시 presigned URL을 반환해야 함", async () => {
-    // 정상적으로 인증, key 파라미터, S3 presigned URL 생성까지 모두 성공하는 경우
-    const req = createMockRequest({
-      method: "GET",
-      url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
-      headers: { authorization: "Bearer mock-token" },
+  describe("유효성 검증", () => {
+    test("key 파라미터가 없으면 400 에러를 반환한다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: "http://localhost:3000/api/s3",
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(body.error).toBe(true);
+      expect(body.message).toBe("key 파라미터가 필요합니다.");
+      expect(mockedGetSignedUrl).not.toHaveBeenCalled();
     });
-    const response = await GET(req);
-    const body = await response.json();
-    expect(response.status).toBe(200);
-    expect(body.url).toBe(mockSignedUrl);
-    expect(getSignedUrl).toHaveBeenCalledTimes(1);
+
+    test("빈 문자열 key는 400 에러를 반환한다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: "http://localhost:3000/api/s3?key=",
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(body.error).toBe(true);
+    });
+
+    test("허용되지 않는 경로는 400 에러를 반환한다", async () => {
+      const invalidKeys = [
+        "private-files/secret.txt",
+        "admin/config.json",
+        "public/image.png",
+        "documents/file.pdf",
+      ];
+
+      for (const invalidKey of invalidKeys) {
+        const req = createMockRequest({
+          method: "GET",
+          url: `http://localhost:3000/api/s3?key=${encodeURIComponent(invalidKey)}`,
+        });
+
+        const response = await GET(req);
+        const body = await response.json();
+
+        expect(response.status).toBe(400);
+        expect(body.error).toBe(true);
+        expect(body.message).toBe("허용되지 않는 key 경로입니다.");
+      }
+
+      expect(mockedGetSignedUrl).not.toHaveBeenCalled();
+    });
+
+    test("profile-img/로 시작하지 않는 경로는 거부된다", async () => {
+      const invalidKeys = [
+        "../secret/file.txt",
+        "admin/config.json",
+        "../../etc/passwd",
+        "private-files/secret.txt",
+      ];
+
+      for (const key of invalidKeys) {
+        const req = createMockRequest({
+          method: "GET",
+          url: `http://localhost:3000/api/s3?key=${encodeURIComponent(key)}`,
+        });
+
+        const response = await GET(req);
+        const body = await response.json();
+
+        expect(response.status).toBe(400);
+        expect(body.message).toBe("허용되지 않는 key 경로입니다.");
+      }
+    });
+
+    test("profile-img/로 시작하더라도 ..를 포함하면 잠재적 위험이 있다", async () => {
+      // 참고: 현재 구현은 startsWith만 체크하므로 이런 경로를 허용함
+      // 실제 프로덕션에서는 S3가 경로를 정규화하므로 위험하지 않을 수 있음
+      const pathWithDotDot = "profile-img/../admin/config.json";
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(pathWithDotDot)}`,
+      });
+
+      const response = await GET(req);
+
+      // 현재 구현은 이를 허용함 (profile-img/로 시작하므로)
+      // 추후 개선이 필요할 수 있음
+      expect(response.status).toBe(200);
+    });
   });
 
-  test("실패: key 파라미터가 없는 경우 400 에러를 반환해야 함", async () => {
-    // key 파라미터가 없을 때 400 반환
-    const req = createMockRequest({
-      method: "GET",
-      url: "http://localhost:3000/api/s3",
-      headers: { authorization: "Bearer mock-token" },
+  describe("에러 처리", () => {
+    test("getSignedUrl 실패 시 500 에러를 반환한다", async () => {
+      const errorMessage = "S3 서비스 장애";
+      mockedGetSignedUrl.mockRejectedValue(new Error(errorMessage));
+
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body.error).toBe(true);
+      expect(body.message).toBe(errorMessage);
+      expect(mockedGetSignedUrl).toHaveBeenCalledTimes(1);
     });
-    const response = await GET(req);
-    const body = await response.json();
-    expect(response.status).toBe(400);
-    expect(body.error).toBe(true);
-    expect(body.message).toBe("key 파라미터가 필요합니다.");
-    expect(getSignedUrl).not.toHaveBeenCalled();
+
+    test("AWS 권한 에러를 적절히 처리한다", async () => {
+      const awsError = new Error("AccessDenied: Access Denied");
+      mockedGetSignedUrl.mockRejectedValue(awsError);
+
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body.message).toBe("AccessDenied: Access Denied");
+    });
+
+    test("환경변수 누락 에러를 처리한다", async () => {
+      mockedGetS3BucketName.mockImplementation(() => {
+        throw new Error("환경변수 AWS_S3_BUCKET이 설정되지 않았습니다.");
+      });
+
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body.message).toContain("환경변수");
+    });
+
+    test("알 수 없는 에러는 기본 메시지를 반환한다", async () => {
+      mockedGetSignedUrl.mockRejectedValue("Unknown error");
+
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body.message).toBe("알 수 없는 에러가 발생했습니다.");
+    });
   });
 
-  test("실패: 인증되지 않은 요청 시 401 에러를 반환해야 함", async () => {
-    // 인증 실패 시 401 반환
-    (verifyAuthToken as jest.Mock).mockResolvedValue({
-      success: false,
-      error: "로그인이 필요합니다.",
-      statusCode: 401,
+  describe("응답 구조", () => {
+    test("성공 응답은 url과 expiresIn을 포함한다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(body).toHaveProperty("url");
+      expect(body).toHaveProperty("expiresIn");
+      expect(typeof body.url).toBe("string");
+      expect(typeof body.expiresIn).toBe("number");
+      expect(body.expiresIn).toBeGreaterThan(0);
     });
-    const req = createMockRequest({
-      method: "GET",
-      url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+
+    test("에러 응답은 error와 message를 포함한다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: "http://localhost:3000/api/s3",
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(body).toHaveProperty("error");
+      expect(body).toHaveProperty("message");
+      expect(body.error).toBe(true);
+      expect(typeof body.message).toBe("string");
     });
-    const response = await GET(req);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body.error).toBe(true);
-    expect(body.message).toBe("인증이 필요합니다.");
-    expect(getSignedUrl).not.toHaveBeenCalled();
   });
 
-  test("실패: getSignedUrl에서 에러 발생 시 500 에러를 반환해야 함", async () => {
-    // getSignedUrl 함수에서 에러 발생 시 500 반환
-    const errorMessage = "S3 is down";
-    (getSignedUrl as jest.Mock).mockRejectedValue(new Error(errorMessage));
-    const req = createMockRequest({
-      method: "GET",
-      url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
-      headers: { authorization: "Bearer mock-token" },
+  describe("URL 인코딩", () => {
+    test("URL 인코딩된 key를 올바르게 디코딩한다", async () => {
+      const keyWithSpecialChars = "profile-img/user-123/한글 파일명.jpg";
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(keyWithSpecialChars)}`,
+      });
+
+      const response = await GET(req);
+
+      expect(response.status).toBe(200);
+      expect(mockedGetSignedUrl).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          Key: keyWithSpecialChars,
+        }),
+        expect.any(Object),
+      );
     });
-    const response = await GET(req);
-    const body = await response.json();
-    expect(response.status).toBe(500);
-    expect(body.error).toBe(true);
-    expect(body.message).toBe(errorMessage);
-    expect(getSignedUrl).toHaveBeenCalledTimes(1);
+
+    test("공백이 포함된 key를 처리한다", async () => {
+      const keyWithSpaces = "profile-img/user-123/my photo.jpg";
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(keyWithSpaces)}`,
+      });
+
+      const response = await GET(req);
+      expect(response.status).toBe(200);
+    });
+  });
+
+  describe("통합 시나리오", () => {
+    test("전체 플로우가 정상 작동한다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(mockKey)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      // 1. 응답 상태 확인
+      expect(response.status).toBe(200);
+
+      // 2. 응답 구조 확인
+      expect(body).toHaveProperty("url");
+      expect(body).toHaveProperty("expiresIn");
+
+      // 3. 유틸리티 함수 호출 확인
+      expect(mockedGetS3BucketName).toHaveBeenCalled();
+      expect(mockedGetS3DownloadTTL).toHaveBeenCalled();
+
+      // 4. S3 SDK 호출 확인
+      expect(mockedGetSignedUrl).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          Bucket: "test-bucket",
+          Key: mockKey,
+        }),
+        expect.objectContaining({
+          expiresIn: mockTTL,
+        }),
+      );
+    });
   });
 });
