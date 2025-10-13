@@ -11,12 +11,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
 
-// 줄거리 텍스트를 자르는 유틸리티 함수
-const truncateText = (text: string, maxLength: number): string => {
-  if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength).trim() + "...";
-};
-
 interface RecommendSectionProps {
   movie: MovieList;
   trailerKey?: string;
@@ -36,23 +30,6 @@ export default function RecommendSection({
 
   // 클라이언트 사이드 렌더링 상태 관리
   const [isClient, setIsClient] = useState(false);
-
-  // 줄거리 텍스트 처리
-  const displayOverview = useMemo(() => {
-    if (!movie.overview) return "";
-
-    // SSR 중에는 기본값 사용, 클라이언트에서는 실제 화면 크기 반영
-    const maxLength =
-      isClient && typeof window !== "undefined" && window.innerWidth >= 768
-        ? 300
-        : 150;
-
-    if (movie.overview.length <= maxLength) {
-      return movie.overview;
-    }
-
-    return truncateText(movie.overview, maxLength);
-  }, [movie.overview, isClient]);
 
   // 줄거리가 잘렸는지 확인
   const isOverviewTruncated = useMemo(() => {
@@ -100,12 +77,15 @@ export default function RecommendSection({
   }, []);
 
   return (
-    <article ref={sectionRef} className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-4xl">
-      <div className="mx-auto flex flex-col items-center justify-center lg:flex-row lg:gap-20">
+    <article
+      ref={sectionRef}
+      className="mx-4 lg:mx-12 lg:mb-16 xl:mx-auto xl:max-w-6xl"
+    >
+      <div className="mx-auto flex flex-col items-center justify-center md:flex-row">
         {/* 영화 타이틀 및 정보 */}
-        <section className="mx-auto w-full">
-          <header>
-            <p className="mb-2 text-base font-semibold tracking-tight text-accent-300 lg:text-lg">
+        <section className="mx-auto w-full xl:max-w-2xl">
+          <header className="sm:mx-4 lg:mx-0">
+            <p className="mb-2 text-sm font-semibold tracking-tight text-accent-300 lg:text-lg">
               오늘의 추천 영화
             </p>
             {/* 영화 제목 */}
@@ -132,21 +112,23 @@ export default function RecommendSection({
             <p className="mt-4 text-sm text-gray-200 lg:mt-2">{`${movie.genres?.join(", ")}`}</p>
 
             {/* 줄거리 */}
-            <div className="mt-6">
-              <p className="break-words text-sm leading-loose tracking-tight text-white">
-                {displayOverview}
-              </p>
-              <div className="text-right">
+            {movie.overview && (
+              <div className="mt-6 md:mt-8 md:max-w-lg">
+                <p className="line-clamp-3 break-words text-sm leading-loose tracking-tight text-white md:line-clamp-4">
+                  {movie.overview}
+                </p>
                 {isOverviewTruncated && (
-                  <Link
-                    href={`/movie-details/${movie.id}`}
-                    className="mt-2 text-sm font-medium text-accent-300 transition-colors hover:text-accent-200"
-                  >
-                    더 보기
-                  </Link>
+                  <div className="text-right">
+                    <Link
+                      href={`/movie-details/${movie.id}`}
+                      className="text-sm text-accent-300 transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
+                    >
+                      더 보기
+                    </Link>
+                  </div>
                 )}
               </div>
-            </div>
+            )}
           </header>
 
           {/* 예고편 섹션 */}
@@ -172,7 +154,11 @@ export default function RecommendSection({
             {/* 전체 티켓을 3D 효과로 묶기 */}
             <div className="-rotate-y-6 rotate-x-4 group-hover:rotate-y-0 group-hover:rotate-x-0 pointer-events-auto relative skew-y-3 scale-75 transform transition-all duration-300 ease-in-out group-hover:skew-y-0 group-hover:scale-90 lg:scale-90 lg:group-hover:scale-100">
               {/* 영화 포스터 */}
-              <MoviePoster posterPath={movie.poster_path} title={movieTitle} />
+              <MoviePoster
+                posterPath={movie.poster_path}
+                title={movieTitle}
+                importance="hero"
+              />
               {/* 영화 정보 카드 */}
               <MovieInfoCard movie={movie} />
               {/* 티켓 만들기 버튼 */}

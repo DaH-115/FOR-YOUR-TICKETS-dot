@@ -1,4 +1,4 @@
-import HomePage from "app/home/HomePage";
+import HomePage from "@/home/HomePage";
 import { fetchNowPlayingMovies } from "lib/movies/fetchNowPlayingMovies";
 import { fetchVideosMovies } from "lib/movies/fetchVideosMovies";
 import { fetchReviewsPaginated } from "lib/reviews/fetchReviewsPaginated";
@@ -18,18 +18,39 @@ export default async function Page() {
   }
 
   // 매일 다른 추천 영화 선택 (SSR 안전한 날짜 기반 로직)
-  // 1-31일 날짜를 영화 배열 길이로 나눈 나머지로 인덱스 결정
+  // 예고편이 있는 영화만 선택
   const today = new Date().getDate();
-  const recommendIndex = today % nowPlayingMovies.length;
-  const recommendMovie = nowPlayingMovies[recommendIndex];
+  const startIndex = today % nowPlayingMovies.length;
 
-  const [trailerData, credits, movieDetails] = await Promise.all([
-    fetchVideosMovies(recommendMovie.id),
+  let recommendMovie = nowPlayingMovies[startIndex];
+  let trailerKey = "";
+  let attempts = 0;
+  const maxAttempts = nowPlayingMovies.length;
+
+  // 예고편이 있는 영화를 찾을 때까지 순회
+  while (attempts < maxAttempts) {
+    const currentIndex = (startIndex + attempts) % nowPlayingMovies.length;
+    const currentMovie = nowPlayingMovies[currentIndex];
+    const trailerData = await fetchVideosMovies(currentMovie.id);
+
+    if (trailerData?.results?.[0]?.key) {
+      recommendMovie = currentMovie;
+      trailerKey = trailerData.results[0].key;
+      break;
+    }
+
+    attempts++;
+  }
+
+  // 예고편이 있는 영화가 없는 경우, 첫 번째 영화 사용 (fallback)
+  if (!trailerKey) {
+    recommendMovie = nowPlayingMovies[startIndex];
+  }
+
+  const [credits, movieDetails] = await Promise.all([
     fetchMovieCredits(recommendMovie.id),
     fetchMovieDetails(recommendMovie.id),
   ]);
-
-  const trailerKey = trailerData?.results?.[0]?.key || "";
 
   const recommendMovieWithDetails = {
     ...recommendMovie,

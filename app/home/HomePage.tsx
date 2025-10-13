@@ -9,6 +9,7 @@ import Background from "@/components/ui/layout/Background";
 // 컴포넌트 지연 로딩
 const LatestReviewList = dynamic(
   () => import("app/home/components/reviews/LatestReviewList"),
+  { ssr: false },
 );
 
 interface HomePageProps {

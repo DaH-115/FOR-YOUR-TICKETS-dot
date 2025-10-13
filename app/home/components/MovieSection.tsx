@@ -51,9 +51,12 @@ const MovieSection = memo(function MovieSection({
   }, []);
 
   return (
-    <section ref={sectionRef} className="mt-8 lg:mt-16">
+    <section
+      ref={sectionRef}
+      className="mx-4 mb-8 lg:mx-12 lg:mb-16 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]"
+    >
       <header
-        className={`mx-4 mb-4 transition-all duration-500 ease-out lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px] ${
+        className={`mb-4 transition-all duration-500 ease-out ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
       >
@@ -62,7 +65,7 @@ const MovieSection = memo(function MovieSection({
 
       {/* SwiperList */}
       <div
-        className={`mx-4 transition-all duration-500 ease-out lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px] ${
+        className={`transition-all duration-500 ease-out ${
           isVisible
             ? "translate-y-0 opacity-100 transition-delay-300"
             : "translate-y-8 opacity-0"
