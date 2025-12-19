@@ -3,10 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import InputField from "app/components/ui/forms/InputField";
-import { useChangePassword } from "app/my-page/hooks/useChangePassword";
+import InputField from "@/components/ui/forms/InputField";
+import { useChangePassword } from "@/my-page/hooks/useChangePassword";
 
-const passwordBase = z
+// 비밀번호 검증 규칙
+const passwordSchema = z
   .string()
   .min(8, "비밀번호는 최소 8자 이상이어야 합니다.")
   .regex(
@@ -15,10 +16,11 @@ const passwordBase = z
   );
 
 const currentPasswordSchema = z.object({
-  currentPassword: passwordBase,
+  currentPassword: passwordSchema,
 });
+
 const newPasswordSchema = z.object({
-  newPassword: passwordBase,
+  newPassword: passwordSchema,
 });
 
 type CurrentPasswordForm = z.infer<typeof currentPasswordSchema>;
@@ -43,15 +45,31 @@ export default function ChangePassword() {
     resolver: zodResolver(newPasswordSchema),
   });
 
-  const { isVerifying, isUpdating, onVerifyCurrent, onChangePassword } =
-    useChangePassword();
+  const {
+    isVerified,
+    isVerifying,
+    isUpdating,
+    onVerifyCurrent,
+    onChangePassword,
+  } = useChangePassword();
+
+  // 현재 비밀번호 확인 핸들러: 성공 시 현재 비밀번호 필드 리셋
+  const handleVerifyCurrent = async (data: CurrentPasswordForm) => {
+    try {
+      await onVerifyCurrent(data);
+      // 재인증 성공 시 보안을 위해 입력 필드 즉시 클리어
+      resetCurrentPassword();
+    } catch (error) {
+      // 재인증 실패 시 폼 유지 (사용자가 다시 시도 가능)
+      console.error("비밀번호 확인 실패:", error);
+    }
+  };
 
   // 새 비밀번호 변경 핸들러: 성공 시 입력값 리셋
   const handleChangePassword = async (data: NewPasswordForm) => {
     try {
       await onChangePassword(data);
-      // 성공 시에만 폼 리셋
-      resetCurrentPassword();
+      // 성공 시 새 비밀번호 필드 리셋
       resetNewPassword();
     } catch (error) {
       // 에러 발생 시 폼은 그대로 유지하여 사용자가 수정할 수 있도록 함
@@ -63,16 +81,16 @@ export default function ChangePassword() {
     <section className="relative rounded-xl bg-white">
       <h2 className="mb-4 text-lg font-bold">비밀번호 변경</h2>
 
-      {/* 현재 비밀번호 확인 폼 - 항상 표시 */}
+      {/* 현재 비밀번호 확인 폼 */}
       <div className="mb-6">
         <h3 className="sr-only">현재 비밀번호 확인</h3>
         <div
           className="mb-2"
           onKeyDown={(e) => {
             // 엔터키 입력 시, 현재 비밀번호 확인 실행
-            if (e.key === "Enter" && !isVerifying) {
+            if (e.key === "Enter" && !isVerifying && !isVerified) {
               e.preventDefault();
-              submitCurrent(onVerifyCurrent)();
+              submitCurrent(handleVerifyCurrent)();
             }
           }}
         >
@@ -84,34 +102,42 @@ export default function ChangePassword() {
             register={regCurrent}
             error={errCurrent.currentPassword?.message}
             touched={!!touchedCurrent.currentPassword}
-            disabled={isVerifying}
+            disabled={isVerifying || isVerified}
             autoComplete="off"
           />
         </div>
-        <div className="flex justify-end">
+        <div className="flex items-center justify-end gap-2">
+          {isVerified && (
+            <span className="text-xs text-green-600">✓ 확인 완료</span>
+          )}
           <button
             type="button"
-            onClick={submitCurrent(onVerifyCurrent)}
-            disabled={isVerifying}
+            onClick={submitCurrent(handleVerifyCurrent)}
+            disabled={isVerifying || isVerified}
             className={`mt-2 flex-shrink-0 rounded-2xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
-              isVerifying
+              isVerifying || isVerified
                 ? "cursor-not-allowed bg-gray-200 text-gray-400"
-                : "bg-gray-600 text-white hover:bg-gray-700"
+                : "bg-gray-600 text-white hover:bg-gray-400"
             }`}
+            aria-label={isVerified ? "비밀번호 확인 완료" : "비밀번호 확인"}
           >
-            {isVerifying ? "확인 중..." : "비밀번호 확인"}
+            {isVerifying
+              ? "확인 중..."
+              : isVerified
+                ? "확인 완료"
+                : "비밀번호 확인"}
           </button>
         </div>
       </div>
 
-      {/* 새 비밀번호 변경 폼 - 항상 표시 */}
+      {/* 새 비밀번호 변경 폼 */}
       <div>
         <h3 className="sr-only">새 비밀번호 변경</h3>
         <div
           className="mb-2"
           onKeyDown={(e) => {
             // 엔터키 입력 시, 새 비밀번호 변경 실행
-            if (e.key === "Enter" && !isUpdating) {
+            if (e.key === "Enter" && !isUpdating && isVerified) {
               e.preventDefault();
               submitNew(handleChangePassword)();
             }
@@ -125,20 +151,32 @@ export default function ChangePassword() {
             register={regNew}
             error={errNew.newPassword?.message}
             touched={!!touchedNew.newPassword}
-            disabled={isUpdating}
+            disabled={isUpdating || !isVerified}
             autoComplete="off"
           />
         </div>
+        {!isVerified && (
+          <p className="mb-2 text-xs text-gray-500">
+            먼저 현재 비밀번호를 확인해주세요.
+          </p>
+        )}
         <div className="flex justify-end">
           <button
             type="button"
             onClick={submitNew(handleChangePassword)}
-            disabled={isUpdating}
+            disabled={isUpdating || !isVerified}
             className={`mt-2 flex-shrink-0 rounded-2xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
-              isUpdating
+              !isVerified || isUpdating
                 ? "cursor-not-allowed bg-gray-200 text-gray-400"
-                : "bg-gray-600 text-white hover:bg-gray-700"
+                : "bg-gray-600 text-white hover:bg-gray-400"
             }`}
+            aria-label={
+              !isVerified
+                ? "재인증 후 변경 가능"
+                : isUpdating
+                  ? "변경 중"
+                  : "비밀번호 변경"
+            }
           >
             {isUpdating ? "변경 중..." : "비밀번호 변경"}
           </button>

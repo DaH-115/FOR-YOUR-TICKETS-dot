@@ -15,16 +15,15 @@ jest.mock("lib/aws/s3", () => ({
   __esModule: true,
   default: {},
 }));
-jest.mock("lib/aws/s3.constants", () => ({
-  getS3BucketName: jest.fn(() => "test-bucket"),
-  getS3DownloadTTL: jest.fn(() => 3600),
-  isAllowedS3Path: jest.fn((key: string) => key.startsWith("profile-img/")),
-  ALLOWED_S3_PATHS: ["profile-img/"],
-  S3_PRESIGNED_URL_EXPIRY: {
-    DOWNLOAD: 3600,
-    UPLOAD: 300,
-  },
-}));
+jest.mock("lib/aws/s3.constants", () => {
+  // 실제 isAllowedS3Path 구현을 사용
+  const actual = jest.requireActual("lib/aws/s3.constants");
+  return {
+    ...actual,
+    getS3BucketName: jest.fn(() => "test-bucket"),
+    getS3DownloadTTL: jest.fn(() => 3600),
+  };
+});
 
 const mockedGetSignedUrl = getSignedUrl as jest.MockedFunction<
   typeof getSignedUrl
@@ -184,9 +183,9 @@ describe("GET /api/s3 - Presigned URL 다운로드", () => {
       }
     });
 
-    test("profile-img/로 시작하더라도 ..를 포함하면 잠재적 위험이 있다", async () => {
-      // 참고: 현재 구현은 startsWith만 체크하므로 이런 경로를 허용함
-      // 실제 프로덕션에서는 S3가 경로를 정규화하므로 위험하지 않을 수 있음
+    test("profile-img/로 시작하더라도 ..를 포함하면 거부된다 (Path Traversal 방지)", async () => {
+      // Path Traversal 공격 시도: profile-img/../admin/config.json
+      // 정규화하면 admin/config.json이 되어 허용된 경로를 벗어남
       const pathWithDotDot = "profile-img/../admin/config.json";
       const req = createMockRequest({
         method: "GET",
@@ -194,10 +193,51 @@ describe("GET /api/s3 - Presigned URL 다운로드", () => {
       });
 
       const response = await GET(req);
+      const body = await response.json();
 
-      // 현재 구현은 이를 허용함 (profile-img/로 시작하므로)
-      // 추후 개선이 필요할 수 있음
+      // .. 패턴을 포함하므로 거부되어야 함
+      expect(response.status).toBe(400);
+      expect(body.message).toBe("허용되지 않는 key 경로입니다.");
+    });
+
+    test("절대 경로(/로 시작)는 거부된다", async () => {
+      const absolutePath = "/profile-img/test.jpg";
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(absolutePath)}`,
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(body.message).toBe("허용되지 않는 key 경로입니다.");
+    });
+
+    test("연속된 슬래시가 있어도 정규화 후 검증된다", async () => {
+      const pathWithMultipleSlashes = "profile-img//user123//test.jpg";
+      const req = createMockRequest({
+        method: "GET",
+        url: `http://localhost:3000/api/s3?key=${encodeURIComponent(pathWithMultipleSlashes)}`,
+      });
+
+      const response = await GET(req);
+
+      // 정규화 후 profile-img/로 시작하므로 허용됨
       expect(response.status).toBe(200);
+    });
+
+    test("빈 문자열 key는 거부된다", async () => {
+      const req = createMockRequest({
+        method: "GET",
+        url: "http://localhost:3000/api/s3?key=",
+      });
+
+      const response = await GET(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(body.message).toBe("허용되지 않는 key 경로입니다.");
     });
   });
 

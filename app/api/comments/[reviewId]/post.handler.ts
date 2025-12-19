@@ -98,7 +98,12 @@ export async function POST(
     );
 
     // 6. 사용자 활동 등급 업데이트
-    await updateUserActivityLevel(uid);
+    try {
+      await updateUserActivityLevel(uid);
+    } catch (error) {
+      console.error("사용자 등급 업데이트 실패:", error);
+      // 등급 업데이트 실패는 댓글 생성에 영향을 주지 않음
+    }
 
     // 7. 캐시 재검증
     revalidatePath("/ticket-list");

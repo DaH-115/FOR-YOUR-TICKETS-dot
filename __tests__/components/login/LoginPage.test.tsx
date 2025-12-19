@@ -28,12 +28,12 @@ jest.mock("firebase/auth", () => ({
 jest.mock("firebase-config", () => ({
   isAuth: jest.fn(),
 }));
-jest.mock("app/utils/authPersistence", () => ({
+jest.mock("@/utils/authPersistence", () => ({
   setRememberMe: jest.fn(() => Promise.resolve()),
   getCurrentPersistence: jest.fn(() => "local"),
   clearAuthPersistence: jest.fn(),
 }));
-jest.mock("app/utils/getIdToken/getIdToken", () => ({
+jest.mock("@/utils/getIdToken/getIdToken", () => ({
   getIdToken: jest.fn(() => Promise.resolve("mock-id-token")),
 }));
 jest.mock("store/redux-toolkit/hooks", () => ({
@@ -54,6 +54,9 @@ const mockUseAppSelector = useAppSelector as jest.MockedFunction<
 >;
 
 const mockShowErrorHandler = jest.fn();
+const mockShowSuccessHandler = jest.fn();
+const mockHideErrorHandler = jest.fn();
+const mockHideSuccessHandler = jest.fn();
 const mockReplace = jest.fn();
 const mockPush = jest.fn();
 const mockSetRememberMe = jest.fn();
@@ -71,6 +74,9 @@ beforeEach(() => {
   // 기본 mock 설정
   (useAlert as jest.Mock).mockReturnValue({
     showErrorHandler: mockShowErrorHandler,
+    showSuccessHandler: mockShowSuccessHandler,
+    hideErrorHandler: mockHideErrorHandler,
+    hideSuccessHandler: mockHideSuccessHandler,
   });
   (useRouter as jest.Mock).mockReturnValue({
     replace: mockReplace,

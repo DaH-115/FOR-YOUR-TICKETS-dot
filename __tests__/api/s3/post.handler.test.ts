@@ -27,7 +27,9 @@ jest.mock("lib/aws/s3.constants", () => ({
   },
 }));
 jest.mock("@/utils/file/validateFileSize", () => ({
-  MAX_FILE_SIZE: 5 * 1024 * 1024,
+  MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+}));
+jest.mock("@/utils/file/validateFileType", () => ({
   ALLOWED_CONTENT_TYPES: ["image/jpeg", "image/png", "image/gif"],
 }));
 

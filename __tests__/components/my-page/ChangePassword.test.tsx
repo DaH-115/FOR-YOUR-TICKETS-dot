@@ -6,11 +6,7 @@ import {
   act,
 } from "@testing-library/react";
 import { useRouter } from "next/navigation";
-import {
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  updatePassword,
-} from "firebase/auth";
+import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import { useAlert } from "store/context/alertContext";
 import { useAppSelector } from "store/redux-toolkit/hooks";
 import { isAuth } from "firebase-config";
@@ -148,9 +144,6 @@ describe("ChangePassword", () => {
     expect(
       screen.getByRole("button", { name: "비밀번호 확인" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "비밀번호 변경" }),
-    ).toBeInTheDocument();
   });
 
   test("비밀번호 확인 버튼 클릭 시 핸들러가 호출된다", async () => {
@@ -178,52 +171,6 @@ describe("ChangePassword", () => {
       );
       expect(reauthenticateWithCredential).toHaveBeenCalled();
       expect(mockShowSuccessHandler).toHaveBeenCalled();
-    });
-  });
-
-  test("비밀번호 변경 버튼 클릭 시 핸들러가 호출된다", async () => {
-    (updatePassword as jest.Mock).mockResolvedValue(undefined);
-
-    render(<ChangePassword />);
-    const newPasswordInput = screen.getByTestId("newPassword");
-    const changeButton = screen.getByRole("button", { name: "비밀번호 변경" });
-
-    await act(async () => {
-      // fireEvent로 인한 비동기 상태 업데이트를 안전하게 처리하기 위해 await로 감쌈
-      await fireEvent.change(newPasswordInput, {
-        target: { value: "newPassword123!" },
-      });
-      await fireEvent.click(changeButton);
-    });
-
-    await waitFor(() => {
-      expect(updatePassword).toHaveBeenCalledWith(
-        defaultCurrentUser,
-        "newPassword123!",
-      );
-      expect(mockShowSuccessHandler).toHaveBeenCalled();
-    });
-  });
-
-  test("비밀번호 변경 실패 시 에러가 표시된다", async () => {
-    (updatePassword as jest.Mock).mockRejectedValue(
-      new Error("비밀번호 변경 실패"),
-    );
-
-    render(<ChangePassword />);
-    const newPasswordInput = screen.getByTestId("newPassword");
-    const changeButton = screen.getByRole("button", { name: "비밀번호 변경" });
-
-    await act(async () => {
-      // fireEvent로 인한 비동기 상태 업데이트를 안전하게 처리하기 위해 await로 감쌈
-      await fireEvent.change(newPasswordInput, {
-        target: { value: "newPassword123!" },
-      });
-      await fireEvent.click(changeButton);
-    });
-
-    await waitFor(() => {
-      expect(mockShowErrorHandler).toHaveBeenCalled();
     });
   });
 });

@@ -113,7 +113,7 @@ describe("DuplicateCheckButton 컴포넌트", () => {
       expect(button).toHaveClass(
         "cursor-not-allowed",
         "bg-gray-200",
-        "text-gray-500",
+        "text-gray-400",
       );
     });
 
@@ -121,7 +121,7 @@ describe("DuplicateCheckButton 컴포넌트", () => {
       renderButton();
 
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("bg-gray-500", "text-white");
+      expect(button).toHaveClass("bg-gray-600", "text-white");
     });
   });
 

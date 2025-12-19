@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
+import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
 
 // DELETE /api/comments/[reviewId]/[commentId] - 댓글 삭제
 export async function DELETE(
@@ -56,6 +57,14 @@ export async function DELETE(
         commentsCount: FieldValue.increment(-1),
       });
     });
+
+    // 사용자 활동 등급 업데이트
+    try {
+      await updateUserActivityLevel(authResult.uid!);
+    } catch (error) {
+      console.error("사용자 등급 업데이트 실패:", error);
+      // 등급 업데이트 실패는 댓글 삭제에 영향을 주지 않음
+    }
 
     // 캐시 재검증
     revalidatePath("/ticket-list");
