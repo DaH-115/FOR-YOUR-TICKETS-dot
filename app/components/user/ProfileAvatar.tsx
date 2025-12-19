@@ -4,17 +4,6 @@ import Image from "next/image";
 import { memo, useEffect, useRef, useState } from "react";
 import { usePresignedUrl } from "@/components/user/hooks/usePresignedUrl";
 
-// 헬퍼 함수들
-const getImageSrc = (
-  previewSrc?: string,
-  s3photoKey?: string | null,
-  presignedUrl?: string,
-) => {
-  if (previewSrc) return previewSrc;
-  if (s3photoKey) return presignedUrl;
-  return undefined;
-};
-
 const getFirstLetter = (displayName?: string) => {
   return displayName ? displayName.charAt(0).toUpperCase() : "U";
 };
@@ -64,7 +53,8 @@ function ProfileAvatar({
     key: shouldFetchUrl ? s3photoKey : null,
   });
 
-  const src = getImageSrc(previewSrc, s3photoKey, presignedUrl);
+  // 이미지 우선순위: previewSrc > s3photoKey의 presignedUrl > undefined
+  const src = previewSrc || (s3photoKey ? presignedUrl : undefined);
 
   // S3 이미지 지연 로딩을 위한 Intersection Observer
   useEffect(() => {

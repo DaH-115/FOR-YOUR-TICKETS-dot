@@ -1,6 +1,6 @@
-import ModalPortal from "app/components/ui/modal/ModalPortal";
+import ModalPortal from "@/components/ui/modal/ModalPortal";
+import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
 import { FaCheck } from "react-icons/fa";
-import ActivityBadge from "app/components/ui/feedback/ActivityBadge";
 
 interface LevelUpModalProps {
   open: boolean;
@@ -16,16 +16,15 @@ function LevelUpModal({ open, onClose, newLevel }: LevelUpModalProps) {
         <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg">
           <FaCheck className="text-white" />
         </div>
-        <h3 className="text-lg font-bold text-gray-900">등급 상승!</h3>
+        <h3 className="text-lg font-bold text-gray-900">레벨 업!</h3>
       </div>
       {/* Alert Description */}
       <div className="mb-6 text-center">
         <p className="break-keep text-sm leading-relaxed text-gray-600">
-          {"축하합니다! 새로운 등급으로 업그레이드 되었습니다."}
+          {"새로운 등급으로 업그레이드 되었습니다."}
         </p>
         <ActivityBadge
           activityLevel={newLevel}
-          size="small"
           className="ml-1 inline-block align-middle"
         />
       </div>

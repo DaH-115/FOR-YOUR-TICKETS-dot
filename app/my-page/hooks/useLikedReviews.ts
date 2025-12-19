@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { getAuthHeaders } from "@/utils/getIdToken";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 
 interface UseLikedReviewsOptions {
@@ -39,8 +40,14 @@ export default function useLikedReviews({
           }
         },
       );
+      const authHeaders = await getAuthHeaders();
       const response = await fetch(
         `/api/reviews/liked-by-user?${searchParams.toString()}`,
+        {
+          headers: {
+            ...authHeaders,
+          },
+        },
       );
       if (!response.ok) {
         throw new Error("리뷰 데이터를 불러오는데 실패했습니다.");

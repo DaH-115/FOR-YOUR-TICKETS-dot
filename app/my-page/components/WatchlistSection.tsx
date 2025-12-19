@@ -9,6 +9,7 @@ import {
   fetchWatchlist,
 } from "store/redux-toolkit/slice/watchlistSlice";
 import EmptyState from "./EmptyState";
+import { IoChevronForward } from "react-icons/io5";
 
 interface WatchlistSectionProps {
   uid?: string | null;
@@ -27,17 +28,20 @@ export default function WatchlistSection({ uid }: WatchlistSectionProps) {
   }, [uid, dispatch]);
 
   return (
-    <section className="mb-8 mt-16">
+    <section className="mb-8 mt-12">
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">보고 싶은 영화</h2>
-        {/* 더보기 링크 - 로딩 중이 아닐 때만 표시 */}
+        <h2 className="text-lg font-bold text-white">보고 싶은 영화</h2>
+        {/* 더 보기 링크 - 로딩 중이 아닐 때만 표시 */}
         {!loading && (
-          <Link
-            href="/my-page/watchlist"
-            className="block text-right text-sm text-accent-300 hover:underline md:text-xs"
-          >
-            더보기
-          </Link>
+          <div className="flex items-center">
+            <Link
+              href="/my-page/watchlist"
+              className="text-sm text-accent-300 transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
+            >
+              더 보기
+            </Link>
+            <IoChevronForward className="text-sm text-accent-300" aria-hidden />
+          </div>
         )}
       </div>
 

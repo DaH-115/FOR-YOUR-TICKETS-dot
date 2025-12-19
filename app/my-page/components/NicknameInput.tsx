@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import DuplicateCheckButton from "app/components/ui/buttons/DuplicateCheckButton";
 import { useDuplicateCheckState } from "app/my-page/hooks/useDuplicateCheckState";
@@ -5,11 +6,13 @@ import { useDuplicateCheckState } from "app/my-page/hooks/useDuplicateCheckState
 interface NicknameInputProps {
   originalValue?: string | null;
   isEditing: boolean;
+  onDuplicateCheckSuccess?: () => void; // 중복 체크 성공 시 콜백
 }
 
 export default function NicknameInput({
   originalValue,
   isEditing,
+  onDuplicateCheckSuccess,
 }: NicknameInputProps) {
   const {
     register,
@@ -25,6 +28,13 @@ export default function NicknameInput({
       value: watchedNickname,
       originalValue: originalValue ?? undefined,
     });
+
+  // 중복 체크 성공 시 부모 컴포넌트에 알림
+  useEffect(() => {
+    if (isChecked && isAvailable && onDuplicateCheckSuccess) {
+      onDuplicateCheckSuccess();
+    }
+  }, [isChecked, isAvailable, onDuplicateCheckSuccess]);
 
   // 닉네임 유효성 검사 에러 또는 중복 확인 에러를 표시
   const displayError =

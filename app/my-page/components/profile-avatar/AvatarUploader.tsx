@@ -19,9 +19,9 @@ export default function AvatarUploader(props: AvatarUploadCallbacks) {
         <button
           type="button"
           onClick={onEditToggle}
-          className="rounded-xl bg-gray-800 px-3 py-2 text-white transition-colors hover:bg-gray-700"
+          className="rounded-full bg-gray-800 px-3 py-2 text-white transition-colors hover:bg-gray-700"
         >
-          프로필 이미지 수정
+          프로필 사진 수정
         </button>
       ) : (
         <div className="space-y-3">
@@ -45,7 +45,7 @@ export default function AvatarUploader(props: AvatarUploadCallbacks) {
             <button
               type="button"
               onClick={onEditToggle}
-              className="rounded-xl border border-black px-3 py-2 transition-colors hover:border-red-600 hover:bg-red-600 hover:text-white"
+              className="rounded-xl border border-gray-300 px-3 py-2 transition-colors hover:border-red-600 hover:bg-red-600 hover:text-white"
             >
               취소
             </button>

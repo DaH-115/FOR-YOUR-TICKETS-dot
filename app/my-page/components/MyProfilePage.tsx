@@ -113,7 +113,7 @@ export default function MyProfilePage() {
           />
         </div>
         {/* 프로필 정보 섹션 */}
-        <div className="flex flex-1 flex-col rounded-2xl bg-white px-8 py-6">
+        <div className="flex flex-1 flex-col rounded-2xl bg-white px-6 py-6 lg:px-8">
           {/* 사용자 이름과 편집 버튼 */}
           <div className="border-b-4 border-dotted pb-3">
             <div className="flex items-center justify-between gap-2">

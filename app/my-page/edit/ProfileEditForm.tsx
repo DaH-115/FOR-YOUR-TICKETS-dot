@@ -3,22 +3,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useWatch } from "react-hook-form";
 
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import { z } from "zod";
-import BioInput from "app/my-page/components/BioInput";
-import ChangePassword from "app/my-page/components/ChangePassword";
-import NicknameInput from "app/my-page/components/NicknameInput";
-import AvatarUploader from "app/my-page/components/profile-avatar/AvatarUploader";
-import ProfileAvatar from "app/components/user/ProfileAvatar";
+import BioInput from "@/my-page/components/BioInput";
+import ChangePassword from "@/my-page/components/ChangePassword";
+import NicknameInput from "@/my-page/components/NicknameInput";
+import AvatarUploader from "@/my-page/components/profile-avatar/AvatarUploader";
+import ProfileAvatar from "@/components/user/ProfileAvatar";
 import { isAuth } from "firebase-config";
 import { useAlert } from "store/context/alertContext";
-import { useAppDispatch, useAppSelector } from "store/redux-toolkit/hooks";
-import {
-  updateUserProfile,
-  selectUser,
-} from "store/redux-toolkit/slice/userSlice";
+import { useAppSelector } from "store/redux-toolkit/hooks";
+import { selectUser } from "store/redux-toolkit/slice/userSlice";
+import { useProfileEditForm } from "@/my-page/hooks/useProfileEditForm";
+import { PROFILE_EDIT_MESSAGES } from "@/my-page/edit/constants";
 
 const profileSchema = z.object({
   displayName: z
@@ -39,8 +38,7 @@ export default function ProfileEditForm() {
   const router = useRouter();
   const user = useAppSelector(selectUser);
   const currentUser = isAuth.currentUser;
-  const { showErrorHandler, showSuccessHandler } = useAlert();
-  const dispatch = useAppDispatch();
+  const { showErrorHandler } = useAlert();
 
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -49,6 +47,7 @@ export default function ProfileEditForm() {
 
   const {
     handleSubmit,
+    control,
     formState: { dirtyFields, isSubmitting },
     reset,
   } = methods;
@@ -56,8 +55,35 @@ export default function ProfileEditForm() {
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [hasImageChanged, setHasImageChanged] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+
+  // displayName 변경 감지
+  const watchedDisplayName = useWatch({ name: "displayName", control });
+
+  // 닉네임이 변경되면 중복 체크 상태 초기화
+  useEffect(() => {
+    if (watchedDisplayName !== user?.displayName) {
+      setIsNicknameChecked(false);
+    } else {
+      setIsNicknameChecked(true); // 원래 값으로 돌아가면 체크된 것으로 간주
+    }
+  }, [watchedDisplayName, user?.displayName]);
 
   const hasDirty = Object.keys(dirtyFields).length > 0 || hasImageChanged;
+
+  // 제출 가능 조건: 변경사항이 있고, 닉네임이 변경되었다면 중복 체크가 완료되어야 함
+  const canSubmit =
+    hasDirty &&
+    !isSubmitting &&
+    (dirtyFields.displayName ? isNicknameChecked : true);
+
+  // 커스텀 훅으로 비즈니스 로직 분리
+  const { onSubmit } = useProfileEditForm({
+    methods,
+    selectedFile,
+    hasImageChanged,
+    isNicknameChecked,
+  });
 
   // 초기값 설정
   useEffect(() => {
@@ -66,6 +92,8 @@ export default function ProfileEditForm() {
         displayName: user.displayName || "",
         biography: user.biography || "",
       });
+      // 초기 로드 시에는 닉네임이 체크된 것으로 간주
+      setIsNicknameChecked(true);
     }
   }, [reset, user]);
 
@@ -76,104 +104,9 @@ export default function ProfileEditForm() {
     }
   }, [currentUser, user, router]);
 
-  const onSubmit = useCallback(
-    async (data: ProfileFormData) => {
-      if (!currentUser || !user?.uid) {
-        showErrorHandler("오류", "로그인이 필요합니다.");
-        return;
-      }
-
-      try {
-        const updatePayload: {
-          displayName?: string;
-          biography?: string;
-          photoKey?: string;
-        } = {};
-
-        // 변경된 필드만 업데이트 대상에 포함
-        if (dirtyFields.displayName && data.displayName !== user?.displayName) {
-          updatePayload.displayName = data.displayName;
-        }
-        if (dirtyFields.biography && data.biography !== user?.biography) {
-          updatePayload.biography = data.biography;
-        }
-
-        // 이미지 업로드 처리
-        if (selectedFile && hasImageChanged) {
-          // S3 Presigned URL 요청 (size 파라미터 추가)
-          const presignedRes = await fetch("/api/s3", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${await currentUser.getIdToken()}`,
-            },
-            body: JSON.stringify({
-              filename: selectedFile.name,
-              contentType: selectedFile.type,
-              size: selectedFile.size,
-            }),
-          });
-
-          if (!presignedRes.ok) {
-            const errorData = await presignedRes.json();
-            throw new Error(
-              errorData.error || "이미지 업로드 준비에 실패했습니다.",
-            );
-          }
-
-          const { url, key } = await presignedRes.json();
-
-          // S3에 이미지 업로드
-          const uploadRes = await fetch(url, {
-            method: "PUT",
-            headers: { "Content-Type": selectedFile.type },
-            body: selectedFile,
-          });
-
-          if (!uploadRes.ok) {
-            throw new Error("이미지 업로드에 실패했습니다.");
-          }
-
-          updatePayload.photoKey = key;
-        }
-
-        // 변경사항이 있는 경우에만 API 호출
-        if (Object.keys(updatePayload).length > 0) {
-          await dispatch(
-            updateUserProfile({ uid: user.uid, data: updatePayload }),
-          ).unwrap();
-
-          showSuccessHandler("성공", "프로필이 업데이트되었습니다.");
-        }
-
-        // 성공 시 마이페이지로 이동
-        router.push("/my-page");
-      } catch (error) {
-        let errorMessage = "프로필 업데이트에 실패했습니다.";
-        if (typeof error === "string") {
-          errorMessage = error;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        showErrorHandler("오류", errorMessage);
-      }
-    },
-    [
-      currentUser,
-      user,
-      dispatch,
-      showErrorHandler,
-      showSuccessHandler,
-      router,
-      dirtyFields,
-      selectedFile,
-      hasImageChanged,
-    ],
-  );
-
   const handleCancel = useCallback(() => {
     if (hasDirty) {
-      if (confirm("변경사항이 저장되지 않습니다. 정말 나가시겠습니까?")) {
+      if (confirm(PROFILE_EDIT_MESSAGES.CONFIRM.UNSAVED_CHANGES)) {
         router.push("/my-page");
       }
     } else {
@@ -182,7 +115,10 @@ export default function ProfileEditForm() {
   }, [hasDirty, router]);
 
   return (
-    <main className="flex min-h-full w-full flex-col pl-0 md:w-3/4 md:pl-4">
+    <main
+      className="flex min-h-full w-full flex-col pl-0 md:w-3/4 md:pl-4"
+      aria-busy={isSubmitting}
+    >
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -199,12 +135,13 @@ export default function ProfileEditForm() {
         <button
           type="submit"
           form="profile-edit-form"
-          disabled={!hasDirty || isSubmitting}
+          disabled={!canSubmit}
           className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-            hasDirty && !isSubmitting
+            canSubmit
               ? "bg-accent-300 text-white hover:bg-accent-500"
               : "cursor-not-allowed bg-gray-200 text-gray-400"
           }`}
+          aria-label={isSubmitting ? "저장 중" : "변경사항 저장"}
         >
           <FaCheck size={12} />
           {isSubmitting ? "저장 중..." : "완료"}
@@ -215,10 +152,11 @@ export default function ProfileEditForm() {
         <form id="profile-edit-form" onSubmit={handleSubmit(onSubmit)}>
           {/* 프로필 이미지 섹션 */}
           <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-medium">프로필 사진</h2>
+            <h2 className="mb-4 text-lg font-bold">프로필 사진</h2>
             <div className="flex flex-col items-center gap-4">
               <ProfileAvatar
                 userDisplayName={user?.displayName ?? "사용자"}
+                s3photoKey={user?.photoKey}
                 previewSrc={previewSrc || undefined}
                 size={96}
                 className="mx-auto"
@@ -238,7 +176,7 @@ export default function ProfileEditForm() {
 
           {/* 기본 정보 섹션 */}
           <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-medium">기본 정보</h2>
+            <h2 className="mb-4 text-lg font-bold">기본 정보</h2>
             <div className="space-y-6">
               {user?.email && (
                 <div className="mb-4">
@@ -254,6 +192,7 @@ export default function ProfileEditForm() {
               <NicknameInput
                 originalValue={user?.displayName}
                 isEditing={true}
+                onDuplicateCheckSuccess={() => setIsNicknameChecked(true)}
               />
 
               <BioInput isEditing={true} originalValue={user?.biography} />
