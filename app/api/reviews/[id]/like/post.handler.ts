@@ -7,9 +7,11 @@ import { verifyAuthToken } from "lib/auth/verifyToken";
 // POST /api/reviews/[id]/like - 좋아요 추가
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
 
@@ -31,7 +33,7 @@ export async function POST(
     }
 
     const uid = authResult.uid!;
-    const reviewId = params.id;
+    const reviewId = id;
 
     const reviewRef = adminFirestore.collection("movie-reviews").doc(reviewId);
     const likeRef = reviewRef.collection("likedBy").doc(uid);

@@ -8,9 +8,11 @@ import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
 // DELETE /api/comments/[reviewId]/[commentId] - 댓글 삭제
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { reviewId: string; commentId: string } },
+  { params }: { params: Promise<{ reviewId: string; commentId: string }> },
 ) {
   try {
+    const { reviewId, commentId } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -23,8 +25,8 @@ export async function DELETE(
     // Firestore 트랜잭션을 사용하여 댓글 삭제와 카운트 업데이트를 원자적으로 처리
     const reviewRef = adminFirestore
       .collection("movie-reviews")
-      .doc(params.reviewId);
-    const commentRef = reviewRef.collection("comments").doc(params.commentId);
+      .doc(reviewId);
+    const commentRef = reviewRef.collection("comments").doc(commentId);
 
     await adminFirestore.runTransaction(async (transaction) => {
       // 댓글 문서가 존재하는지 확인

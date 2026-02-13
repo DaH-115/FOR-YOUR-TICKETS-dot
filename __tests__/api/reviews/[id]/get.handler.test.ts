@@ -97,7 +97,7 @@ describe("GET /api/reviews/[id]", () => {
     } as unknown as NextRequest;
 
     const response = await GET(mockRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     const body = await response.json();
 
@@ -129,7 +129,7 @@ describe("GET /api/reviews/[id]", () => {
     } as unknown as NextRequest;
 
     const response = await GET(mockRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(404);
@@ -153,7 +153,7 @@ describe("GET /api/reviews/[id]", () => {
     } as unknown as NextRequest;
 
     const response = await GET(mockRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(500);

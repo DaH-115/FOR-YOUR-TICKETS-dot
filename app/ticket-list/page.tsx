@@ -15,10 +15,11 @@ interface searchParamsProps {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: searchParamsProps;
+  searchParams: Promise<searchParamsProps>;
 }) {
-  const page = parseInt(searchParams.page ?? "1", 10);
-  const search = searchParams.search?.trim() ?? "";
+  const resolvedSearchParams = await searchParams;
+  const page = parseInt(resolvedSearchParams.page ?? "1", 10);
+  const search = resolvedSearchParams.search?.trim() ?? "";
 
   const { reviews, totalPages } = await fetchReviewsPaginated({
     page,

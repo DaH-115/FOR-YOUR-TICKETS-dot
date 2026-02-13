@@ -76,7 +76,7 @@ describe("POST /api/comments/[reviewId]", () => {
       body: mockCommentData,
     });
     const response = await POST(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(201);
@@ -96,7 +96,7 @@ describe("POST /api/comments/[reviewId]", () => {
     const incompleteData = { authorId: "test-user-id" };
     const request = createMockRequest({ method: "POST", body: incompleteData });
     const response = await POST(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(400);
@@ -115,7 +115,7 @@ describe("POST /api/comments/[reviewId]", () => {
       body: mockCommentData,
     });
     const response = await POST(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     expect(response.status).toBe(401);
   });
@@ -130,7 +130,7 @@ describe("POST /api/comments/[reviewId]", () => {
       body: mockCommentData,
     });
     const response = await POST(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     expect(response.status).toBe(500);
   });
@@ -148,7 +148,7 @@ describe("POST /api/comments/[reviewId]", () => {
       body: mockCommentData,
     });
     const response = await POST(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     expect(response.status).toBe(403);
   });

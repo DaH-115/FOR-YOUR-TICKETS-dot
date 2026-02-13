@@ -65,7 +65,7 @@ describe("GET /api/comments/[reviewId]", () => {
       });
     const request = createMockRequest({ method: "GET" });
     const response = await GET(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(200);
@@ -96,7 +96,7 @@ describe("GET /api/comments/[reviewId]", () => {
     mockUserDoc.get.mockResolvedValue({ exists: false });
     const request = createMockRequest({ method: "GET" });
     const response = await GET(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(200);
@@ -110,7 +110,7 @@ describe("GET /api/comments/[reviewId]", () => {
     );
     const request = createMockRequest({ method: "GET" });
     const response = await GET(request as NextRequest, {
-      params: { reviewId: mockReviewId },
+      params: Promise.resolve({ reviewId: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(500);

@@ -6,9 +6,11 @@ import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 // DELETE /api/users/[uid] - 회원 탈퇴 (관련 데이터 전체 삭제)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: Promise<{ uid: string }> },
 ) {
   try {
+    const { uid } = await params;
+
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
       return NextResponse.json(
@@ -19,7 +21,7 @@ export async function DELETE(
 
     const ownershipResult = verifyResourceOwnership(
       authResult.uid!,
-      params.uid,
+      uid,
     );
     if (!ownershipResult.success) {
       return NextResponse.json(
@@ -27,8 +29,6 @@ export async function DELETE(
         { status: ownershipResult.statusCode || 403 },
       );
     }
-
-    const uid = params.uid;
     const batch = adminFirestore.batch();
 
     // 1. 사용자가 작성한 모든 리뷰와 그 하위 데이터(댓글, 좋아요) 삭제

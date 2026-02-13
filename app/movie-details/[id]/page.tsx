@@ -13,9 +13,11 @@ import SimilarMovieList from "@/movie-details/[id]/components/SimilarMovieList";
 export async function generateMetadata({
   params,
 }: {
-  params: { id: number };
+  params: Promise<{ id: number }>;
 }): Promise<Metadata> {
-  if (!params.id) {
+  const { id } = await params;
+
+  if (!id) {
     return {
       title: "잘못된 접근",
       description: "올바르지 않은 영화 ID입니다.",
@@ -23,13 +25,13 @@ export async function generateMetadata({
   }
 
   try {
-    const movieDetails = await fetchMovieDetails(params.id);
+    const movieDetails = await fetchMovieDetails(id);
     const { original_title, title, backdrop_path, overview } = movieDetails;
     const movieTitle = getMovieTitle(original_title, title);
 
     return {
       alternates: {
-        canonical: `/movie-details/${params.id}`,
+        canonical: `/movie-details/${id}`,
       },
       title: movieTitle,
       description: overview,
@@ -55,22 +57,24 @@ export async function generateMetadata({
 export default async function MovieDetailPage({
   params,
 }: {
-  params: { id: number };
+  params: Promise<{ id: number }>;
 }) {
-  if (!params.id) {
+  const { id } = await params;
+
+  if (!id) {
     return notFound();
   }
 
   try {
-    const movieDetails = await fetchMovieDetails(params.id);
+    const movieDetails = await fetchMovieDetails(id);
     if (!movieDetails) {
       return notFound();
     }
 
     const [movieCredits, movieTrailerData, similarMovies] = await Promise.all([
-      fetchMovieCredits(params.id),
-      fetchVideosMovies(params.id),
-      fetchSimilarMovies(params.id),
+      fetchMovieCredits(id),
+      fetchVideosMovies(id),
+      fetchSimilarMovies(id),
     ]);
 
     const { backdrop_path } = movieDetails;

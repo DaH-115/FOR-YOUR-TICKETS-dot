@@ -6,9 +6,11 @@ import { fetchUserReviewCount } from "lib/users/fetchUserReviewCount";
 // GET /api/users/[uid] - 사용자 프로필 조회 (통계 정보 포함)
 export async function GET(
   req: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: Promise<{ uid: string }> },
 ) {
   try {
+    const { uid } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -21,7 +23,7 @@ export async function GET(
     // 본인 프로필만 조회 가능
     const ownershipResult = verifyResourceOwnership(
       authResult.uid!,
-      params.uid,
+      uid,
     );
     if (!ownershipResult.success) {
       return NextResponse.json(
@@ -30,7 +32,7 @@ export async function GET(
       );
     }
 
-    const userRef = adminFirestore.collection("users").doc(params.uid);
+    const userRef = adminFirestore.collection("users").doc(uid);
     const userSnap = await userRef.get();
 
     if (!userSnap.exists) {
@@ -47,13 +49,13 @@ export async function GET(
     if (userData?.reviewCount !== undefined) {
       myReviewsCount = userData.reviewCount;
     } else {
-      myReviewsCount = await fetchUserReviewCount(params.uid);
+      myReviewsCount = await fetchUserReviewCount(uid);
     }
 
     // 2. 좋아요한 리뷰 개수 (컬렉션 그룹 쿼리 사용)
     const likesQuery = adminFirestore
       .collectionGroup("likedBy")
-      .where("uid", "==", params.uid)
+      .where("uid", "==", uid)
       .orderBy("createdAt", "desc");
 
     const likesSnapshot = await likesQuery.count().get();

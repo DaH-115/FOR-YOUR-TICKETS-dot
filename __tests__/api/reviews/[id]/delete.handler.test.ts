@@ -84,7 +84,7 @@ describe("DELETE /api/reviews/[id]", () => {
     mockedUpdateUserActivityLevel.mockResolvedValue("PRO");
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(200);
@@ -106,7 +106,7 @@ describe("DELETE /api/reviews/[id]", () => {
     });
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(401);
   });
@@ -117,7 +117,7 @@ describe("DELETE /api/reviews/[id]", () => {
     mockDoc.get.mockResolvedValue({ exists: false });
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(404);
   });
@@ -136,7 +136,7 @@ describe("DELETE /api/reviews/[id]", () => {
     });
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(403);
   });
@@ -160,7 +160,7 @@ describe("DELETE /api/reviews/[id]", () => {
     mockBatch.commit.mockRejectedValue(new Error("배치 커밋 오류"));
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(500);
   });

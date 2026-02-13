@@ -7,9 +7,11 @@ import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 // PUT /api/reviews/[id] - 리뷰 수정
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -32,7 +34,7 @@ export async function PUT(
       );
     }
 
-    const reviewRef = adminFirestore.collection("movie-reviews").doc(params.id);
+    const reviewRef = adminFirestore.collection("movie-reviews").doc(id);
 
     // 문서 존재 확인
     const reviewSnap = await reviewRef.get();

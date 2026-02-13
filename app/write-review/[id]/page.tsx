@@ -11,13 +11,17 @@ export default async function EditReviewPage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { movieId?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ movieId?: string }>;
 }) {
-  const movieId = Number(searchParams.movieId!);
+  const [{ id }, { movieId: movieIdParam }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
+  const movieId = Number(movieIdParam!);
   const movieData = await fetchMovieDetails(movieId);
 
   return (
-    <ReviewContainer mode="edit" reviewId={params.id} movieData={movieData} />
+    <ReviewContainer mode="edit" reviewId={id} movieData={movieData} />
   );
 }

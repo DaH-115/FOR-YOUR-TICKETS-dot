@@ -10,9 +10,10 @@ export const metadata: Metadata = {
 export default async function NewReviewPage({
   searchParams,
 }: {
-  searchParams: { movieId?: string };
+  searchParams: Promise<{ movieId?: string }>;
 }) {
-  const movieId = Number(searchParams.movieId!);
+  const { movieId: movieIdParam } = await searchParams;
+  const movieId = Number(movieIdParam!);
   const movieData = await fetchMovieDetails(movieId);
 
   return <ReviewContainer mode="new" movieData={movieData} />;

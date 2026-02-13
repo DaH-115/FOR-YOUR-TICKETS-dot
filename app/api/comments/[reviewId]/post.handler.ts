@@ -8,9 +8,11 @@ import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
 // POST /api/comments/[reviewId] - 댓글 생성
 export async function POST(
   req: NextRequest,
-  { params }: { params: { reviewId: string } },
+  { params }: { params: Promise<{ reviewId: string }> },
 ) {
   try {
+    const { reviewId } = await params;
+
     // 1. Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -64,7 +66,7 @@ export async function POST(
     // Firestore 트랜잭션을 사용하여 댓글 추가와 카운트 업데이트를 원자적으로 처리
     const reviewRef = adminFirestore
       .collection("movie-reviews")
-      .doc(params.reviewId);
+      .doc(reviewId);
     const commentCollectionRef = reviewRef.collection("comments");
 
     const newCommentRef = await adminFirestore.runTransaction(

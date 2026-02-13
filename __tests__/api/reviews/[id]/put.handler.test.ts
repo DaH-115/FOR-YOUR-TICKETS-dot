@@ -54,7 +54,7 @@ describe("PUT /api/reviews/[id]", () => {
     mockedVerifyResourceOwnership.mockReturnValue({ success: true });
     const request = createMockRequest({ method: "PUT", body: mockUpdateData });
     const response = await PUT(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(200);
@@ -78,7 +78,7 @@ describe("PUT /api/reviews/[id]", () => {
     const incompleteData = { reviewTitle: "Incomplete" };
     const request = createMockRequest({ method: "PUT", body: incompleteData });
     const response = await PUT(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     const body = await response.json();
     expect(response.status).toBe(400);
@@ -94,7 +94,7 @@ describe("PUT /api/reviews/[id]", () => {
     });
     const request = createMockRequest({ method: "PUT", body: mockUpdateData });
     const response = await PUT(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(401);
   });
@@ -105,7 +105,7 @@ describe("PUT /api/reviews/[id]", () => {
     mockDoc.get.mockResolvedValue({ exists: false });
     const request = createMockRequest({ method: "PUT", body: mockUpdateData });
     const response = await PUT(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(404);
   });
@@ -124,7 +124,7 @@ describe("PUT /api/reviews/[id]", () => {
     });
     const request = createMockRequest({ method: "PUT", body: mockUpdateData });
     const response = await PUT(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(403);
   });
@@ -140,7 +140,7 @@ describe("PUT /api/reviews/[id]", () => {
     mockDoc.update.mockRejectedValue(new Error("DB 업데이트 오류"));
     const request = createMockRequest({ method: "PUT", body: mockUpdateData });
     const response = await PUT(request as NextRequest, {
-      params: { id: mockReviewId },
+      params: Promise.resolve({ id: mockReviewId }),
     });
     expect(response.status).toBe(500);
   });

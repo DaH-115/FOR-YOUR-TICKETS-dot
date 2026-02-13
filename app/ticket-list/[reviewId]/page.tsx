@@ -3,7 +3,7 @@ import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import ReviewDetail from "./components/ReviewDetail";
 
 interface ReviewDetailPageProps {
-  params: { reviewId: string };
+  params: Promise<{ reviewId: string }>;
 }
 
 async function fetchReviewFromAPI(reviewId: string): Promise<ReviewDoc | null> {
@@ -31,7 +31,7 @@ async function fetchReviewFromAPI(reviewId: string): Promise<ReviewDoc | null> {
 export default async function ReviewDetailPage({
   params,
 }: ReviewDetailPageProps) {
-  const { reviewId } = params;
+  const { reviewId } = await params;
   const review = await fetchReviewFromAPI(reviewId);
 
   if (!review) return notFound();

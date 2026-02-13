@@ -7,9 +7,11 @@ import { FieldValue } from "firebase-admin/firestore";
 // PUT /api/users/[uid]/activity-level - 사용자 활동 등급 업데이트
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: Promise<{ uid: string }> },
 ) {
   try {
+    const { uid } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -22,7 +24,7 @@ export async function PUT(
     // 본인 등급만 변경 가능
     const ownershipResult = verifyResourceOwnership(
       authResult.uid!,
-      params.uid,
+      uid,
     );
     if (!ownershipResult.success) {
       return NextResponse.json(
@@ -48,7 +50,7 @@ export async function PUT(
     }
 
     // Firestore에서 사용자 등급 업데이트
-    const userRef = adminFirestore.collection("users").doc(params.uid);
+    const userRef = adminFirestore.collection("users").doc(uid);
 
     // 사용자 존재 확인
     const userDoc = await userRef.get();
@@ -73,7 +75,7 @@ export async function PUT(
       message: "등급이 성공적으로 업데이트되었습니다.",
       activityLevel,
       user: {
-        uid: params.uid,
+        uid,
         ...updatedUserData,
       },
     });

@@ -7,9 +7,11 @@ import { verifyAuthToken } from "lib/auth/verifyToken";
 // DELETE /api/reviews/[id]/like - 좋아요 취소
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -20,7 +22,7 @@ export async function DELETE(
     }
 
     const uid = authResult.uid!;
-    const reviewId = params.id;
+    const reviewId = id;
 
     const reviewRef = adminFirestore.collection("movie-reviews").doc(reviewId);
     const likeRef = reviewRef.collection("likedBy").doc(uid);

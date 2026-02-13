@@ -6,10 +6,10 @@ import { verifyAuthToken } from "lib/auth/verifyToken";
 // GET /api/reviews/[id] - 개별 리뷰 조회
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     // 1순위: Authorization 헤더로 인증 → uid 획득, 2순위: 쿼리 파라미터 uid 폴백
     let uid: string | null = null;
     const authResult = await verifyAuthToken(req);

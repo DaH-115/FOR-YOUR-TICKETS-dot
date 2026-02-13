@@ -64,7 +64,7 @@ describe("DELETE /api/comments/[reviewId]/[commentId]", () => {
     mockedUpdateUserActivityLevel.mockResolvedValue("PRO");
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { reviewId: mockReviewId, commentId: mockCommentId },
+      params: Promise.resolve({ reviewId: mockReviewId, commentId: mockCommentId }),
     });
     const body = await response.json();
     expect(response.status).toBe(200);
@@ -86,7 +86,7 @@ describe("DELETE /api/comments/[reviewId]/[commentId]", () => {
     });
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { reviewId: mockReviewId, commentId: mockCommentId },
+      params: Promise.resolve({ reviewId: mockReviewId, commentId: mockCommentId }),
     });
     expect(response.status).toBe(401);
   });
@@ -97,7 +97,7 @@ describe("DELETE /api/comments/[reviewId]/[commentId]", () => {
     mockTransaction.get.mockResolvedValue({ exists: false });
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { reviewId: mockReviewId, commentId: mockCommentId },
+      params: Promise.resolve({ reviewId: mockReviewId, commentId: mockCommentId }),
     });
     expect(response.status).toBe(404);
   });
@@ -116,7 +116,7 @@ describe("DELETE /api/comments/[reviewId]/[commentId]", () => {
     });
     const request = createMockRequest({ method: "DELETE" });
     const response = await DELETE(request as NextRequest, {
-      params: { reviewId: mockReviewId, commentId: mockCommentId },
+      params: Promise.resolve({ reviewId: mockReviewId, commentId: mockCommentId }),
     });
     expect(response.status).toBe(403);
   });

@@ -14,9 +14,11 @@ import { FieldValue } from "firebase-admin/firestore";
 // PUT /api/users/[uid] - 사용자 프로필 업데이트
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: Promise<{ uid: string }> },
 ) {
   try {
+    const { uid } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -29,7 +31,7 @@ export async function PUT(
     // 본인 프로필만 수정 가능
     const ownershipResult = verifyResourceOwnership(
       authResult.uid!,
-      params.uid,
+      uid,
     );
     if (!ownershipResult.success) {
       return NextResponse.json(
@@ -51,7 +53,7 @@ export async function PUT(
       );
     }
 
-    const userRef = adminFirestore.collection("users").doc(params.uid);
+    const userRef = adminFirestore.collection("users").doc(uid);
 
     // 사용자 존재 확인
     const userSnap = await userRef.get();
@@ -83,7 +85,7 @@ export async function PUT(
     if (displayName !== undefined) {
       try {
         // 현재 사용자 정보 가져오기
-        const authUser = await adminAuth.getUser(params.uid);
+        const authUser = await adminAuth.getUser(uid);
         const oldDisplayName = authUser.displayName;
 
         // Firestore 트랜잭션을 사용하여 닉네임 중복 검사와 등록을 원자적으로 처리
@@ -109,7 +111,7 @@ export async function PUT(
 
           // 새 닉네임을 usernames 컬렉션에 등록
           transaction.set(newDisplayNameRef, {
-            uid: params.uid,
+            uid,
             createdAt: FieldValue.serverTimestamp(),
           });
 
@@ -121,15 +123,15 @@ export async function PUT(
         });
 
         // Firebase Auth의 displayName 업데이트 (트랜잭션 외부에서 실행)
-        await adminAuth.updateUser(params.uid, { displayName });
+        await adminAuth.updateUser(uid, { displayName });
 
         // 기존 리뷰들의 사용자 닉네임 업데이트 (백그라운드에서 실행)
-        updateReviewsDisplayName(params.uid, displayName).catch((error) => {
+        updateReviewsDisplayName(uid, displayName).catch((error) => {
           console.error("리뷰 닉네임 업데이트 실패:", error);
         });
 
         // 기존 댓글들의 사용자 닉네임 업데이트 (백그라운드에서 실행)
-        updateCommentsDisplayName(params.uid, displayName).catch((error) => {
+        updateCommentsDisplayName(uid, displayName).catch((error) => {
           console.error("댓글 닉네임 업데이트 실패:", error);
         });
 
@@ -161,17 +163,17 @@ export async function PUT(
         const photoURL = await getS3Url(photoKey);
 
         // Firebase Auth 프로필 사진 업데이트 (백그라운드)
-        adminAuth.updateUser(params.uid, { photoURL }).catch((error) => {
+        adminAuth.updateUser(uid, { photoURL }).catch((error) => {
           console.error("Firebase Auth 사진 업데이트 실패:", error);
         });
 
         // 기존 리뷰들의 사용자 사진 업데이트 (백그라운드)
-        updateReviewsPhotoKey(params.uid, photoKey).catch((error) => {
+        updateReviewsPhotoKey(uid, photoKey).catch((error) => {
           console.error("리뷰 사진 업데이트 실패:", error);
         });
 
         // 기존 댓글들의 사용자 사진 업데이트 (백그라운드)
-        updateCommentsPhotoKey(params.uid, photoKey).catch((error) => {
+        updateCommentsPhotoKey(uid, photoKey).catch((error) => {
           console.error("댓글 사진 업데이트 실패:", error);
         });
 

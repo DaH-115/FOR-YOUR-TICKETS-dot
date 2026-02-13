@@ -5,9 +5,11 @@ import { verifyAuthToken } from "lib/auth/verifyToken";
 // PUT /api/users/[uid]/sync-liked-count - 사용자의 좋아요 개수 동기화
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { uid: string } },
+  { params }: { params: Promise<{ uid: string }> },
 ) {
   try {
+    const { uid } = await params;
+
     // Firebase Admin SDK로 토큰 검증
     const authResult = await verifyAuthToken(req);
     if (!authResult.success) {
@@ -17,7 +19,7 @@ export async function PUT(
       );
     }
 
-    const targetUid = params.uid;
+    const targetUid = uid;
     const requestingUid = authResult.uid!;
 
     // 본인의 데이터만 동기화 가능

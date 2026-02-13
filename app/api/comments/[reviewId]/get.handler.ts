@@ -4,12 +4,14 @@ import { adminFirestore } from "firebase-admin-config";
 // GET /api/comments/[reviewId] - 'movie-reviews' 컬렉션의 특정 리뷰의 댓글 목록 조회
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { reviewId: string } },
+  { params }: { params: Promise<{ reviewId: string }> },
 ) {
   try {
+    const { reviewId } = await params;
+
     const commentsCol = adminFirestore
       .collection("movie-reviews")
-      .doc(params.reviewId)
+      .doc(reviewId)
       .collection("comments");
 
     const querySnapshot = await commentsCol.orderBy("createdAt", "asc").get();
