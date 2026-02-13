@@ -1,36 +1,7 @@
-export interface CastMember {
-  id: number;
-  name: string;
-  original_name: string;
-  character: string;
-  gender: number;
-  profile_path: string | null;
-  cast_id: number;
-  credit_id: string;
-  adult: boolean;
-  order: number;
-  popularity: number;
-  known_for_department: string;
-}
+import type { MovieCredits } from "types/movie";
 
-export interface CrewMember {
-  id: number;
-  job: string;
-  name: string;
-  original_name: string;
-  profile_path: string | null;
-  gender: number;
-  adult: boolean;
-  credit_id: string;
-  department: string;
-  known_for_department: string;
-  popularity: number;
-}
-
-export interface MovieCredits {
-  cast: CastMember[];
-  crew: CrewMember[];
-}
+// 타입 re-export (하위 호환성 유지)
+export type { CastMember, CrewMember, MovieCredits } from "types/movie";
 
 export async function fetchMovieCredits(id: number): Promise<MovieCredits> {
   const TMDB_API_KEY = process.env.TMDB_API_KEY;

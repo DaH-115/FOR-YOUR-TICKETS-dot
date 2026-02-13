@@ -1,12 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  getS3Url,
-  updateReviewsDisplayName,
-  updateCommentsDisplayName,
-  updateReviewsPhotoKey,
-  updateCommentsPhotoKey,
-} from "@/api/users/[uid]/route.helper";
+import { getS3Url } from "@/api/users/[uid]/route.helper";
 import { adminAuth, adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 import { FieldValue } from "firebase-admin/firestore";
@@ -125,15 +119,8 @@ export async function PUT(
         // Firebase Auth의 displayName 업데이트 (트랜잭션 외부에서 실행)
         await adminAuth.updateUser(uid, { displayName });
 
-        // 기존 리뷰들의 사용자 닉네임 업데이트 (백그라운드에서 실행)
-        updateReviewsDisplayName(uid, displayName).catch((error) => {
-          console.error("리뷰 닉네임 업데이트 실패:", error);
-        });
-
-        // 기존 댓글들의 사용자 닉네임 업데이트 (백그라운드에서 실행)
-        updateCommentsDisplayName(uid, displayName).catch((error) => {
-          console.error("댓글 닉네임 업데이트 실패:", error);
-        });
+        // 리뷰/댓글의 비정규화된 닉네임은 조회 시 users 컬렉션에서
+        // 최신 데이터로 교체되므로 별도 배치 업데이트가 불필요합니다.
 
         responseData.displayName = displayName;
       } catch (error) {
@@ -167,15 +154,8 @@ export async function PUT(
           console.error("Firebase Auth 사진 업데이트 실패:", error);
         });
 
-        // 기존 리뷰들의 사용자 사진 업데이트 (백그라운드)
-        updateReviewsPhotoKey(uid, photoKey).catch((error) => {
-          console.error("리뷰 사진 업데이트 실패:", error);
-        });
-
-        // 기존 댓글들의 사용자 사진 업데이트 (백그라운드)
-        updateCommentsPhotoKey(uid, photoKey).catch((error) => {
-          console.error("댓글 사진 업데이트 실패:", error);
-        });
+        // 리뷰/댓글의 비정규화된 photoKey는 조회 시 users 컬렉션에서
+        // 최신 데이터로 교체되므로 별도 배치 업데이트가 불필요합니다.
 
         responseData.photoKey = photoKey;
         responseData.photoURL = photoURL;

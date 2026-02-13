@@ -1,6 +1,6 @@
 import MobileMenu from "@/my-page/components/menu/MobileMenu";
 import SideMenu from "@/my-page/components/menu/SideMenu";
-import { PrivateRoute } from "store/context/auth/authContext";
+import { PrivateRoute } from "store/context/auth/PrivateRoute";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

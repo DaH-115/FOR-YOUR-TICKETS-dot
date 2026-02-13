@@ -1,16 +1,3 @@
-// 중복 체크 API 호출 유틸
-export async function checkDuplicate(
-  type: "displayName" | "email",
-  value: string,
-): Promise<{ available: boolean; message: string }> {
-  const response = await fetch("/api/auth/check-availability", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type, value }),
-  });
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.error || "중복 확인에 실패했습니다.");
-  }
-  return result;
-}
+// 하위 호환성을 위한 re-export
+// 실제 구현은 app/services/authService.ts에 있습니다.
+export { checkDuplicate } from "@/services/authService";

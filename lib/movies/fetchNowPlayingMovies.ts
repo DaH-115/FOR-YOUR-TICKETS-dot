@@ -1,36 +1,8 @@
 import { enrichMovieData } from "lib/movies/utils/enrichMovieData";
+import type { MovieList } from "types/movie";
 
-export interface MovieBaseType {
-  id: number;
-  title: string;
-  original_title: string;
-  overview: string;
-  poster_path?: string;
-  backdrop_path?: string;
-  release_date: string;
-  vote_average: number;
-  runtime: string;
-  production_companies: { id: number; name: string }[];
-}
-
-export interface MovieList {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: number[];
-  id: number;
-  original_language: string;
-  original_title: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  release_date: string;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-  genres?: string[];
-  certification?: string | null;
-}
+// 타입 re-export (하위 호환성 유지)
+export type { MovieBaseType, MovieList } from "types/movie";
 
 export async function fetchNowPlayingMovies(): Promise<MovieList[]> {
   const TMDB_API_KEY = process.env.TMDB_API_KEY;

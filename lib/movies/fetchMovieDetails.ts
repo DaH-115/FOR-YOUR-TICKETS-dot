@@ -1,11 +1,9 @@
 import { fetchMovieReleaseDates } from "lib/movies/fetchMovieReleaseDates";
-import { MovieBaseType } from "lib/movies/fetchNowPlayingMovies";
 import { getCertification } from "lib/movies/utils/getCertification";
+import type { MovieDetails } from "types/movie";
 
-export interface MovieDetails extends MovieBaseType {
-  genres: { id: number; name: string }[];
-  certification?: string | null;
-}
+// 타입 re-export (하위 호환성 유지)
+export type { MovieDetails } from "types/movie";
 
 export async function fetchMovieDetails(id: number): Promise<MovieDetails> {
   const TMDB_API_KEY = process.env.TMDB_API_KEY;

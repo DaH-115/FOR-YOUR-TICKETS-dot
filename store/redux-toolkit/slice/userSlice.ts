@@ -2,26 +2,10 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { isAuth } from "firebase-config";
 import { getAuthHeaders } from "@/utils/getIdToken/getAuthHeaders";
 import { User as FirebaseUser } from "firebase/auth";
+import type { User } from "types/user";
 
-// 사용자 정보 타입 정의
-export interface User {
-  // Firebase Auth 정보
-  uid: string | null;
-  email: string | null;
-  displayName: string | null;
-  photoKey: string | null; // S3 이미지 Key만 사용합니다.
-
-  // Firestore 메타데이터
-  biography: string | null;
-  provider: string | null;
-  activityLevel: string;
-  createdAt: string;
-  updatedAt: string;
-
-  // 사용자 통계 정보
-  myTicketsCount: number;
-  likedTicketsCount: number;
-}
+// 타입 re-export (하위 호환성 유지)
+export type { User } from "types/user";
 
 // Redux 상태 타입
 type UserState = {

@@ -1,14 +1,8 @@
 // 리뷰 작성/수정 관련 상수
 
-/**
- * 사용자 활동 등급 목록
- */
-export const USER_LEVELS = ["NEWBIE", "REGULAR", "ACTIVE", "EXPERT"] as const;
-
-/**
- * 사용자 활동 등급 타입
- */
-export type UserLevel = (typeof USER_LEVELS)[number];
+// 사용자 등급 타입 re-export (하위 호환성 유지)
+export { USER_LEVELS } from "types/user";
+export type { UserLevel } from "types/user";
 
 /**
  * 리뷰 작성/수정 성공 메시지

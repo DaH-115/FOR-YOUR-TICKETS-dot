@@ -6,7 +6,7 @@ import VideoPlayer from "@/components/movie/VideoPlayer";
 import WriteButton from "@/components/ui/buttons/WriteButton";
 import MovieInfoCard from "@/home/components/MovieInfoCard";
 import getEnrichMovieTitle from "@/utils/getEnrichMovieTitle";
-import { MovieList } from "lib/movies/fetchNowPlayingMovies";
+import type { MovieList, CrewMember } from "types/movie";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
@@ -14,11 +14,15 @@ import Link from "next/link";
 interface RecommendSectionProps {
   movie: MovieList;
   trailerKey?: string;
+  genres: string[];
+  uniqueDirectors: CrewMember[];
 }
 
 export default function RecommendSection({
   movie,
   trailerKey,
+  genres,
+  uniqueDirectors,
 }: RecommendSectionProps) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -160,7 +164,11 @@ export default function RecommendSection({
                 importance="hero"
               />
               {/* 영화 정보 카드 */}
-              <MovieInfoCard movie={movie} />
+              <MovieInfoCard
+                movie={movie}
+                genres={genres}
+                uniqueDirectors={uniqueDirectors}
+              />
               {/* 티켓 만들기 버튼 */}
               <WriteButton movieId={movie.id} />
             </div>

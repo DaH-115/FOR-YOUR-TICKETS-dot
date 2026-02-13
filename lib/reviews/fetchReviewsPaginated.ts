@@ -1,35 +1,9 @@
 import { adminFirestore } from "firebase-admin-config";
 import type { Query, DocumentData, Timestamp } from "firebase-admin/firestore";
+import type { ReviewDoc, ReviewUser } from "types/review";
 
-// 사용자 정보 타입 정의
-export interface ReviewUser {
-  uid: string | null;
-  displayName: string | null;
-  photoKey: string | null;
-  activityLevel?: string;
-}
-
-// API에서 반환하는 리뷰 데이터 타입 (날짜는 문자열로 변환됨)
-export interface ReviewDoc {
-  id: string;
-  user: ReviewUser;
-  review: {
-    movieId: number;
-    movieTitle: string;
-    originalTitle: string;
-    moviePosterPath?: string;
-    releaseYear: string;
-    rating: number;
-    reviewTitle: string;
-    reviewContent: string;
-    createdAt: string; // ISO 문자열
-    updatedAt: string;
-    likeCount: number;
-    // 목록에서는 사용자 컨텍스트가 없어 미확정 상태일 수 있음
-    isLiked?: boolean;
-  };
-  orderNumber?: number; // 전체 리뷰 중 순서 (오래된 순 기준, 1부터 시작)
-}
+// 타입 re-export (하위 호환성 유지)
+export type { ReviewDoc, ReviewUser } from "types/review";
 
 // 'Firestore'에서 가져온 원본 리뷰 데이터 타입 (날짜는 Timestamp)
 interface RawReview {

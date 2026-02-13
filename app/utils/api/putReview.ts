@@ -1,26 +1,3 @@
-import { ReviewFormValues } from "@/write-review/types";
-
-// 리뷰 수정 API 호출 유틸
-export async function putReview({
-  reviewId,
-  reviewData,
-  authHeaders,
-}: {
-  reviewId: string;
-  reviewData: ReviewFormValues;
-  authHeaders: Record<string, string>;
-}) {
-  const response = await fetch(`/api/reviews/${reviewId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeaders,
-    },
-    body: JSON.stringify(reviewData),
-  });
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || "review/update-failed");
-  }
-  return response.json();
-}
+// 하위 호환성을 위한 re-export
+// 실제 구현은 app/services/reviewService.ts에 있습니다.
+export { putReview } from "@/services/reviewService";

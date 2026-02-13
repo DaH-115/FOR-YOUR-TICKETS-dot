@@ -1,13 +1,9 @@
 import { NextRequest } from "next/server";
 import { adminAuth } from "firebase-admin-config";
+import type { AuthResult } from "types/auth";
 
-export interface AuthResult {
-  success: boolean;
-  uid?: string;
-  email?: string;
-  error?: string;
-  statusCode?: number;
-}
+// 타입 re-export (하위 호환성 유지)
+export type { AuthResult } from "types/auth";
 
 /**
  * Authorization 헤더에서 Firebase ID Token을 검증합니다.

@@ -6,14 +6,22 @@ import GenreList from "app/components/movie/GenreList";
 import MovieCertification from "app/components/movie/MovieCertification";
 import Tooltip from "app/components/ui/feedback/Tooltip";
 import formatMovieDate from "app/utils/formatMovieDate";
-import { MovieList } from "lib/movies/fetchNowPlayingMovies";
-import { useMovieDetails } from "store/context/movieDetailsContext";
+import type { MovieList, CrewMember } from "types/movie";
 import { IoInformationCircle } from "react-icons/io5";
 
-export default function MovieInfoCard({ movie }: { movie: MovieList }) {
+interface MovieInfoCardProps {
+  movie: MovieList;
+  genres: string[];
+  uniqueDirectors: CrewMember[];
+}
+
+export default function MovieInfoCard({
+  movie,
+  genres,
+  uniqueDirectors,
+}: MovieInfoCardProps) {
   const { id, title, original_title, release_date, vote_average } = movie;
   const releaseDate = formatMovieDate(release_date);
-  const { genres, uniqueDirectors } = useMovieDetails();
 
   return (
     <section className="mt-2 rounded-2xl bg-white">

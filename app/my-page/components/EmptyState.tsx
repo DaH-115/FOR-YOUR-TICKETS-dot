@@ -1,11 +1,3 @@
-interface EmptyStateProps {
-  message: string;
-}
-
-export default function EmptyState({ message }: EmptyStateProps) {
-  return (
-    <div className="flex w-full flex-col items-center justify-center py-8">
-      <p className="text-center text-sm text-gray-500">{message}</p>
-    </div>
-  );
-}
+// 하위 호환성을 위한 re-export
+// 실제 구현은 app/components/ui/feedback/EmptyState.tsx에 있습니다.
+export { default } from "@/components/ui/feedback/EmptyState";

@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { RecommendSection, MovieSection } from "app/home/components";
-import { MovieList } from "lib/movies/fetchNowPlayingMovies";
-import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
+import type { MovieList, CrewMember } from "types/movie";
+import type { ReviewDoc } from "types/review";
 import Background from "@/components/ui/layout/Background";
 
 // 컴포넌트 지연 로딩
@@ -17,6 +17,8 @@ interface HomePageProps {
   recommendMovie: MovieList;
   trailerKey: string;
   latestReviews: ReviewDoc[];
+  genres: string[];
+  uniqueDirectors: CrewMember[];
 }
 
 export default function HomePage({
@@ -24,6 +26,8 @@ export default function HomePage({
   recommendMovie,
   trailerKey,
   latestReviews,
+  genres,
+  uniqueDirectors,
 }: HomePageProps) {
   return (
     <main>
@@ -32,7 +36,12 @@ export default function HomePage({
         height="80vh"
         aspectRatio="16/9"
       />
-      <RecommendSection movie={recommendMovie} trailerKey={trailerKey} />
+      <RecommendSection
+        movie={recommendMovie}
+        trailerKey={trailerKey}
+        genres={genres}
+        uniqueDirectors={uniqueDirectors}
+      />
       <MovieSection
         title="상영 중인 영화"
         movieList={movieList}

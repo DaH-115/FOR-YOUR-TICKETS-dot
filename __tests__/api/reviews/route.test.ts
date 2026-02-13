@@ -4,14 +4,12 @@ import { adminFirestore } from "firebase-admin-config";
 import { fetchReviewsPaginated } from "lib/reviews/fetchReviewsPaginated";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
-import { updateCommentsActivityLevel } from "@/api/users/[uid]/route.helper";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createMockRequest } from "__tests__/utils/test-utils";
 
 jest.mock("lib/reviews/fetchReviewsPaginated");
 jest.mock("lib/auth/verifyToken");
 jest.mock("lib/users/updateUserActivityLevel");
-jest.mock("@/api/users/[uid]/route.helper");
 jest.mock("next/cache");
 jest.mock("firebase-admin-config", () => ({
   adminFirestore: {
@@ -25,8 +23,6 @@ const mockedFetchReviewsPaginated = fetchReviewsPaginated as jest.Mock;
 const mockedVerifyAuthToken = verifyAuthToken as jest.Mock;
 const mockedVerifyResourceOwnership = verifyResourceOwnership as jest.Mock;
 const mockedUpdateUserActivityLevel = updateUserActivityLevel as jest.Mock;
-const mockedUpdateCommentsActivityLevel =
-  updateCommentsActivityLevel as jest.Mock;
 const mockedRevalidatePath = revalidatePath as jest.Mock;
 const mockedRevalidateTag = revalidateTag as jest.Mock;
 const mockedFirestoreAdd = adminFirestore.collection("movie-reviews")
@@ -83,13 +79,9 @@ describe("리뷰 API 라우트 (/api/reviews)", () => {
           }),
         }),
       );
-      // 등급 업데이트, 댓글 등급 업데이트, 캐시 무효화 함수 호출 확인
+      // 등급 업데이트, 캐시 무효화 함수 호출 확인
       await new Promise(process.nextTick);
       expect(mockedUpdateUserActivityLevel).toHaveBeenCalledWith(mockUid, 1);
-      expect(mockedUpdateCommentsActivityLevel).toHaveBeenCalledWith(
-        mockUid,
-        "새싹",
-      );
       expect(mockedRevalidatePath).toHaveBeenCalledWith("/ticket-list");
       expect(mockedRevalidatePath).toHaveBeenCalledWith("/");
       expect(mockedRevalidateTag).toHaveBeenCalledWith("reviews");

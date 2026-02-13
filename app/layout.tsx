@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import "@/globals.css";
 import { AlertProvider } from "store/context/alertContext";
-import { AuthProvider } from "store/context/auth/authContext";
+import { AuthInitializer } from "store/context/auth/AuthInitializer";
 import { LevelUpProvider } from "store/context/levelUp/LevelUpContext";
 import Providers from "store/redux-toolkit/Providers";
 import Header from "@/components/ui/layout/header/Header";
@@ -110,7 +110,7 @@ export default function RootLayout({
       <body className="bg-[#121212]">
         {/* RTK Provider */}
         <Providers>
-          <AuthProvider>
+          <AuthInitializer>
             <AlertProvider>
               <LevelUpProvider>
                 <Header />
@@ -121,7 +121,7 @@ export default function RootLayout({
                 <ScrollToTopButton />
               </LevelUpProvider>
             </AlertProvider>
-          </AuthProvider>
+          </AuthInitializer>
         </Providers>
       </body>
     </html>
