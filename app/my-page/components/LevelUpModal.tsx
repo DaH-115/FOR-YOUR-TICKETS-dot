@@ -13,7 +13,7 @@ function LevelUpModal({ open, onClose, newLevel }: LevelUpModalProps) {
     <ModalPortal isOpen={open} onClose={onClose}>
       {/* Alert Header */}
       <div className="mb-4 text-center">
-        <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg">
+        <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 shadow-lg">
           <FaCheck className="text-white" />
         </div>
         <h3 className="text-lg font-bold text-gray-900">레벨 업!</h3>
@@ -32,7 +32,7 @@ function LevelUpModal({ open, onClose, newLevel }: LevelUpModalProps) {
       <div className="w-full">
         <button
           type="button"
-          className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-3 text-sm text-white shadow-lg transition-all duration-200 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+          className="w-full rounded-xl bg-linear-to-r from-emerald-500 to-emerald-600 px-5 py-3 text-sm text-white shadow-lg transition-all duration-200 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-xl focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30"
           onClick={onClose}
           autoFocus
         >

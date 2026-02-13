@@ -43,7 +43,7 @@ export default function MyProfilePage() {
   // 안전한 배경 그라데이션 적용을 위한 등급별 클래스 맵핑
   const getBackgroundGradient = (level: { label?: string } | null) => {
     const baseClasses =
-      "flex flex-col items-center rounded-2xl justify-center bg-gradient-to-b p-6 md:w-1/3";
+      "flex flex-col items-center rounded-2xl justify-center bg-linear-to-b p-6 md:w-1/3";
 
     switch (level?.label) {
       case "NEWBIE":

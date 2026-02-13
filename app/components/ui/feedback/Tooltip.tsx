@@ -55,7 +55,7 @@ export default function Tooltip({ children }: { children: ReactNode }) {
 
   const tooltipContent = (
     <div
-      className="animate-in fade-in fixed z-[99999] -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/20 bg-black px-3 py-2 text-xs text-white shadow-xl duration-200"
+      className="animate-in fade-in fixed z-99999 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/20 bg-black px-3 py-2 text-xs text-white shadow-xl duration-200"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,

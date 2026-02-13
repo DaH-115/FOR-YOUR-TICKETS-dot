@@ -117,9 +117,9 @@ function ProfileAvatar({
           }}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600">
+        <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-gray-400 to-gray-600">
           <span
-            className="select-none font-bold text-white drop-shadow-sm"
+            className="select-none font-bold text-white drop-shadow-xs"
             style={{ fontSize: size * 0.4 }}
           >
             {firstLetter}

@@ -125,7 +125,7 @@ export default function MovieDetailCard({
                           userDisplayName={cast.name}
                           previewSrc={profilePath(cast.profile_path)}
                           size={40}
-                          className="flex-shrink-0"
+                          className="shrink-0"
                           showLoading={false}
                         />
                         <div>
@@ -164,7 +164,7 @@ export default function MovieDetailCard({
                             userDisplayName={crew.name}
                             previewSrc={profilePath(crew.profile_path)}
                             size={40}
-                            className="flex-shrink-0"
+                            className="shrink-0"
                             showLoading={false}
                           />
                           <div>

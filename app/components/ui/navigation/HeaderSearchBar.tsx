@@ -100,7 +100,7 @@ export default function HeaderSearchBar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="영화 검색"
-              className={`w-full rounded-full bg-transparent py-3 pl-6 pr-14 text-sm text-white placeholder-white/70 transition-all duration-300 ease-in-out focus:outline-none ${
+              className={`w-full rounded-full bg-transparent py-3 pl-6 pr-14 text-sm text-white placeholder-white/70 transition-all duration-300 ease-in-out focus:outline-hidden ${
                 isSearchOpen ? "opacity-100" : "opacity-0"
               }`}
               displayValue={() => searchQuery}
@@ -117,13 +117,13 @@ export default function HeaderSearchBar() {
             <ComboboxOptions
               modal={false}
               transition
-              className={`absolute right-0 top-full z-10 mt-2 max-h-96 w-64 origin-top-right overflow-auto rounded-xl border border-white/20 bg-black/90 shadow-xl transition duration-200 ease-out scrollbar-hide focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150`}
+              className={`absolute right-0 top-full z-10 mt-2 max-h-96 w-64 origin-top-right overflow-auto rounded-xl border border-white/20 bg-black/90 shadow-xl transition duration-200 ease-out scrollbar-hide focus:outline-hidden data-closed:scale-95 data-closed:opacity-0 data-enter:duration-200 data-leave:duration-150`}
             >
               {results.slice(0, visibleCount).map((result) => (
                 <ComboboxOption
                   key={result.id}
                   value={result}
-                  className="cursor-pointer px-4 py-3 text-white transition-colors data-[focus]:bg-white/10"
+                  className="cursor-pointer px-4 py-3 text-white transition-colors data-focus:bg-white/10"
                 >
                   <p className="font-medium">{result.title}</p>
                   <p className="text-sm text-white/70">

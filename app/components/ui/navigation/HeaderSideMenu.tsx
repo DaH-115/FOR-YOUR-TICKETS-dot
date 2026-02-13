@@ -68,7 +68,7 @@ export default function HeaderSideMenu({
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-[9999] transition-all duration-300 ${
+      className={`fixed inset-0 z-9999 transition-all duration-300 ${
         isOpen ? "visible opacity-100" : "invisible opacity-0"
       }`}
     >

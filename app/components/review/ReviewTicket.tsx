@@ -12,7 +12,7 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
   return (
     <article className="group relative flex cursor-pointer flex-col drop-shadow-lg">
       {/* 별점 */}
-      <div className="absolute left-0 right-0 top-0 z-20 flex items-center rounded-t-xl bg-gradient-to-b from-black/80 via-black/60 to-transparent px-3 pt-2 text-white">
+      <div className="absolute left-0 right-0 top-0 z-20 flex items-center rounded-t-xl bg-linear-to-b from-black/80 via-black/60 to-transparent px-3 pt-2 text-white">
         <FaStar className="text-accent-300" size={14} />
         <span className="ml-1 font-semibold">{review.review.rating}</span>
       </div>

@@ -65,7 +65,7 @@ export default function SearchPage({
             {...register("searchQuery")}
             type="search"
             placeholder="영화 제목으로 검색해 보세요"
-            className="w-full rounded-xl bg-gray-600 py-2 pl-4 pr-12 text-sm tracking-tight text-white outline-none"
+            className="w-full rounded-xl bg-gray-600 py-2 pl-4 pr-12 text-sm tracking-tight text-white outline-hidden"
           />
           <button type="button" className="absolute right-3">
             <IoSearchOutline className="text-gray-400" size={20} />

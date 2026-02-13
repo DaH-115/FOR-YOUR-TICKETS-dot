@@ -82,7 +82,7 @@ export default function AnimatedOverview({
 
       {/* 그라데이션 오버레이 */}
       {!isExpanded && showButton && (
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-linear-to-t from-white to-transparent" />
       )}
 
       {/* 더 보기/접기 버튼 */}
@@ -90,7 +90,7 @@ export default function AnimatedOverview({
         <div className="flex justify-end">
           <button
             onClick={toggleExpanded}
-            className="mt-2 rounded-full px-3 py-1 text-xs text-gray-600 transition-all duration-200 hover:bg-primary-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-accent-300 focus:ring-offset-1"
+            className="mt-2 rounded-full px-3 py-1 text-xs text-gray-600 transition-all duration-200 hover:bg-primary-600 hover:text-white focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1"
             aria-expanded={isExpanded}
             aria-label={isExpanded ? "줄거리 접기" : "줄거리 더 보기"}
           >

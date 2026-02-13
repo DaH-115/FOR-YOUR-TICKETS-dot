@@ -30,19 +30,19 @@ export default function HeaderDropDownMenu({
         </span>
         <IoIosArrowDown
           size={12}
-          className="text-white transition-transform data-[open]:rotate-180"
+          className="text-white transition-transform data-open:rotate-180"
         />
       </MenuButton>
 
       <MenuItems
         modal={false}
         transition
-        className="absolute -right-4 top-full z-10 mt-4 min-w-32 origin-top overflow-hidden rounded-lg bg-white shadow-xl transition duration-200 ease-out focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150"
+        className="absolute -right-4 top-full z-10 mt-4 min-w-32 origin-top overflow-hidden rounded-lg bg-white shadow-xl transition duration-200 ease-out focus:outline-hidden data-closed:scale-95 data-closed:opacity-0 data-enter:duration-200 data-leave:duration-150"
       >
         <MenuItem>
           <Link
             href="/my-page"
-            className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-gray-900"
+            className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-gray-800 transition-colors data-focus:bg-gray-50 data-focus:text-gray-900"
           >
             <MdPerson className="mr-2 text-sm text-gray-600" />
             나의 프로필
@@ -53,7 +53,7 @@ export default function HeaderDropDownMenu({
           <MenuItem>
             <button
               onClick={logoutHandler}
-              className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-gray-800 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-red-600"
+              className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-gray-800 transition-colors data-focus:bg-gray-50 data-focus:text-red-600"
             >
               <MdLogout className="mr-2 text-sm text-gray-600" />
               로그아웃

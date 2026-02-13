@@ -41,12 +41,12 @@ const TicketBtnGroup = React.memo(function ReviewBtnGroup({
       <MenuItems
         modal={false}
         transition
-        className="absolute right-0 top-8 z-10 min-w-32 origin-top-right overflow-hidden rounded-lg bg-white shadow-xl transition duration-200 ease-out focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150"
+        className="absolute right-0 top-8 z-10 min-w-32 origin-top-right overflow-hidden rounded-lg bg-white shadow-xl transition duration-200 ease-out focus:outline-hidden data-closed:scale-95 data-closed:opacity-0 data-enter:duration-200 data-leave:duration-150"
       >
         <MenuItem>
           <Link
             href={`/write-review/${postId}?movieId=${movieId}`}
-            className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-700 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-gray-900"
+            className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-gray-700 transition-colors data-focus:bg-gray-50 data-focus:text-gray-900"
           >
             <MdOutlineEdit className="mr-2 text-sm" />
             Edit
@@ -57,7 +57,7 @@ const TicketBtnGroup = React.memo(function ReviewBtnGroup({
           <MenuItem>
             <button
               onClick={handleDelete}
-              className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-red-600 transition-colors data-[focus]:bg-gray-50 data-[focus]:text-red-700"
+              className="flex w-full items-center px-4 py-3 text-left text-xs font-medium text-red-600 transition-colors data-focus:bg-gray-50 data-focus:text-red-700"
             >
               <MdDeleteOutline className="mr-2 text-sm" />
               Delete

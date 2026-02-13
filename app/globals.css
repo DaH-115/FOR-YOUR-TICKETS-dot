@@ -1,6 +1,114 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tailwind-scrollbar-hide/v4';
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/* ========================================================================= */
+/* 커스텀 테마 설정 (tailwind.config.ts에서 마이그레이션)                      */
+/* ========================================================================= */
+
+@theme {
+  /* 브레이크포인트 */
+  --breakpoint-3xl: 1920px;
+
+  /* Primary 컬러 (버건디) */
+  --color-primary-50: #FDF2F4;
+  --color-primary-100: #F7D9E0;
+  --color-primary-200: #F0B5C3;
+  --color-primary-300: #E38FA6;
+  --color-primary-400: #D66A89;
+  --color-primary-500: #8B1E3F;
+  --color-primary-600: #701832;
+  --color-primary-700: #551226;
+  --color-primary-800: #3A0C19;
+  --color-primary-900: #1E060D;
+
+  /* Accent 컬러 (골드) */
+  --color-accent-50: #FBF7E8;
+  --color-accent-100: #F7EFD1;
+  --color-accent-200: #ECD594;
+  --color-accent-300: #D4AF37;
+  --color-accent-400: #BD9C31;
+  --color-accent-500: #A6892B;
+  --color-accent-600: #8F7625;
+  --color-accent-700: #78631F;
+  --color-accent-800: #615019;
+  --color-accent-900: #4A3D13;
+
+  /* 커스텀 스페이싱 */
+  --spacing-18: 4.5rem;
+  --spacing-88: 22rem;
+
+  /* 커스텀 애니메이션 */
+  --animate-scroll: scroll 40s linear infinite;
+  --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-bounce: bounce 3s ease-in-out infinite;
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+  --animate-scale-in: scaleIn 0.3s ease-out;
+  --animate-bounce-slow: bounce 2s infinite;
+}
+
+/* 키프레임 정의 */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ========================================================================= */
+/* 커스텀 유틸리티 (tailwind.config.ts 플러그인에서 마이그레이션)              */
+/* ========================================================================= */
+
+@utility transition-delay-300 {
+  transition-delay: 300ms;
+}
+
+/* ========================================================================= */
+/* 기본 스타일                                                                */
+/* ========================================================================= */
 
 @layer base {
   html {

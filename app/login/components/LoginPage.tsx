@@ -138,7 +138,7 @@ export default function LoginPage() {
                     type="checkbox"
                     id="rememberMe"
                     {...register("rememberMe")}
-                    className="h-4 w-4 rounded-md border-2 border-gray-300 bg-white text-accent-500 transition-all duration-200 checked:border-accent-500 checked:bg-accent-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/20"
+                    className="h-4 w-4 rounded-md border-2 border-gray-300 bg-white text-accent-500 transition-all duration-200 checked:border-accent-500 checked:bg-accent-500 focus:border-accent-500 focus:outline-hidden focus:ring-2 focus:ring-accent-500/20"
                     disabled={isLoading}
                     aria-describedby="rememberMe-description"
                   />

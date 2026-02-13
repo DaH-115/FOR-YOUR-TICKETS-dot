@@ -7,7 +7,7 @@ export default function LoginHeader() {
         <Link href="/" className="group">
           <div className="flex items-center space-x-2">
             <div className="text-center lg:text-left">
-              <h1 className="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-2xl font-bold leading-tight text-transparent lg:text-3xl">
+              <h1 className="bg-linear-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-2xl font-bold leading-tight text-transparent lg:text-3xl">
                 <span className="block sm:inline">Just Movie</span>
                 <span className="block sm:ml-2 sm:inline lg:ml-0 lg:block">
                   Tickets

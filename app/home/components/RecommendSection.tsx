@@ -114,7 +114,7 @@ export default function RecommendSection({
             {/* 줄거리 */}
             {movie.overview && (
               <div className="mt-6 md:mt-8 md:max-w-lg">
-                <p className="line-clamp-3 break-words text-sm leading-loose tracking-tight text-white md:line-clamp-4">
+                <p className="line-clamp-3 wrap-break-word text-sm leading-loose tracking-tight text-white md:line-clamp-4">
                   {movie.overview}
                 </p>
                 {isOverviewTruncated && (

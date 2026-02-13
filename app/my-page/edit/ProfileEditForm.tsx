@@ -151,7 +151,7 @@ export default function ProfileEditForm() {
       <FormProvider {...methods}>
         <form id="profile-edit-form" onSubmit={handleSubmit(onSubmit)}>
           {/* 프로필 이미지 섹션 */}
-          <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
+          <div className="mb-8 rounded-2xl bg-white p-6 shadow-xs">
             <h2 className="mb-4 text-lg font-bold">프로필 사진</h2>
             <div className="flex flex-col items-center gap-4">
               <ProfileAvatar
@@ -175,7 +175,7 @@ export default function ProfileEditForm() {
           </div>
 
           {/* 기본 정보 섹션 */}
-          <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
+          <div className="mb-8 rounded-2xl bg-white p-6 shadow-xs">
             <h2 className="mb-4 text-lg font-bold">기본 정보</h2>
             <div className="space-y-6">
               {user?.email && (
@@ -201,7 +201,7 @@ export default function ProfileEditForm() {
 
           {/* 비밀번호 변경 섹션 */}
           {user?.provider === "email" && (
-            <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
+            <div className="mb-8 rounded-2xl bg-white p-6 shadow-xs">
               <ChangePassword />
             </div>
           )}

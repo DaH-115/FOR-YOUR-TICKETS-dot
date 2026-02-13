@@ -25,7 +25,7 @@ export default function BioInput({ isEditing, originalValue }: BioInputProps) {
             id="biography"
             {...register("biography")}
             rows={3}
-            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-300 focus:ring-offset-1"
+            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-accent-500 focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1"
             placeholder="자신을 소개해보세요"
           />
           {errors.biography?.message && (

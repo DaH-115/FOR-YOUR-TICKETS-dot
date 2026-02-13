@@ -30,7 +30,7 @@ export default function WatchlistMovieCard({ movie }: WatchlistMovieCardProps) {
       </Link>
 
       {/* 그라데이션 배경 */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-black/80 via-black/50 to-black/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       {/* 영화 정보 오버레이 */}
       <div className="pointer-events-none absolute inset-0 flex flex-col justify-end p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">

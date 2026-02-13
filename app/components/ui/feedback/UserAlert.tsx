@@ -33,10 +33,10 @@ export default function UserAlert({
   }, [show, autoClose, autoCloseDelay, onConfirm]);
   return (
     <AlertPortal show={show}>
-      <div className="w-full rounded-xl bg-white p-4 shadow-2xl ring-1 ring-gray-200/50 backdrop-blur-sm">
+      <div className="w-full rounded-xl bg-white p-4 shadow-2xl ring-1 ring-gray-200/50 backdrop-blur-xs">
         {/* Toast Header */}
         <div className="flex items-start gap-3">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-sm">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 shadow-xs">
             <FaCheck className="text-xs text-white" />
           </div>
           <div className="flex-1">

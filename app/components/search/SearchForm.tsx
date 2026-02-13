@@ -63,7 +63,7 @@ export default function SearchForm({
         {...register("search")}
         type="search"
         placeholder={placeholder}
-        className="h-full w-full rounded-full pl-4 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-accent-300 focus:ring-offset-1"
+        className="h-full w-full rounded-full pl-4 pr-10 text-sm focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1"
         aria-invalid={!!errors.search}
       />
 

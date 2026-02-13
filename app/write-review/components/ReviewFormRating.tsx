@@ -59,7 +59,7 @@ export default function ReviewFormRating() {
             <div className="relative">
               <Listbox value={field.value} onChange={field.onChange}>
                 <ListboxButton
-                  className={`w-full rounded-xl border px-4 py-3 text-left transition-all focus:outline-none focus:ring-1 focus:ring-accent-300 focus:ring-offset-1 ${
+                  className={`w-full rounded-xl border px-4 py-3 text-left transition-all focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1 ${
                     error
                       ? "border-red-500 bg-red-50 ring-2 ring-red-500/30"
                       : "bg-gray-white border-gray-200 focus:border-accent-500"
@@ -86,18 +86,18 @@ export default function ReviewFormRating() {
                       )}
                     </div>
                     <IoChevronDown
-                      className="transition-transform data-[open]:rotate-180"
+                      className="transition-transform data-open:rotate-180"
                       size={16}
                     />
                   </div>
                 </ListboxButton>
 
-                <ListboxOptions className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg focus:outline-none">
+                <ListboxOptions className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg focus:outline-hidden">
                   {ratingOptions.map((option) => (
                     <ListboxOption
                       key={option.value}
                       value={option.value}
-                      className="flex cursor-pointer items-center space-x-3 px-4 py-3 transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-accent-50 data-[focus]:bg-accent-100 data-[selected]:bg-accent-50"
+                      className="flex cursor-pointer items-center space-x-3 px-4 py-3 transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-accent-50 data-focus:bg-accent-100 data-selected:bg-accent-50"
                     >
                       <Stars count={option.stars} />
                       <div className="space-x-2 text-gray-800">

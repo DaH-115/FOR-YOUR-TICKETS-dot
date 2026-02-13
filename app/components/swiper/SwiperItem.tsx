@@ -23,7 +23,7 @@ export default function SwiperItem({
   return (
     <article className="relative flex flex-col drop-shadow-xl">
       {/* 랭킹 번호 */}
-      <header className="absolute left-0 top-0 z-50 flex w-full items-center rounded-t-xl bg-gradient-to-t from-transparent to-black/60 py-1 pl-3 pr-2 text-white">
+      <header className="absolute left-0 top-0 z-50 flex w-full items-center rounded-t-xl bg-linear-to-t from-transparent to-black/60 py-1 pl-3 pr-2 text-white">
         <p className="text-2xl font-semibold">{idx + 1}</p>
       </header>
 

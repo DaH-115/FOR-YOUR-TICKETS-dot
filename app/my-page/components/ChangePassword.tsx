@@ -114,7 +114,7 @@ export default function ChangePassword() {
             type="button"
             onClick={submitCurrent(handleVerifyCurrent)}
             disabled={isVerifying || isVerified}
-            className={`mt-2 flex-shrink-0 rounded-2xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
+            className={`mt-2 shrink-0 rounded-2xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
               isVerifying || isVerified
                 ? "cursor-not-allowed bg-gray-200 text-gray-400"
                 : "bg-gray-600 text-white hover:bg-gray-400"
@@ -165,7 +165,7 @@ export default function ChangePassword() {
             type="button"
             onClick={submitNew(handleChangePassword)}
             disabled={isUpdating || !isVerified}
-            className={`mt-2 flex-shrink-0 rounded-2xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
+            className={`mt-2 shrink-0 rounded-2xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
               !isVerified || isUpdating
                 ? "cursor-not-allowed bg-gray-200 text-gray-400"
                 : "bg-gray-600 text-white hover:bg-gray-400"

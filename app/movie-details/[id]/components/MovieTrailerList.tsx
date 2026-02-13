@@ -79,7 +79,7 @@ export default function MovieTrailerList({
             <div className="mt-6 flex justify-center">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="rounded-full px-6 py-3 text-sm text-white transition-all duration-300 hover:scale-105 hover:bg-white/20 focus:outline-none focus:ring-1 focus:ring-white/50"
+                className="rounded-full px-6 py-3 text-sm text-white transition-all duration-300 hover:scale-105 hover:bg-white/20 focus:outline-hidden focus:ring-1 focus:ring-white/50"
               >
                 {showAll ? (
                   <div className="flex items-center">

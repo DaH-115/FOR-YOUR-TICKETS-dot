@@ -39,7 +39,7 @@ export default function MoviePoster({
   const policy = POLICY[importance];
   return (
     <div
-      className={`group relative aspect-[2/3] overflow-hidden rounded-2xl ${className}`}
+      className={`group relative aspect-2/3 overflow-hidden rounded-2xl ${className}`}
     >
       <MovieImage
         posterPath={posterPath}

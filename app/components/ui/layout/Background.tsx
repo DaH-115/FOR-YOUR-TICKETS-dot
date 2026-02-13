@@ -38,8 +38,8 @@ export default function Background({
 
       {/* 오버레이 */}
       <div className="absolute inset-0 bg-[#121212]/30" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#121212] via-[#121212]/80 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/10 to-black/70" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-[#121212] via-[#121212]/80 to-transparent" />
     </div>
   );
 }
