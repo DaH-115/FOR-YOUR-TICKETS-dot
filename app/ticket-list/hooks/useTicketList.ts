@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { ReviewDoc } from "types/review";
-import { getAuthHeaders } from "@/utils/getIdToken";
+import { getAuthHeaders, waitForAuthReady } from "@/utils/getIdToken";
 import { mergeLikeStatuses } from "@/utils/api";
+import { isAuth } from "firebase-config";
 
 interface UseTicketListParams {
   initialReviews: ReviewDoc[];
@@ -96,12 +97,19 @@ export default function useTicketList({
 
 /**
  * 리뷰 목록에 좋아요 상태를 병합
+ * - Auth 초기화 대기 후 로그인 상태일 때만 API 호출
  * - 인증 실패/네트워크 오류 시 원본 데이터를 그대로 반환
  */
 async function syncLikeStatuses(reviews: ReviewDoc[]): Promise<ReviewDoc[]> {
   if (reviews.length === 0) return reviews;
 
   try {
+    // Firebase Auth 초기화 완료 대기
+    await waitForAuthReady();
+
+    // 로그인하지 않은 경우 서버 동기화 불필요
+    if (!isAuth.currentUser) return reviews;
+
     const reviewIds = reviews.map((r) => r.id);
     const authHeaders = await getAuthHeaders();
     const likeRes = await fetch(`/api/reviews/like-statuses`, {

@@ -14,7 +14,7 @@ import { selectUser } from "store/redux-toolkit/slice/userSlice";
 import { useAlert } from "store/context/alertContext";
 import { isAuth } from "firebase-config";
 import MoviePoster from "@/components/movie/MoviePoster";
-import { getAuthHeaders } from "@/utils/getIdToken";
+import { getAuthHeaders, waitForAuthReady } from "@/utils/getIdToken";
 
 interface ReviewDetailProps {
   review: ReviewDoc;
@@ -41,13 +41,16 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
   // 마운트 시 좋아요 상태 동기화
   useEffect(() => {
-    // 로그인하지 않은 경우 서버 동기화 불필요
-    if (!isAuth.currentUser) return;
-
     let isCancelled = false;
 
     (async () => {
       try {
+        // Firebase Auth 초기화 완료 대기
+        await waitForAuthReady();
+
+        // 로그인하지 않은 경우 서버 동기화 불필요
+        if (!isAuth.currentUser || isCancelled) return;
+
         // 인증 헤더 생성 후 like-statuses API 호출
         const authHeaders = await getAuthHeaders();
         const response = await fetch("/api/reviews/like-statuses", {

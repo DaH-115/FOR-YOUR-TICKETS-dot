@@ -126,17 +126,7 @@ export const removeWatchlist = createAsyncThunk<
 const watchlistSlice = createSlice({
   name: "watchlist",
   initialState,
-  reducers: {
-    /**
-     * 워치리스트 상태를 초기화하는 액션
-     * 로그아웃 시나 페이지 이동 시 사용
-     */
-    clearWatchlist(state) {
-      state.movies = [];
-      state.status = "idle";
-      state.error = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       // fetchWatchlist 액션 처리
@@ -187,9 +177,6 @@ const watchlistSlice = createSlice({
       );
   },
 });
-
-// 액션 생성자 내보내기
-export const { clearWatchlist } = watchlistSlice.actions;
 
 // 상태 선택자 내보내기
 export const selectWatchlist = (state: { watchlist: WatchlistState }) =>

@@ -211,12 +211,7 @@ try {
 
   jest.mock("@/store/redux-toolkit/slice/userSlice", () => ({
     selectUser: (state) => state.user,
-    userSlice: {
-      actions: {
-        setUser: (user) => ({ type: "user/setUser", payload: user }),
-        clearUser: () => ({ type: "user/clearUser" }),
-      },
-    },
+    clearUser: () => ({ type: "user/clearUser" }),
   }));
 } catch (error) {
   // 모듈이 없으면 무시

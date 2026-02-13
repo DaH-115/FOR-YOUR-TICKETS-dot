@@ -174,15 +174,6 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // 로그인 시 사용자 정보 설정
-    setUser(state, action: PayloadAction<User>) {
-      state.user = action.payload;
-      state.isAuthenticated = true;
-      state.authLoading = false;
-      state.status = "succeeded";
-      state.error = null;
-    },
-
     // 로그아웃 시 모든 정보 초기화
     clearUser(state) {
       state.user = null;
@@ -192,24 +183,7 @@ const userSlice = createSlice({
       state.error = null;
     },
 
-    // 인증 로딩 상태 설정
-    setAuthLoading(state, action: PayloadAction<boolean>) {
-      state.authLoading = action.payload;
-    },
-
-    // 프로필 이미지만 빠르게 업데이트 (로컬 상태)
-    updatePhotoKey(state, action: PayloadAction<string>) {
-      if (state.user) {
-        state.user.photoKey = action.payload;
-      }
-    },
-
-    // 에러 상태 초기화
-    clearError(state) {
-      state.error = null;
-    },
-
-    // 개발용 등급 변경 액션
+    // 등급 변경 액션
     updateActivityLevel(state, action: PayloadAction<string>) {
       if (state.user) {
         state.user.activityLevel = action.payload;
@@ -280,14 +254,7 @@ const userSlice = createSlice({
 });
 
 // 액션과 리듀서 내보내기
-export const {
-  setUser,
-  clearUser,
-  setAuthLoading,
-  updatePhotoKey,
-  clearError,
-  updateActivityLevel,
-} = userSlice.actions;
+export const { clearUser, updateActivityLevel } = userSlice.actions;
 export default userSlice.reducer;
 
 // 상태 선택자 (Selector) - 컴포넌트에서 쉽게 사용할 수 있도록
@@ -295,13 +262,7 @@ export const selectUser = (state: { userData: UserState }) =>
   state.userData.user;
 export const selectUserStatus = (state: { userData: UserState }) =>
   state.userData.status;
-export const selectUserError = (state: { userData: UserState }) =>
-  state.userData.error;
 export const selectIsAuthenticated = (state: { userData: UserState }) =>
   state.userData.isAuthenticated;
 export const selectAuthLoading = (state: { userData: UserState }) =>
   state.userData.authLoading;
-export const selectIsLoggedIn = (state: { userData: UserState }) =>
-  state.userData.isAuthenticated && !!state.userData.user;
-export const selectIsLoading = (state: { userData: UserState }) =>
-  state.userData.status === "loading";
