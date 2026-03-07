@@ -77,7 +77,7 @@ export default function HeaderSideMenu({
 
       {/* 메뉴 패널 */}
       <div
-        className={`fixed right-0 top-0 h-full w-full bg-black transition-transform duration-300 ease-out md:w-2/3 ${
+        className={`fixed top-0 right-0 h-full w-full bg-black transition-transform duration-300 ease-out md:w-2/3 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -86,7 +86,7 @@ export default function HeaderSideMenu({
           <h2 className="font-semibold text-white">메뉴</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-white hover:bg-white/20"
+            className="cursor-pointer rounded-full p-2 text-white hover:bg-white/20"
           >
             <IoMdClose size={24} />
           </button>
@@ -103,7 +103,7 @@ export default function HeaderSideMenu({
                 showLoading={true}
               />
               <div>
-                <p className="font-medium text-white">{userDisplayName}</p>
+                <p className="text-white">{userDisplayName}</p>
                 <p className="text-gray-300">{userEmail}</p>
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function HeaderSideMenu({
             <Link
               href="/login"
               onClick={onClose}
-              className="block w-full font-medium text-white"
+              className="block w-full text-white"
             >
               로그인
             </Link>
@@ -129,10 +129,10 @@ export default function HeaderSideMenu({
                     <Link
                       href={href}
                       onClick={onClose}
-                      className={`block w-full rounded-full px-6 py-3 text-left ${
+                      className={`block w-full rounded-full p-3 text-left ${
                         isActive
-                          ? "font-semibold text-accent-300"
-                          : "text-gray-300 hover:text-accent-300"
+                          ? "text-accent-300 font-bold"
+                          : "hover:text-accent-300 text-gray-300"
                       }`}
                     >
                       {label}
@@ -157,10 +157,10 @@ export default function HeaderSideMenu({
                       <Link
                         href={href}
                         onClick={onClose}
-                        className={`block w-full rounded-full px-6 py-3 text-left ${
+                        className={`block w-full rounded-full p-3 text-left ${
                           isActive
-                            ? "font-semibold text-accent-300"
-                            : "text-gray-300 hover:text-accent-300"
+                            ? "text-accent-300 font-bold"
+                            : "hover:text-accent-300 text-gray-300"
                         }`}
                       >
                         {label}

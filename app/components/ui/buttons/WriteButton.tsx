@@ -13,7 +13,7 @@ export default function WriteButton({
   return (
     <Link
       href={`/write-review/new?movieId=${movieId}`}
-      className={`relative flex items-center justify-center gap-1 rounded-xl bg-primary-500 text-white transition-colors duration-300 hover:border-primary-300 ${
+      className={`bg-primary-500 hover:border-primary-300 relative flex items-center justify-center gap-1 rounded-2xl text-white transition-colors duration-300 ${
         size === "large" ? "p-5" : "p-4"
       }`}
     >

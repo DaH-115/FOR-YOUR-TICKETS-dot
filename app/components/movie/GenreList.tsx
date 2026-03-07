@@ -4,13 +4,10 @@ export default function GenreList({ genres }: { genres: string[] }) {
   }
 
   return (
-    <ul className="flex w-full items-center space-x-1 overflow-x-scroll scrollbar-hide">
+    <ul className="scrollbar-hide flex w-full items-center space-x-1 overflow-x-scroll">
       {genres.slice(0, 3).map((genre: string, idx: number) => (
-        <li
-          key={idx}
-          className="flex items-center rounded-full border border-gray-300 px-2 py-1.5"
-        >
-          <p className="text-nowrap text-xs text-gray-800">{genre}</p>
+        <li key={idx} className="flex items-center">
+          <p className="text-xs text-nowrap text-gray-800">{genre}</p>
         </li>
       ))}
     </ul>

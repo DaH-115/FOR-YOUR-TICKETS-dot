@@ -3,7 +3,6 @@
 import MovieCertification from "@/components/movie/MovieCertification";
 import MoviePoster from "@/components/movie/MoviePoster";
 import VideoPlayer from "@/components/movie/VideoPlayer";
-import WriteButton from "@/components/ui/buttons/WriteButton";
 import MovieInfoCard from "@/home/components/MovieInfoCard";
 import getEnrichMovieTitle from "@/utils/getEnrichMovieTitle";
 import type { MovieList, CrewMember } from "types/movie";
@@ -31,24 +30,6 @@ export default function RecommendSection({
     () => getEnrichMovieTitle(movie.original_title, movie.title),
     [movie],
   );
-
-  // 클라이언트 사이드 렌더링 상태 관리
-  const [isClient, setIsClient] = useState(false);
-
-  // 줄거리가 잘렸는지 확인
-  const isOverviewTruncated = useMemo(() => {
-    if (!movie.overview) return false;
-    const maxLength =
-      isClient && typeof window !== "undefined" && window.innerWidth >= 768
-        ? 300
-        : 150;
-    return movie.overview.length > maxLength;
-  }, [movie.overview, isClient]);
-
-  useEffect(() => {
-    // 클라이언트 사이드에서만 실행
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     // ref 값을 변수에 저장
@@ -83,13 +64,13 @@ export default function RecommendSection({
   return (
     <article
       ref={sectionRef}
-      className="mx-4 lg:mx-12 lg:mb-16 xl:mx-auto xl:max-w-6xl"
+      className="mx-auto max-w-md lg:mb-16 lg:max-w-4xl xl:max-w-5xl"
     >
       <div className="mx-auto flex flex-col items-center justify-center md:flex-row">
         {/* 영화 타이틀 및 정보 */}
-        <section className="mx-auto w-full xl:max-w-2xl">
+        <div className="mx-auto mr-8 w-full xl:max-w-2xl">
           <header className="sm:mx-4 lg:mx-0">
-            <p className="mb-2 text-sm font-semibold tracking-tight text-accent-300 lg:text-lg">
+            <p className="text-accent-300 mb-2 text-sm font-semibold tracking-tight lg:text-lg">
               오늘의 추천 영화
             </p>
             {/* 영화 제목 */}
@@ -106,38 +87,36 @@ export default function RecommendSection({
                 />
                 {/* 평점 */}
                 <div className="flex items-center">
-                  <FaStar className="mr-1 text-accent-300" />
-                  <p className="text-xl font-semibold text-white">{`${movie.vote_average.toFixed(1)}`}</p>
+                  <FaStar className="text-accent-300 mr-1" />
+                  <span className="text-xl font-semibold text-white">{`${movie.vote_average.toFixed(1)}`}</span>
                 </div>
               </div>
             </div>
 
             {/* 장르 */}
             <p className="mt-4 text-sm text-gray-200 lg:mt-2">{`${movie.genres?.join(", ")}`}</p>
-
-            {/* 줄거리 */}
-            {movie.overview && (
-              <div className="mt-6 md:mt-8 md:max-w-lg">
-                <p className="line-clamp-3 wrap-break-word text-sm leading-loose tracking-tight text-white md:line-clamp-4">
-                  {movie.overview}
-                </p>
-                {isOverviewTruncated && (
-                  <div className="text-right">
-                    <Link
-                      href={`/movie-details/${movie.id}`}
-                      className="text-sm text-accent-300 transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
-                    >
-                      더 보기
-                    </Link>
-                  </div>
-                )}
-              </div>
-            )}
           </header>
 
-          {/* 예고편 섹션 */}
+          {/* 줄거리 */}
+          {movie.overview && (
+            <div className="mt-6 sm:mx-4 md:mt-8 md:max-w-lg lg:mx-0">
+              <p className="line-clamp-3 text-sm leading-loose tracking-tight wrap-break-word text-white">
+                {movie.overview}
+              </p>
+              <div className="text-right">
+                <Link
+                  href={`/movie-details/${movie.id}`}
+                  className="text-accent-300 text-sm transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
+                >
+                  더 보기
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* 예고편 */}
           {trailerKey && (
-            <section className="mt-8 hidden w-full lg:mt-18 lg:block lg:max-w-lg">
+            <section className="mt-8 w-full lg:mt-18 lg:max-w-lg">
               <h3 className="mb-2 font-semibold tracking-tight text-gray-200">
                 예고편
               </h3>
@@ -146,17 +125,17 @@ export default function RecommendSection({
               </div>
             </section>
           )}
-        </section>
+        </div>
 
         {/* 영화 포스터 & 정보 카드 */}
-        <section
+        <div
           className={`w-full max-w-sm transition-transform duration-300 ease-in-out ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
           }`}
         >
           <div className="group mx-auto drop-shadow-xl transition-transform duration-300 ease-in-out hover:drop-shadow-2xl">
             {/* 전체 티켓을 3D 효과로 묶기 */}
-            <div className="-rotate-y-6 rotate-x-4 group-hover:rotate-y-0 group-hover:rotate-x-0 pointer-events-auto relative skew-y-3 scale-75 transform transition-all duration-300 ease-in-out group-hover:skew-y-0 group-hover:scale-90 lg:scale-90 lg:group-hover:scale-100">
+            <div className="pointer-events-auto relative scale-75 rotate-x-4 -rotate-y-6 skew-y-3 transform transition-all duration-300 ease-in-out group-hover:scale-90 group-hover:rotate-x-0 group-hover:rotate-y-0 group-hover:skew-y-0 lg:scale-90 lg:group-hover:scale-100">
               {/* 영화 포스터 */}
               <MoviePoster
                 posterPath={movie.poster_path}
@@ -169,11 +148,9 @@ export default function RecommendSection({
                 genres={genres}
                 uniqueDirectors={uniqueDirectors}
               />
-              {/* 티켓 만들기 버튼 */}
-              <WriteButton movieId={movie.id} />
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </article>
   );

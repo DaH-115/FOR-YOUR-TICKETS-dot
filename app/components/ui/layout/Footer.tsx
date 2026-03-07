@@ -56,7 +56,7 @@ export default function Footer() {
           {/* 메인 메뉴 */}
           <div>
             <h3 className="text-lg font-semibold text-white">메인 메뉴</h3>
-            <ul>
+            <ul className="text-base">
               {mainMenuItems.map(({ href, label }) => (
                 <li key={href}>
                   <Link
@@ -74,7 +74,7 @@ export default function Footer() {
           {isLoggedIn ? (
             <div>
               <h3 className="text-lg font-semibold text-white">나의 메뉴</h3>
-              <ul>
+              <ul className="text-base">
                 {userMenuItems.map(({ href, label }) => (
                   <li key={href}>
                     <Link

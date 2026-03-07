@@ -97,15 +97,15 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 w-full pb-4 pt-8 transition-all duration-500 ease-in-out lg:pt-4 ${
+      className={`fixed top-0 right-0 left-0 z-50 w-full pt-8 pb-4 transition-all duration-500 ease-in-out lg:pt-4 ${
         // 스크롤 다운 시 헤더를 위로 숨김
         isHeaderHidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="mx-4 flex items-center justify-between md:mx-6 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+      <div className="3xl:max-w-[1600px] mx-4 flex items-center justify-between md:mx-6 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl">
         {/* LOGO */}
-        <Link href="/" className="max-w-24 lg:max-w-48">
-          <p className="px-2 text-lg font-bold leading-tight tracking-tighter text-white transition-colors duration-200 hover:text-accent-300 md:px-0 md:text-xl">
+        <Link href="/" className="max-w-48">
+          <p className="px-2 text-lg leading-tight font-bold tracking-tighter text-white transition-colors duration-200 md:px-0 md:text-xl">
             Just Your Tickets
           </p>
         </Link>
@@ -135,14 +135,12 @@ export default function Header() {
                 />
               </div>
             ) : (
-              <Link href="/login">
-                <button
-                  type="button"
-                  className="rounded-full border border-white bg-white px-3 py-2 text-sm text-black shadow-lg transition-all duration-200 hover:bg-gray-100 hover:shadow-xl"
-                >
-                  로그인
-                </button>
-              </Link>
+              <button
+                type="button"
+                className="rounded-full bg-white px-4 py-3 text-sm text-black"
+              >
+                <Link href="/login">로그인</Link>
+              </button>
             )}
           </div>
 
@@ -152,7 +150,7 @@ export default function Header() {
           {/* 모바일 메뉴 */}
           <button
             onClick={() => setIsSideMenuOpen((prev) => !prev)}
-            className="px-2 text-white lg:hidden"
+            className="cursor-pointer px-2 text-white lg:hidden"
             aria-label="메뉴 열기"
           >
             <IoIosMenu size={28} aria-hidden />
