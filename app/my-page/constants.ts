@@ -12,5 +12,4 @@ export const MY_PAGE_MENU_ITEMS: MyPageMenuItem[] = [
   { href: "/my-page", label: "마이 페이지" },
   { href: "/my-page/my-ticket-list", label: "나의 티켓" },
   { href: "/my-page/liked-ticket-list", label: "좋아요한 티켓" },
-  { href: "/my-page/watchlist", label: "보고 싶은 영화" },
 ];

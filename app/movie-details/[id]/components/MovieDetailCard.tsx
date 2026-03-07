@@ -8,7 +8,6 @@ import { MovieCredits } from "lib/movies/fetchMovieCredits";
 import { MovieDetails } from "lib/movies/fetchMovieDetails";
 import ProfileAvatar from "@/components/user/ProfileAvatar";
 import { FaStar } from "react-icons/fa";
-import AddWatchlistButton from "@/components/movie/AddWatchlistButton";
 import GenreList from "@/components/movie/GenreList";
 
 interface MovieDetailCardProps {
@@ -220,13 +219,10 @@ export default function MovieDetailCard({
                   )}
                 </ul>
               </div>
-              {/* 리뷰 작성 & 워치리스트 버튼 */}
-              <div className="flex w-full items-center justify-between gap-3 border-t-4 border-dotted pt-4">
+              {/* 리뷰 작성 버튼 */}
+              <div className="flex w-full items-center border-t-4 border-dotted pt-4">
                 <div className="flex-1">
                   <WriteButton movieId={movieDetails.id} size="large" />
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-white p-2">
-                  <AddWatchlistButton movieId={movieDetails.id} />
                 </div>
               </div>
             </div>

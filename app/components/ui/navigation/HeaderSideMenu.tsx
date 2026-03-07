@@ -32,7 +32,6 @@ const userMenuItems: MenuItem[] = [
   { href: "/my-page", label: "나의 프로필" },
   { href: "/my-page/my-ticket-list", label: "나의 티켓" },
   { href: "/my-page/liked-ticket-list", label: "좋아요한 티켓" },
-  { href: "/my-page/watchlist", label: "보고 싶은 영화" },
 ];
 
 export default function HeaderSideMenu({

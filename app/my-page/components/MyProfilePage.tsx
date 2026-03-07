@@ -11,7 +11,6 @@ import {
 } from "store/redux-toolkit/slice/userSlice";
 import ProfileAvatar from "@/components/user/ProfileAvatar";
 import UserGradeInfo from "@/my-page/components/UserGradeInfo";
-import WatchlistSection from "@/my-page/components/WatchlistSection";
 import formatDate from "@/utils/formatDate";
 import { updateActivityLevel as updateActivityLevelAPI } from "@/utils/api/updateActivityLevel";
 import {
@@ -183,8 +182,6 @@ export default function MyProfilePage() {
           </div>
         </div>
       </section>
-      {/* 보고 싶은 영화 목록 */}
-      <WatchlistSection uid={user?.uid} />
     </main>
   );
 }

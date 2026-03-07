@@ -33,7 +33,6 @@ yarn test
 - 🏆 **등급 배지 시스템** - 사용자 활동 등급 표시
 - 🎬 **동영상 플레이어** - YouTube 트레일러 재생
 - 🎠 **캐러셀 UI** - Swiper 기반 반응형 영화 목록
-- 📚 **보고 싶은 영화(Watchlist)** - 보고 싶은 영화 저장 및 관리
 - 🧪 **테스트 환경** - Jest Mock 기반 포괄적인 테스트 환경
 
 ## 🛠 기술 스택
@@ -117,12 +116,6 @@ yarn test
 - `PUT /api/comments/[reviewId]/[commentId]` - 댓글 수정
 - `DELETE /api/comments/[reviewId]/[commentId]` - 댓글 삭제
 
-### 와치리스트 API
-
-- `GET /api/watchlist?uid=[uid]` - 사용자의 보고 싶은 영화 목록 조회
-- `POST /api/watchlist` - 영화를 보고 싶은 영화 목록에 추가
-- `DELETE /api/watchlist` - 보고 싶은 영화 목록에서 영화 제거
-
 ### 기타 API
 
 - `GET /api/s3`, `POST /api/s3` - AWS S3 파일 업로드
@@ -153,13 +146,6 @@ yarn test
 모든 인증이 필요한 API는 JWT 토큰 검증을 통과해야 합니다.
 
 ## 📝 버전 히스토리
-
-### v2.4.0 (2025-08-27)
-
-- **와치리스트 시스템**: 보고 싶은 영화 저장 및 관리 기능 추가
-- **영화 북마크**: 영화 상세 페이지에서 와치리스트 추가/제거
-- **개인화된 영화 관리**: 사용자별 보고 싶은 영화 목록 관리
-- **Redux 상태 관리**: 와치리스트 전역 상태 관리 및 실시간 동기화
 
 ### v2.3.0 (2025-07-09)
 
