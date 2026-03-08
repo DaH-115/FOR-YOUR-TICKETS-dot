@@ -48,7 +48,7 @@ export async function fetchReviewsPaginated({
   pageSize,
   uid,
   search = "",
-}: FetchReviewsParams): Promise<{ reviews: ReviewDoc[]; totalPages: number }> {
+}: FetchReviewsParams): Promise<{ reviews: ReviewDoc[]; totalPages: number; totalCount: number }> {
   try {
     // 1. 기본 쿼리 설정 ('movie-reviews' 컬렉션에서 가져오기)
     let baseQuery: Query<DocumentData> =
@@ -80,7 +80,7 @@ async function getReviewsWithSearch(
   search: string,
   page: number,
   pageSize: number,
-): Promise<{ reviews: ReviewDoc[]; totalPages: number }> {
+): Promise<{ reviews: ReviewDoc[]; totalPages: number; totalCount: number }> {
   // 1. 최신 리뷰부터 최대 1000개까지만 가져오기 (메모리 보호용)
   const snapshot = await baseQuery
     .orderBy("review.createdAt", "desc")
@@ -96,7 +96,7 @@ async function getReviewsWithSearch(
   const matchingReviews = filterReviewsBySearch(allReviews, search);
 
   // 4. 검색 결과에서 해당 페이지만 자르기
-  const { paginatedReviews, totalPages } = paginateReviews(
+  const { paginatedReviews, totalPages, totalCount } = paginateReviews(
     matchingReviews,
     page,
     pageSize,
@@ -108,6 +108,7 @@ async function getReviewsWithSearch(
   return {
     reviews: finalReviews,
     totalPages,
+    totalCount,
   };
 }
 
@@ -118,7 +119,7 @@ async function getReviews(
   baseQuery: Query<DocumentData>,
   page: number,
   pageSize: number,
-): Promise<{ reviews: ReviewDoc[]; totalPages: number }> {
+): Promise<{ reviews: ReviewDoc[]; totalPages: number; totalCount: number }> {
   // 1. 전체 리뷰 개수 구하기
   const countSnapshot = await baseQuery.count().get();
   const totalCount = countSnapshot.data().count;
@@ -127,8 +128,8 @@ async function getReviews(
   // 2. 해당 페이지의 리뷰만 가져오기
   const snapshot = await baseQuery
     .orderBy("review.createdAt", "desc")
-    .offset((page - 1) * pageSize) // 몇 개 건너뛸지
-    .limit(pageSize) // 몇 개 가져올지
+    .offset((page - 1) * pageSize)
+    .limit(pageSize)
     .get();
 
   // 3. 데이터 변환
@@ -142,6 +143,7 @@ async function getReviews(
   return {
     reviews: finalReviews,
     totalPages,
+    totalCount,
   };
 }
 
@@ -176,14 +178,15 @@ function paginateReviews(
   reviews: RawReview[],
   page: number,
   pageSize: number,
-): { paginatedReviews: RawReview[]; totalPages: number } {
-  const totalPages = Math.ceil(reviews.length / pageSize);
+): { paginatedReviews: RawReview[]; totalPages: number; totalCount: number } {
+  const totalCount = reviews.length;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedReviews = reviews.slice(startIndex, endIndex);
 
-  return { paginatedReviews, totalPages };
+  return { paginatedReviews, totalPages, totalCount };
 }
 
 /**

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "모든 사용자들의 티켓을 확인해보세요",
 };
 
-interface searchParamsProps {
+interface SearchParamsProps {
   page?: string;
   search?: string;
 }
@@ -15,24 +15,25 @@ interface searchParamsProps {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<searchParamsProps>;
+  searchParams: Promise<SearchParamsProps>;
 }) {
   const resolvedSearchParams = await searchParams;
   const page = parseInt(resolvedSearchParams.page ?? "1", 10);
   const search = resolvedSearchParams.search?.trim() ?? "";
 
-  const { reviews, totalPages } = await fetchReviewsPaginated({
+  const { reviews, totalPages, totalCount } = await fetchReviewsPaginated({
     page,
-    pageSize: 10,
+    pageSize: 14,
     search,
   });
 
   return (
     <TicketListPage
-      initialReviews={reviews}
-      initialPage={page}
-      initialSearch={search}
-      initialTotalPages={totalPages}
+      reviews={reviews}
+      page={page}
+      search={search}
+      totalPages={totalPages}
+      totalCount={totalCount}
     />
   );
 }

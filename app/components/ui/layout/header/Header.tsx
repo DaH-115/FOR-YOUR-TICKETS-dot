@@ -117,7 +117,7 @@ export default function Header() {
               {navItems.map(({ href, label }) => (
                 <li
                   key={href}
-                  className="text-white transition-all duration-100 hover:border-b-2 hover:border-white hover:pb-1 hover:font-semibold"
+                  className="text-white transition-all duration-100 hover:font-semibold"
                 >
                   <Link href={href}>{label}</Link>
                 </li>

@@ -36,7 +36,7 @@ export default function MovieInfoCard({
             <MovieCertification certification={movie.certification ?? null} />
           </div>
           {/* 상세정보 아이콘 및 툴팁 */}
-          <div className="relative">
+          <Tooltip content={`${title}(${original_title}) 영화 상세정보 보기`}>
             <Link
               href={`/movie-details/${id}`}
               aria-label={`${title}(${original_title}) 영화 상세정보 보기`}
@@ -45,10 +45,7 @@ export default function MovieInfoCard({
             >
               <IoInformationCircle className="text-2xl" aria-hidden />
             </Link>
-            <Tooltip>
-              {title}({original_title}) 영화 상세정보 보기
-            </Tooltip>
-          </div>
+          </Tooltip>
         </div>
         <p className="leading-tight tracking-tight text-gray-500">
           {`${original_title}(${release_date ? release_date.slice(0, 4) : "개봉일 미정"})`}

@@ -49,7 +49,7 @@ export default function SwiperItem({
             </div>
 
             {/* 인포 버튼 */}
-            <div className="relative">
+            <Tooltip content={`${displayTitle} 영화 상세정보 보기`}>
               <Link
                 href={`/movie-details/${id}`}
                 aria-label={`${displayTitle} 영화 상세정보 보기`}
@@ -59,8 +59,7 @@ export default function SwiperItem({
                   aria-hidden
                 />
               </Link>
-              <Tooltip>{displayTitle} 영화 상세정보 보기</Tooltip>
-            </div>
+            </Tooltip>
           </div>
         </div>
 

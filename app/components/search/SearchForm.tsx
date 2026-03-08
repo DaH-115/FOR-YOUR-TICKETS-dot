@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { IoSearchOutline } from "react-icons/io5";
 import { z } from "zod";
 
@@ -12,16 +13,19 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 interface SearchFormProps {
-  onSearch: (term: string) => void;
+  onSearch?: (term: string) => void;
+  basePath?: string;
   placeholder?: string;
   initialValue?: string;
 }
 
 export default function SearchForm({
   onSearch,
+  basePath,
   placeholder = "검색어를 입력하세요",
   initialValue = "",
 }: SearchFormProps) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -35,22 +39,32 @@ export default function SearchForm({
 
   const searchValue = watch("search");
 
-  // initialValue가 변경되면 폼 값 업데이트
   useEffect(() => {
     setValue("search", initialValue);
   }, [initialValue, setValue]);
 
-  // 입력이 비워졌을 때만 즉시 초기화
+  // 입력이 비워졌을 때 초기화
   useEffect(() => {
     if (searchValue === "") {
-      onSearch("");
+      if (basePath) {
+        router.push(basePath);
+      } else {
+        onSearch?.("");
+      }
     }
-  }, [searchValue, onSearch]);
+  }, [searchValue, onSearch, basePath, router]);
 
   const onSubmit = (data: FormData) => {
     const trimmedSearch = data.search.trim();
-    if (trimmedSearch) {
-      onSearch(trimmedSearch);
+    if (!trimmedSearch) return;
+
+    if (basePath) {
+      const params = new URLSearchParams();
+      params.set("search", trimmedSearch);
+      params.set("page", "1");
+      router.push(`${basePath}?${params.toString()}`);
+    } else {
+      onSearch?.(trimmedSearch);
     }
   };
 
@@ -63,14 +77,14 @@ export default function SearchForm({
         {...register("search")}
         type="search"
         placeholder={placeholder}
-        className="h-full w-full rounded-full pl-4 pr-10 text-sm focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1"
+        className="focus:ring-accent-300 h-full w-full rounded-full bg-white pr-10 pl-4 text-sm text-gray-900 focus:ring-1 focus:ring-offset-1 focus:outline-hidden"
         aria-invalid={!!errors.search}
       />
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="absolute right-1 top-0 flex h-full w-10 items-center justify-center disabled:opacity-50"
+        className="absolute top-0 right-1 flex h-full w-10 items-center justify-center disabled:opacity-50"
       >
         <IoSearchOutline size={20} />
       </button>

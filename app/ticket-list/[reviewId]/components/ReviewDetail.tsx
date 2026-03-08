@@ -14,6 +14,7 @@ import { selectUser } from "store/redux-toolkit/slice/userSlice";
 import { useAlert } from "store/context/alertContext";
 import { isAuth } from "firebase-config";
 import MoviePoster from "@/components/movie/MoviePoster";
+import Tooltip from "@/components/ui/feedback/Tooltip";
 import { getAuthHeaders, waitForAuthReady } from "@/utils/getIdToken";
 
 interface ReviewDetailProps {
@@ -24,7 +25,8 @@ interface ReviewDetailProps {
 export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
   const router = useRouter();
   const currentUser = useAppSelector(selectUser);
-  const { showSuccessHandler, showErrorHandler } = useAlert();
+  const { showSuccessHandler, showErrorHandler, showConfirmHandler } =
+    useAlert();
 
   const { user, review: content } = review;
 
@@ -36,8 +38,8 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
   // 본인 리뷰인지 확인
   const isOwnReview = currentUser?.uid === user.uid;
 
-  // 로그인 상태 확인
-  const isLoggedIn = !!isAuth.currentUser;
+  // Redux store 기반 로그인 상태 (Auth 초기화 후에도 반응적으로 업데이트)
+  const isLoggedIn = !!currentUser?.uid;
 
   // 마운트 시 좋아요 상태 동기화
   useEffect(() => {
@@ -79,14 +81,12 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
     return () => {
       isCancelled = true;
     };
-    // 리뷰 ID가 바뀌면 재동기화
-  }, [reviewId]);
+    // 리뷰 ID 또는 로그인 상태가 바뀌면 재동기화
+  }, [reviewId, isLoggedIn]);
 
   // 좋아요 토글 핸들러
   const likeToggleHandler = useCallback(async () => {
-    if (!isAuth.currentUser) {
-      return;
-    }
+    if (!isAuth.currentUser || isLikeLoading) return;
 
     setIsLikeLoading(true);
     try {
@@ -100,7 +100,6 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
         },
       };
 
-      // DELETE 요청이 아닐 때만 body 추가
       if (!isLiked) {
         requestOptions.body = JSON.stringify({
           movieTitle: content.movieTitle,
@@ -112,14 +111,19 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
         requestOptions,
       );
 
+      const text = await response.text();
+      let data: { isLiked: boolean; likeCount: number; error?: string };
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error("서버 응답을 처리할 수 없습니다.");
+      }
+
       if (response.ok) {
-        const data = await response.json();
-        // API 응답에서 isLiked 상태 사용
         setIsLiked(data.isLiked);
         setLikeCount(data.likeCount);
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "좋아요 처리에 실패했습니다.");
+        throw new Error(data.error || "좋아요 처리에 실패했습니다.");
       }
     } catch (error) {
       console.error("좋아요 토글 실패:", error);
@@ -132,20 +136,15 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
     } finally {
       setIsLikeLoading(false);
     }
-  }, [reviewId, isLiked, content.movieTitle, showErrorHandler]);
+  }, [reviewId, isLiked, isLikeLoading, content.movieTitle, showErrorHandler]);
 
   // 리뷰 수정 핸들러
   const editHandler = useCallback(() => {
     router.push(`/write-review/${reviewId}?movieId=${content.movieId}`);
   }, [router, reviewId, content.movieId]);
 
-  // 리뷰 삭제 핸들러
-  const deleteHandler = useCallback(async () => {
-    if (typeof window === "undefined") return;
-
-    const confirmed = window.confirm("정말로 이 리뷰를 삭제하시겠습니까?");
-    if (!confirmed) return;
-
+  // 실제 삭제 요청 처리
+  const executeDelete = useCallback(async () => {
     try {
       const authHeaders = await getAuthHeaders();
 
@@ -156,13 +155,20 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
         },
       });
 
+      const text = await response.text();
+      let data: { error?: string };
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = {};
+      }
+
       if (response.ok) {
         showSuccessHandler("삭제 완료", "리뷰가 삭제되었습니다.", () => {
           router.push("/ticket-list");
         });
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "삭제에 실패했습니다.");
+        throw new Error(data.error || "삭제에 실패했습니다.");
       }
     } catch (error) {
       console.error("리뷰 삭제 실패:", error);
@@ -175,8 +181,66 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
     }
   }, [reviewId, showSuccessHandler, showErrorHandler, router]);
 
+  // 리뷰 삭제 핸들러 (커스텀 confirm 모달 사용)
+  const deleteHandler = useCallback(() => {
+    showConfirmHandler(
+      "리뷰 삭제",
+      "정말로 이 리뷰를 삭제하시겠습니까?",
+      executeDelete,
+    );
+  }, [showConfirmHandler, executeDelete]);
+
   return (
-    <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+    <main className="3xl:max-w-[1600px] mx-8 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl">
+      {/* 별점, 제목, 영화 정보, 좋아요 버튼 */}
+      <header className="mb-4">
+        <div className="mr-4 mb-2 flex items-center text-3xl">
+          <FaStar className="text-accent-300 mr-1" />
+          <p className="font-bold text-white">{content.rating}</p>
+        </div>
+
+        <div className="flex gap-2">
+          <h3 className="text-4xl font-bold text-white">
+            {content.reviewTitle}
+          </h3>
+          {review.orderNumber && (
+            <span className="text-sm font-medium text-gray-400">
+              #{review.orderNumber}
+            </span>
+          )}
+        </div>
+        <div className="text-gray-400">
+          <Link
+            href={`/movie-details/${content.movieId}`}
+            className="transition-colors duration-150 hover:text-gray-200"
+          >
+            {`${content.movieTitle}(${content.releaseYear})`}
+          </Link>
+        </div>
+      </header>
+
+      {/* 좋아요 버튼 */}
+      {!isLoggedIn ? (
+        <Tooltip content="로그인 후 좋아요를 누를 수 있습니다">
+          <button
+            disabled
+            className="flex cursor-not-allowed items-center rounded-full border border-gray-600 px-4 py-2 text-red-500 opacity-50"
+          >
+            <FaRegHeart size={14} />
+            <p className="ml-1 text-gray-300">{likeCount}</p>
+          </button>
+        </Tooltip>
+      ) : (
+        <button
+          onClick={likeToggleHandler}
+          disabled={isLikeLoading}
+          className="flex items-center rounded-full border border-gray-600 px-4 py-2 text-red-500 transition-colors hover:border-gray-500 hover:text-red-400 disabled:opacity-50"
+        >
+          {isLiked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
+          <p className="ml-1 text-gray-300">{likeCount}</p>
+        </button>
+      )}
+
       <div className="mx-auto max-w-md">
         {/* 영화 포스터 */}
         <MoviePoster
@@ -187,47 +251,6 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
       {/* 리뷰 정보 */}
       <div className="mx-auto max-w-md rounded-2xl border bg-white p-4">
-        {/* 별점, 제목, 영화 정보, 좋아요 버튼 */}
-        <header className="mb-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="mr-4 flex items-center text-lg">
-              <FaStar className="mr-1 text-accent-300" />
-              <p className="font-bold">{content.rating}</p>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold">{content.reviewTitle}</h3>
-                {review.orderNumber && (
-                  <span className="rounded-full bg-accent-100 px-2 py-1 text-xs font-medium text-accent-600">
-                    #{review.orderNumber}
-                  </span>
-                )}
-              </div>
-              <div className="text-sm text-gray-500">
-                <Link
-                  href={`/movie-details/${content.movieId}`}
-                  className="transition-colors duration-300 hover:text-gray-600 hover:underline"
-                >
-                  {`${content.movieTitle}(${content.releaseYear})`}
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* 좋아요 버튼 */}
-          <button
-            onClick={likeToggleHandler}
-            disabled={isLikeLoading}
-            className={`flex items-center rounded-full border border-gray-300 px-4 py-2 text-red-500 transition-colors hover:text-red-600 disabled:opacity-50 ${
-              !isLoggedIn ? "cursor-not-allowed" : ""
-            }`}
-            title={!isLoggedIn ? "로그인이 필요합니다" : ""}
-          >
-            {isLiked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
-            <p className="ml-1 text-black">{likeCount}</p>
-          </button>
-        </header>
-
         {/* 프로필, 닉네임, 등급, 수정/삭제 버튼(본인만) */}
         <div className="mb-6 flex items-center justify-between">
           {/* 프로필, 닉네임, 등급 */}
@@ -249,7 +272,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
               {/* 수정 버튼 */}
               <button
                 onClick={editHandler}
-                className="group flex items-center rounded-full bg-gray-300 px-3 py-1.5 transition-colors duration-200 hover:bg-gray-400"
+                className="group flex cursor-pointer items-center rounded-full bg-gray-300 px-3 py-1.5 transition-colors duration-100 hover:bg-gray-400"
                 title="리뷰 수정"
                 type="button"
               >
@@ -264,7 +287,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
               {/* 삭제 버튼 */}
               <button
                 onClick={deleteHandler}
-                className="group flex items-center rounded-full bg-gray-300 px-3 py-1.5 transition-colors duration-200 hover:bg-gray-400"
+                className="group flex cursor-pointer items-center rounded-full bg-gray-300 px-3 py-1.5 transition-colors duration-100 hover:bg-gray-400"
                 title="리뷰 삭제"
                 type="button"
               >
@@ -282,13 +305,13 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
         {/* 리뷰 본문 */}
         <div className="mb-2 rounded-lg bg-gray-50 p-4">
-          <p className="break-keep text-sm leading-relaxed text-gray-800">
+          <p className="text-sm leading-relaxed break-keep text-gray-800">
             {content.reviewContent}
           </p>
         </div>
 
         {/* 작성일 */}
-        <div className="mb-2 text-right text-xs text-gray-400">
+        <div className="text-right text-xs text-gray-400">
           {formatDate(content.createdAt)}
         </div>
       </div>

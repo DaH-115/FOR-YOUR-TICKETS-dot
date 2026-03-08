@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState } from "react";
-import UserAlert from "app/components/ui/feedback/UserAlert";
+import Toast from "app/components/ui/feedback/Toast";
+import ConfirmDialog from "app/components/ui/feedback/ConfirmDialog";
 
 interface AlertContextType {
   showErrorHandler: (title: string, message: string) => void;
@@ -9,6 +10,11 @@ interface AlertContextType {
     title: string,
     message: string,
     onConfirm?: () => void,
+  ) => void;
+  showConfirmHandler: (
+    title: string,
+    message: string,
+    onConfirm: () => void,
   ) => void;
   hideErrorHandler: () => void;
   hideSuccessHandler: () => void;
@@ -25,11 +31,19 @@ interface SuccessType {
   onConfirm: () => void;
 }
 
+interface ConfirmType {
+  title: string;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 export function AlertProvider({ children }: { children: React.ReactNode }) {
   const [errorState, setErrorState] = useState<ErrorType | null>(null);
   const [successState, setSuccessState] = useState<SuccessType | null>(null);
+  const [confirmState, setConfirmState] = useState<ConfirmType | null>(null);
 
   const hideErrorHandler = useCallback(() => {
     setErrorState(null);
@@ -63,6 +77,23 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
     [hideSuccessHandler],
   );
 
+  const showConfirmHandler = useCallback(
+    (title: string, message: string, onConfirm: () => void) => {
+      setConfirmState({
+        title,
+        message,
+        onConfirm: () => {
+          onConfirm();
+          setConfirmState(null);
+        },
+        onCancel: () => {
+          setConfirmState(null);
+        },
+      });
+    },
+    [],
+  );
+
   return (
     <AlertContext.Provider
       value={{
@@ -70,23 +101,36 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
         hideErrorHandler,
         showSuccessHandler,
         hideSuccessHandler,
+        showConfirmHandler,
       }}
     >
       {children}
-      {/* Error Alert */}
+      {/* Error Toast */}
       {errorState && (
-        <UserAlert
+        <Toast
           title={errorState.title}
           description={errorState.message}
-          onConfirm={hideErrorHandler}
+          type="error"
+          onClose={hideErrorHandler}
         />
       )}
-      {/* Success Alert */}
+      {/* Success Toast */}
       {successState && (
-        <UserAlert
+        <Toast
           title={successState.title}
           description={successState.message}
-          onConfirm={successState.onConfirm}
+          type="success"
+          onClose={successState.onConfirm}
+        />
+      )}
+      {/* Confirm Dialog */}
+      {confirmState && (
+        <ConfirmDialog
+          title={confirmState.title}
+          description={confirmState.message}
+          onConfirm={confirmState.onConfirm}
+          onCancel={confirmState.onCancel}
+          isOpen={!!confirmState}
         />
       )}
     </AlertContext.Provider>

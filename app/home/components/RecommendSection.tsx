@@ -106,7 +106,7 @@ export default function RecommendSection({
               <div className="text-right">
                 <Link
                   href={`/movie-details/${movie.id}`}
-                  className="text-accent-300 text-sm transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
+                  className="text-accent-300 text-sm transition-colors duration-300 hover:font-semibold"
                 >
                   더 보기
                 </Link>

@@ -6,31 +6,28 @@ import SearchSection from "app/components/search/SearchSection";
 import EmptyState from "app/my-page/components/EmptyState";
 import type { ReviewDoc } from "types/review";
 import Link from "next/link";
-import Loading from "@/loading";
-import useTicketList from "@/ticket-list/hooks/useTicketList";
 
 interface TicketListPageProps {
-  initialReviews: ReviewDoc[];
-  initialPage: number;
-  initialSearch: string;
-  initialTotalPages: number;
+  reviews: ReviewDoc[];
+  page: number;
+  search: string;
+  totalPages: number;
+  totalCount: number;
 }
 
 export default function TicketListPage({
-  initialReviews,
-  initialPage,
-  initialSearch,
-  initialTotalPages,
+  reviews,
+  page,
+  search,
+  totalPages,
+  totalCount,
 }: TicketListPageProps) {
-  const { reviews, page, search, totalPages, loading, onPageChange, onSearch } =
-    useTicketList({
-      initialReviews,
-      initialPage,
-      initialSearch,
-      initialTotalPages,
-    });
-
-  if (loading) return <Loading />;
+  const buildPageHref = (newPage: number) => {
+    const params = new URLSearchParams();
+    params.set("page", newPage.toString());
+    if (search) params.set("search", search);
+    return `?${params.toString()}`;
+  };
 
   return (
     <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
@@ -41,10 +38,16 @@ export default function TicketListPage({
             모든 티켓
           </h1>
           <span className="ml-2 font-bold text-accent-300">
-            {reviews.length}
+            {totalCount}
           </span>
         </div>
       </header>
+      {/* 검색 폼 & 결과 정보 */}
+      <SearchSection
+        searchTerm={search}
+        resultCount={reviews.length}
+        basePath="/ticket-list"
+      />
       {/* 리뷰 목록 */}
       {reviews.length > 0 ? (
         <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
@@ -67,13 +70,7 @@ export default function TicketListPage({
       <Pagination
         currentPage={page}
         totalPages={totalPages}
-        onPageChange={onPageChange}
-      />
-      {/* 검색 폼 & 결과 정보 */}
-      <SearchSection
-        searchTerm={search}
-        resultCount={reviews.length}
-        onSearch={onSearch}
+        pageHref={buildPageHref}
       />
     </main>
   );

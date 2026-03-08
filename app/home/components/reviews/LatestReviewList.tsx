@@ -46,7 +46,7 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
   return (
     <section
       ref={sectionRef}
-      className="mx-4 lg:mx-12 lg:mt-20 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]"
+      className="3xl:max-w-[1600px] mx-4 lg:mx-12 lg:mt-20 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl"
     >
       {/* 헤더 영역 애니메이션 */}
       <header
@@ -62,11 +62,11 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
         <div className="flex items-center">
           <Link
             href="/ticket-list"
-            className="text-sm text-accent-300 transition-colors duration-300 hover:font-semibold hover:underline hover:underline-offset-2"
+            className="text-accent-300 text-sm transition-colors duration-300 hover:font-semibold"
           >
             모든 티켓 보기
           </Link>
-          <IoChevronForward className="text-sm text-accent-300" aria-hidden />
+          <IoChevronForward className="text-accent-300 text-sm" aria-hidden />
         </div>
       </header>
 
@@ -74,7 +74,7 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
       <div
         className={`mx-auto grid grid-cols-1 gap-x-2 gap-y-2 transition-all duration-500 ease-out md:grid-cols-2 md:gap-y-4 lg:grid-cols-3 lg:gap-y-6 xl:grid-cols-4 ${
           isClient && isVisible
-            ? "translate-y-0 opacity-100 transition-delay-300"
+            ? "transition-delay-300 translate-y-0 opacity-100"
             : "translate-y-8 opacity-0"
         }`}
       >

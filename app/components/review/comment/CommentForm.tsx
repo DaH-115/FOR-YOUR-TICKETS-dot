@@ -31,7 +31,11 @@ export default function CommentForm({
   onCancelEdit,
 }: CommentFormProps) {
   if (!userState?.uid) {
-    return null;
+    return (
+      <p className="py-4 text-center text-sm text-gray-400">
+        로그인 후 댓글을 작성할 수 있습니다.
+      </p>
+    );
   }
 
   return (
@@ -81,7 +85,7 @@ export default function CommentForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-full border border-primary-600 bg-primary-600 px-4 py-2 text-white transition-colors duration-300 hover:bg-primary-400 disabled:bg-gray-400"
+            className="border-primary-600 bg-primary-600 hover:bg-primary-400 rounded-full border px-4 py-2 text-white transition-colors duration-300 disabled:bg-gray-400"
             aria-label={editingId ? "댓글 수정 완료" : "댓글 등록"}
           >
             {editingId ? "수정 완료" : "등록"}
