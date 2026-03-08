@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tailwind-scrollbar-hide/v4';
+@import "tailwindcss";
+@import "tailwind-scrollbar-hide/v4";
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -28,28 +28,28 @@
   --breakpoint-3xl: 1920px;
 
   /* Primary 컬러 (버건디) */
-  --color-primary-50: #FDF2F4;
-  --color-primary-100: #F7D9E0;
-  --color-primary-200: #F0B5C3;
-  --color-primary-300: #E38FA6;
-  --color-primary-400: #D66A89;
-  --color-primary-500: #8B1E3F;
+  --color-primary-50: #fdf2f4;
+  --color-primary-100: #f7d9e0;
+  --color-primary-200: #f0b5c3;
+  --color-primary-300: #e38fa6;
+  --color-primary-400: #d66a89;
+  --color-primary-500: #8b1e3f;
   --color-primary-600: #701832;
   --color-primary-700: #551226;
-  --color-primary-800: #3A0C19;
-  --color-primary-900: #1E060D;
+  --color-primary-800: #3a0c19;
+  --color-primary-900: #1e060d;
 
   /* Accent 컬러 (골드) */
-  --color-accent-50: #FBF7E8;
-  --color-accent-100: #F7EFD1;
-  --color-accent-200: #ECD594;
-  --color-accent-300: #D4AF37;
-  --color-accent-400: #BD9C31;
-  --color-accent-500: #A6892B;
-  --color-accent-600: #8F7625;
-  --color-accent-700: #78631F;
+  --color-accent-50: #fbf7e8;
+  --color-accent-100: #f7efd1;
+  --color-accent-200: #ecd594;
+  --color-accent-300: #d4af37;
+  --color-accent-400: #bd9c31;
+  --color-accent-500: #a6892b;
+  --color-accent-600: #8f7625;
+  --color-accent-700: #78631f;
   --color-accent-800: #615019;
-  --color-accent-900: #4A3D13;
+  --color-accent-900: #4a3d13;
 
   /* 커스텀 스페이싱 */
   --spacing-18: 4.5rem;
@@ -68,8 +68,12 @@
 
 /* 키프레임 정의 */
 @keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes fadeInUp {
@@ -84,18 +88,34 @@
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  0% { transform: translateY(20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-  0% { transform: scale(0.9); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ========================================================================= */
@@ -112,6 +132,8 @@
 
 @layer base {
   html {
+    /* overflow: hidden 시 스크롤바 공간 유지 → 레이아웃 시프트/깜빡임 방지 */
+    scrollbar-gutter: stable;
     font-size: 16px; /* 1rem = 16px (표준 수치) */
     font-family:
       "Pretendard",
@@ -136,6 +158,17 @@
     padding: 0;
     overflow-x: hidden;
   }
+}
+
+/* Swiper 페이지네이션 (다크 테마) */
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background: white;
+  transform: scale(1.2);
 }
 
 @layer utilities {

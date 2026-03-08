@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { IoSearchOutline } from "react-icons/io5";
@@ -38,20 +38,25 @@ export default function SearchForm({
   });
 
   const searchValue = watch("search");
+  const prevSearchValueRef = useRef<string | null>(null);
 
   useEffect(() => {
     setValue("search", initialValue);
   }, [initialValue, setValue]);
 
-  // 입력이 비워졌을 때 초기화
+  // 사용자가 입력을 비웠을 때만 URL 초기화 (마운트 시 빈 값이면 호출 안 함)
   useEffect(() => {
     if (searchValue === "") {
-      if (basePath) {
-        router.push(basePath);
-      } else {
-        onSearch?.("");
+      const hadValue = prevSearchValueRef.current !== null && prevSearchValueRef.current !== "";
+      if (hadValue) {
+        if (basePath) {
+          router.push(basePath);
+        } else {
+          onSearch?.("");
+        }
       }
     }
+    prevSearchValueRef.current = searchValue;
   }, [searchValue, onSearch, basePath, router]);
 
   const onSubmit = (data: FormData) => {

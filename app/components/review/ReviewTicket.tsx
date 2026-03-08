@@ -1,5 +1,6 @@
-import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
+import { FaHeart, FaStar } from "react-icons/fa";
 import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
+import formatDate from "@/utils/formatDate";
 import MoviePoster from "@/components/movie/MoviePoster";
 import ProfileAvatar from "@/components/user/ProfileAvatar";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
@@ -14,7 +15,9 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
       {/* 별점 */}
       <div className="absolute top-0 right-0 left-0 z-20 flex items-center rounded-t-2xl bg-linear-to-b from-black/80 via-black/60 to-transparent px-3 pt-2 text-white">
         <FaStar className="text-accent-300" size={14} />
-        <span className="ml-1 font-semibold">{review.review.rating}</span>
+        <span className="ml-1 text-lg font-semibold">
+          {review.review.rating}
+        </span>
       </div>
       {/* 영화 포스터 */}
       <MoviePoster
@@ -46,22 +49,13 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
         {/* 영화 타이틀 & 좋아요 */}
         <div className="mt-auto flex shrink-0 items-center justify-between border-t-4 border-dotted pt-1">
           <div className="flex-1 truncate pr-1.5 text-xs text-gray-500">
-            {/* 영화 제목 및 연도 */}
-            <span>
-              {`${review.review.movieTitle} (${review.review.releaseYear})`}
-            </span>
+            {/* 리뷰 작성일 */}
+            <span>{formatDate(review.review.createdAt, false)}</span>
           </div>
-          {/* 좋아요 버튼 */}
-          <div className="flex items-center rounded-full border border-gray-300 px-2 py-1">
+          {/* 좋아요 수 표시 (리스트 뷰에서는 채워진 하트로 통일) */}
+          <div className="flex items-center">
             <span className="text-sm text-red-500">
-              {review.review.isLiked === undefined ? (
-                // 미확정: 로딩 상태 느낌의 빈 하트
-                <FaRegHeart />
-              ) : review.review.isLiked ? (
-                <FaHeart />
-              ) : (
-                <FaRegHeart />
-              )}
+              <FaHeart />
             </span>
             <span className="ml-1 text-center text-sm">
               {review.review.likeCount}

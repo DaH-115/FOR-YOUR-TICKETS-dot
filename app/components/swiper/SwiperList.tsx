@@ -1,24 +1,33 @@
 "use client";
 
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import { Swiper as SwiperClass } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import "swiper/css/navigation";
-import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css/pagination";
+import "swiper/css/a11y";
+import { A11y, Pagination } from "swiper/modules";
 import SwiperItem from "@/components/swiper/SwiperItem";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 import SwiperButton from "@/components/swiper/SwiperButton";
 
-export default function SwiperList({ movieList }: { movieList: MovieList[] }) {
+function SwiperList({ movieList }: { movieList: MovieList[] }) {
   const swiperRef = useRef<SwiperClass | null>(null);
+
+  // 빈 리스트 처리
+  if (!movieList?.length) {
+    return null;
+  }
 
   return (
     <div className="group relative">
-      {/* Swiper */}
       <Swiper
+        className="pb-12!"
         loop={true}
-        modules={[Navigation, Pagination]}
+        modules={[Pagination, A11y]}
+        pagination={{
+          clickable: true,
+        }}
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
         }}
@@ -38,13 +47,10 @@ export default function SwiperList({ movieList }: { movieList: MovieList[] }) {
         ))}
       </Swiper>
 
-      {/* 좌측 버튼 */}
       <SwiperButton
         direction="prev"
         onClick={() => swiperRef.current?.slidePrev()}
       />
-
-      {/* 우측 버튼 */}
       <SwiperButton
         direction="next"
         onClick={() => swiperRef.current?.slideNext()}
@@ -52,3 +58,5 @@ export default function SwiperList({ movieList }: { movieList: MovieList[] }) {
     </div>
   );
 }
+
+export default memo(SwiperList);

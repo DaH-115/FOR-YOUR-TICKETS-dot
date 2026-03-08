@@ -52,16 +52,19 @@ export default function TicketListLayout({
   return (
     <main className="mx-auto w-full flex-col">
       {/* 헤더 */}
-      <header className="mb-4">
-        <div className="flex items-center">
-          <h1 className="text-xl font-bold tracking-tight text-white">
-            {title}
-          </h1>
-          <span className="ml-2 text-lg font-bold text-accent-300">
-            {reviews.length}
-          </span>
-        </div>
+      <header className="flex items-center">
+        <h1 className="text-xl font-bold tracking-tight text-white">{title}</h1>
+        <span className="text-accent-300 ml-2 text-lg font-bold">
+          {reviews.length}
+        </span>
       </header>
+
+      {/* 검색 폼 & 결과 정보 */}
+      <SearchSection
+        searchTerm={searchTerm}
+        resultCount={reviews.length}
+        onSearch={searchHandler}
+      />
 
       {/* 리뷰 목록 */}
       {loading ? (
@@ -93,12 +96,6 @@ export default function TicketListLayout({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={pageChangeHandler}
-      />
-      {/* 검색 폼 & 결과 정보 */}
-      <SearchSection
-        searchTerm={searchTerm}
-        resultCount={reviews.length}
-        onSearch={searchHandler}
       />
     </main>
   );

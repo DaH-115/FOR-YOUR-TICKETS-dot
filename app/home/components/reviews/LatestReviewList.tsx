@@ -46,7 +46,7 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
   return (
     <section
       ref={sectionRef}
-      className="3xl:max-w-[1600px] mx-4 lg:mx-12 lg:mt-20 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl"
+      className="mx-6 lg:mx-20 lg:mt-20 xl:mx-auto xl:max-w-5xl 2xl:max-w-6xl 3xl:max-w-7xl"
     >
       {/* 헤더 영역 애니메이션 */}
       <header

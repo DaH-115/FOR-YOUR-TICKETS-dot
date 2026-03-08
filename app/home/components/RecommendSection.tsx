@@ -64,7 +64,7 @@ export default function RecommendSection({
   return (
     <article
       ref={sectionRef}
-      className="mx-auto max-w-md lg:mb-16 lg:max-w-4xl xl:max-w-5xl"
+      className="mx-auto max-w-2xl lg:mb-16 lg:max-w-3xl xl:max-w-5xl 2xl:max-w-6xl"
     >
       <div className="mx-auto flex flex-col items-center justify-center md:flex-row">
         {/* 영화 타이틀 및 정보 */}

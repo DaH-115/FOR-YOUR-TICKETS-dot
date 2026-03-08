@@ -16,7 +16,7 @@ export default function SearchSection({
   basePath,
 }: SearchSectionProps) {
   return (
-    <div className="my-8 flex flex-col gap-2">
+    <div className="mt-4 mb-8 flex flex-col gap-2">
       <SearchForm
         placeholder="영화 제목으로 검색해 보세요"
         onSearch={onSearch}

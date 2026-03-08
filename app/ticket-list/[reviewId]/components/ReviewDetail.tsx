@@ -6,7 +6,7 @@ import Link from "next/link";
 import ProfileAvatar from "@/components/user/ProfileAvatar";
 import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
 import formatDate from "@/utils/formatDate";
-import { FaHeart, FaRegHeart, FaStar, FaEdit, FaTrash } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import CommentList from "@/components/review/comment/CommentList";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import { useAppSelector } from "store/redux-toolkit/hooks";
@@ -211,30 +211,6 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
         </div>
       </header>
 
-      {/* 좋아요 버튼 */}
-      <div className="mb-6">
-        {!isLoggedIn ? (
-          <Tooltip content="로그인 후 좋아요를 누를 수 있습니다">
-            <button
-              disabled
-              className="flex cursor-not-allowed items-center text-red-500 opacity-50"
-            >
-              <FaRegHeart size={18} />
-              <p className="ml-1 text-gray-300">{likeCount}</p>
-            </button>
-          </Tooltip>
-        ) : (
-          <button
-            onClick={likeToggleHandler}
-            disabled={isLikeLoading}
-            className="flex cursor-pointer items-center rounded-full text-red-500 transition-colors hover:text-red-400 disabled:opacity-50"
-          >
-            {isLiked ? <FaHeart size={18} /> : <FaRegHeart size={18} />}
-            <p className="ml-1 text-gray-300">{likeCount}</p>
-          </button>
-        )}
-      </div>
-
       <div className="mx-auto max-w-md">
         {/* 영화 포스터 */}
         <MoviePoster
@@ -245,12 +221,36 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
       {/* 리뷰 정보 */}
       <div className="mx-auto max-w-md rounded-2xl border bg-white p-4">
-        {review.orderNumber && (
-          <p className="mb-2 text-xs text-gray-400">
-            Review #{review.orderNumber}
-          </p>
-        )}
+        <div className="flex items-center justify-between">
+          {/* 리뷰 번호 */}
+          {review.orderNumber && (
+            <p className="mb-2 text-xs text-gray-400">
+              Review #{review.orderNumber}
+            </p>
+          )}
 
+          {/* 좋아요 버튼 */}
+          {!isLoggedIn ? (
+            <Tooltip content="로그인 후 좋아요를 누를 수 있습니다">
+              <button
+                disabled
+                className="flex cursor-not-allowed items-center text-red-500 opacity-50"
+              >
+                <FaRegHeart size={14} />
+                <p className="ml-1">{likeCount}</p>
+              </button>
+            </Tooltip>
+          ) : (
+            <button
+              onClick={likeToggleHandler}
+              disabled={isLikeLoading}
+              className="flex cursor-pointer items-center rounded-full text-red-500 transition-colors hover:text-red-400 disabled:opacity-50"
+            >
+              {isLiked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
+              <p className="ml-1">{likeCount}</p>
+            </button>
+          )}
+        </div>
         {/* 프로필, 닉네임, 등급, 수정/삭제 버튼(본인만) */}
         <div className="mb-6 flex items-center justify-between">
           {/* 프로필, 닉네임, 등급 */}

@@ -29,7 +29,7 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
-  const { showErrorHandler } = useAlert();
+  const { showErrorHandler, showConfirmHandler } = useAlert();
 
   // 댓글 목록 가져오는 함수
   const fetchComments = useCallback(async () => {
@@ -190,14 +190,10 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
     [isPosting, reviewId, comments, showErrorHandler],
   );
 
-  // 댓글 삭제 (낙관적 업데이트 적용)
-  const deleteComment = useCallback(
+  // 댓글 삭제 (확인 다이얼로그 후 낙관적 업데이트 적용)
+  const performDelete = useCallback(
     async (commentId: string) => {
       if (!userState?.uid || isPosting) {
-        return;
-      }
-
-      if (!confirm("정말 댓글을 삭제하시겠습니까?")) {
         return;
       }
 
@@ -251,6 +247,21 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
       }
     },
     [userState?.uid, isPosting, reviewId, comments, showErrorHandler],
+  );
+
+  const deleteComment = useCallback(
+    (commentId: string) => {
+      if (!userState?.uid || isPosting) {
+        return;
+      }
+
+      showConfirmHandler(
+        "댓글 삭제",
+        "정말 이 댓글을 삭제하시겠습니까?",
+        () => performDelete(commentId),
+      );
+    },
+    [userState?.uid, isPosting, showConfirmHandler, performDelete],
   );
 
   // reviewId가 변경될 때 상태 초기화 및 댓글 목록 가져오기

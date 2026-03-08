@@ -33,7 +33,7 @@ function LatestReviewTicket({ review }: { review: ReviewDoc }) {
         className="group flex h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-xl border border-gray-300 bg-white px-3 py-2 hover:bg-gray-100"
       >
         {isNavigating && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black bg-opacity-30">
+          <div className="bg-opacity-30 absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent"></div>
           </div>
         )}
@@ -50,7 +50,12 @@ function LatestReviewTicket({ review }: { review: ReviewDoc }) {
           </div>
         </div>
 
-        <div className="pb-4 pt-3">
+        <div className="pt-3 pb-4">
+          {/* 별점 */}
+          <div className="flex items-center text-sm">
+            <FaStar className="text-accent-300" />
+            <span className="ml-1 text-gray-800">{content.rating}</span>
+          </div>
           {/* 리뷰 제목 */}
           <h3 className="w-full truncate font-semibold">
             {`"${content.reviewTitle}"`}
@@ -62,30 +67,20 @@ function LatestReviewTicket({ review }: { review: ReviewDoc }) {
           </p>
         </div>
 
-        {/* 별점 & 인포 버튼 & 좋아요 */}
+        {/* 작성 날짜 & 좋아요 */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            {/* 별점 */}
-            <div className="flex items-center rounded-full border border-gray-300 px-2 py-1 text-xs">
-              <FaStar className="text-accent-300" />
-              <span className="ml-1 font-semibold text-gray-800">
-                {content.rating}
-              </span>
-            </div>
-
-            {/* 좋아요 */}
-            <div className="flex items-center justify-center rounded-full border border-gray-300 px-2 py-1 text-xs">
-              <FaHeart className="text-red-500" />
-              <span className="ml-1 truncate text-gray-800">
-                {content.likeCount}
-              </span>
-            </div>
-          </div>
-
           {/* 작성 날짜 */}
           <p className="truncate text-right text-xs text-gray-500">
             {formatDate(content.createdAt, false)}
           </p>
+
+          {/* 좋아요 */}
+          <div className="flex items-center justify-center text-sm">
+            <FaHeart className="text-red-500" />
+            <span className="ml-1 truncate text-gray-800">
+              {content.likeCount}
+            </span>
+          </div>
         </div>
       </section>
     </article>

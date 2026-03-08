@@ -53,7 +53,7 @@ const MovieSection = memo(function MovieSection({
   return (
     <section
       ref={sectionRef}
-      className="mx-4 mb-8 lg:mx-12 lg:mb-16 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]"
+      className="mx-6 mb-8 lg:mx-20 lg:mb-16 xl:mx-auto xl:max-w-5xl 2xl:max-w-6xl 3xl:max-w-7xl"
     >
       <header
         className={`mb-4 transition-all duration-500 ease-out ${

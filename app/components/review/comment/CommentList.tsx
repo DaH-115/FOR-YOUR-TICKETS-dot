@@ -1,8 +1,10 @@
 "use client";
 
+import { useCallback } from "react";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import { useAppSelector } from "store/redux-toolkit/hooks";
 import { selectUser } from "store/redux-toolkit/slice/userSlice";
+import { useAlert } from "store/context/alertContext";
 import { useComments } from "@/components/review/comment/hooks/useComments";
 import { useCommentForm } from "@/components/review/comment/hooks/useCommentForm";
 import CommentItem from "@/components/review/comment/CommentItem";
@@ -13,6 +15,7 @@ export default function CommentList({
   reviewAuthorId,
 }: Pick<ReviewDoc, "id"> & { reviewAuthorId: string }) {
   const userState = useAppSelector(selectUser);
+  const { showConfirmHandler } = useAlert();
 
   // 댓글 관련 커스텀 훅
   const {
@@ -49,9 +52,19 @@ export default function CommentList({
     isPosting,
   });
 
+  // 수정 버튼 클릭 시 확인 다이얼로그 표시 후 수정 모드 진입
+  const handleEditWithConfirm = useCallback(
+    (id: string, content: string) => {
+      showConfirmHandler("댓글 수정", "이 댓글을 수정하시겠습니까?", () =>
+        startEdit(id, content),
+      );
+    },
+    [showConfirmHandler, startEdit],
+  );
+
   return (
     <div className="mx-auto mt-6 w-full max-w-md">
-      <p className="mb-2 text-white">댓글 {comments.length}개</p>
+      <p className="mb-2 text-white">댓글 {comments.length}</p>
       <section className="rounded-2xl border bg-white p-4">
         {/* 로딩 스피너 */}
         {isLoading && (
@@ -76,7 +89,7 @@ export default function CommentList({
                 isLast={idx === comments.length - 1}
                 reviewAuthorId={reviewAuthorId}
                 currentUserId={userState?.uid}
-                onEdit={startEdit}
+                onEdit={handleEditWithConfirm}
                 onDelete={deleteComment}
               />
             ))}

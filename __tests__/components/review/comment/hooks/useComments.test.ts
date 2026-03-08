@@ -33,6 +33,7 @@ describe("useComments", () => {
 
   const mockShowErrorHandler = jest.fn();
   const mockShowSuccessHandler = jest.fn();
+  const mockShowConfirmHandler = jest.fn();
   const mockHideErrorHandler = jest.fn();
   const mockHideSuccessHandler = jest.fn();
 
@@ -43,6 +44,7 @@ describe("useComments", () => {
     mockUseAlert.mockReturnValue({
       showErrorHandler: mockShowErrorHandler,
       showSuccessHandler: mockShowSuccessHandler,
+      showConfirmHandler: mockShowConfirmHandler,
       hideErrorHandler: mockHideErrorHandler,
       hideSuccessHandler: mockHideSuccessHandler,
     });
@@ -149,7 +151,7 @@ describe("useComments", () => {
   });
 
   describe("댓글 삭제", () => {
-    test("댓글 삭제 시 낙관적 업데이트가 작동해야 함", async () => {
+    test("댓글 삭제 시 확인 다이얼로그 후 낙관적 업데이트가 작동해야 함", async () => {
       const { result } = renderHook(() =>
         useComments({ reviewId: "review123", userState: mockUserState }),
       );
@@ -167,14 +169,40 @@ describe("useComments", () => {
         });
       });
 
-      // Mock confirm과 API 성공
-      global.confirm = jest.fn(() => true);
+      // showConfirmHandler가 호출되면 onConfirm 콜백을 즉시 실행하도록 모킹
+      mockShowConfirmHandler.mockImplementation(
+        (
+          _title: string,
+          _message: string,
+          onConfirm: () => void | Promise<void>,
+        ) => {
+          const maybePromise = onConfirm();
+          if (maybePromise instanceof Promise) {
+            return maybePromise;
+          }
+        },
+      );
       mockApiCallWithTokenRefresh.mockResolvedValue({});
 
-      // 댓글 삭제 실행
-      await act(async () => {
-        await result.current.deleteComment("comment123");
+      // 댓글 삭제 실행 (확인 다이얼로그 표시)
+      act(() => {
+        result.current.deleteComment("comment123");
       });
+
+      // onConfirm 콜백(performDelete)이 호출되어 삭제가 완료될 때까지 대기
+      await act(async () => {
+        const onConfirm = mockShowConfirmHandler.mock.calls[0]?.[2];
+        if (typeof onConfirm === "function") {
+          await onConfirm();
+        }
+      });
+
+      // 확인 다이얼로그가 호출되었는지 검증
+      expect(mockShowConfirmHandler).toHaveBeenCalledWith(
+        "댓글 삭제",
+        "정말 이 댓글을 삭제하시겠습니까?",
+        expect.any(Function),
+      );
 
       // 낙관적 업데이트 확인: 댓글이 즉시 제거되어야 함
       expect(result.current.comments).toHaveLength(0);
