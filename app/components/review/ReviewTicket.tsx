@@ -10,9 +10,9 @@ interface ReviewTicketProps {
 
 export default function ReviewTicket({ review }: ReviewTicketProps) {
   return (
-    <article className="group relative flex cursor-pointer flex-col drop-shadow-lg">
+    <article className="group relative flex cursor-pointer flex-col">
       {/* 별점 */}
-      <div className="absolute left-0 right-0 top-0 z-20 flex items-center rounded-t-xl bg-linear-to-b from-black/80 via-black/60 to-transparent px-3 pt-2 text-white">
+      <div className="absolute top-0 right-0 left-0 z-20 flex items-center rounded-t-2xl bg-linear-to-b from-black/80 via-black/60 to-transparent px-3 pt-2 text-white">
         <FaStar className="text-accent-300" size={14} />
         <span className="ml-1 font-semibold">{review.review.rating}</span>
       </div>
@@ -21,8 +21,8 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
         posterPath={review.review.moviePosterPath || ""}
         title={review.review.movieTitle}
       />
-      {/* 정보 카드 - 고정 높이 설정 */}
-      <section className="relative z-10 flex h-[140px] flex-col rounded-xl border-2 bg-white px-2 py-2 text-black transition-colors duration-200 group-hover:bg-gray-100">
+      {/* 정보 카드 */}
+      <section className="flex h-[140px] flex-col rounded-2xl bg-white p-2">
         {/* 프로필 사진 & 닉네임 & 등급 */}
         <div className="flex items-center justify-between">
           <div className="flex flex-1 items-center gap-1.5">
@@ -38,13 +38,13 @@ export default function ReviewTicket({ review }: ReviewTicketProps) {
           <ActivityBadge activityLevel={review.user.activityLevel} />
         </div>
         {/* 리뷰 제목 */}
-        <div className="flex-1 px-1 py-3">
+        <div className="px-1 py-3">
           <p className="line-clamp-2 text-sm leading-5">
             {`"${review.review.reviewTitle}"`}
           </p>
         </div>
         {/* 영화 타이틀 & 좋아요 */}
-        <div className="mt-auto flex items-center justify-between border-t-4 border-dotted pt-1">
+        <div className="mt-auto flex shrink-0 items-center justify-between border-t-4 border-dotted pt-1">
           <div className="flex-1 truncate pr-1.5 text-xs text-gray-500">
             {/* 영화 제목 및 연도 */}
             <span>

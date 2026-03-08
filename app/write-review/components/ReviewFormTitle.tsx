@@ -7,7 +7,7 @@ export default function ReviewFormTitle() {
   return (
     <div className="space-y-2">
       <label htmlFor="reviewTitle" className="text-sm text-gray-600">
-        한 줄 평
+        제목
       </label>
       <Controller
         name="reviewTitle"
@@ -24,10 +24,10 @@ export default function ReviewFormTitle() {
             <input
               {...field}
               id="reviewTitle"
-              className={`w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 transition-all duration-300 focus:border-accent-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1 ${
+              className={`focus:border-accent-500 focus:ring-accent-300 w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 transition-all duration-300 focus:bg-white focus:ring-1 focus:ring-offset-1 focus:outline-hidden ${
                 error ? "border-red-500 bg-red-50 ring-2 ring-red-500/30" : ""
               }`}
-              placeholder="한 줄 평을 입력해주세요"
+              placeholder="제목을 입력해주세요"
               onBlur={(e) => {
                 // 앞뒤 공백 제거
                 field.onChange(e.target.value.trim());

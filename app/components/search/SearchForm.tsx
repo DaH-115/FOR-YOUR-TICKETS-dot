@@ -77,14 +77,14 @@ export default function SearchForm({
         {...register("search")}
         type="search"
         placeholder={placeholder}
-        className="focus:ring-accent-300 h-full w-full rounded-full bg-white pr-10 pl-4 text-sm text-gray-900 focus:ring-1 focus:ring-offset-1 focus:outline-hidden"
+        className="focus:ring-accent-300 w-full rounded-full bg-white py-2 pr-12 pl-4 text-sm tracking-tight text-gray-900 outline-hidden focus:ring-1"
         aria-invalid={!!errors.search}
       />
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="absolute top-0 right-1 flex h-full w-10 items-center justify-center disabled:opacity-50"
+        className="absolute right-3"
       >
         <IoSearchOutline size={20} />
       </button>

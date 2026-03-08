@@ -25,7 +25,7 @@ export default function MovieInfoCard({
   const releaseDate = formatMovieDate(release_date);
 
   return (
-    <div className="rounded-2xl bg-white px-4 pt-4 pb-4">
+    <div className="rounded-2xl bg-white p-4">
       {/* 헤더: 영화 제목, 상세정보 아이콘, 원제목, 개봉년도, 등급 */}
       <header>
         <div className="flex justify-between">
@@ -103,7 +103,7 @@ export default function MovieInfoCard({
 
       {/* 티켓 만들기 버튼 */}
       <div className="pt-4">
-        <WriteButton movieId={movie.id} size="small" />
+        <WriteButton movieId={movie.id} />
       </div>
     </div>
   );

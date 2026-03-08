@@ -3,30 +3,18 @@ import { IoTicket } from "react-icons/io5";
 
 interface WriteButtonProps {
   movieId: number;
-  size?: "large" | "small";
 }
 
-export default function WriteButton({
-  movieId,
-  size = "large",
-}: WriteButtonProps) {
+export default function WriteButton({ movieId }: WriteButtonProps) {
   return (
     <Link
       href={`/write-review/new?movieId=${movieId}`}
-      className={`bg-primary-500 hover:border-primary-300 relative flex items-center justify-center gap-1 rounded-2xl text-white transition-colors duration-300 ${
-        size === "large" ? "p-5" : "p-4"
-      }`}
+      className="bg-primary-500 hover:border-primary-300 relative flex items-center justify-center gap-1 rounded-2xl p-2 text-white transition-colors duration-300"
     >
-      <button
-        type="button"
-        className={`${size === "large" ? "text-base" : "text-sm"} tracking-tight`}
-      >
+      <button type="button" className="cursor-pointer text-sm tracking-tight">
         티켓 만들기
       </button>
-      <IoTicket
-        className={`${size === "large" ? "text-base" : "text-sm"}`}
-        aria-hidden
-      />
+      <IoTicket className="text-base" aria-hidden />
     </Link>
   );
 }

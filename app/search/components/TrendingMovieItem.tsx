@@ -15,13 +15,13 @@ export default function TrendingMovieItem({
   return (
     <button
       onClick={() => onMovieClick(movie.title)}
-      className="group flex w-full items-center gap-6 rounded-lg p-3 text-left transition-all duration-200 hover:scale-[1.02]"
+      className="group flex w-full cursor-pointer items-center gap-6 rounded-lg p-3 text-left transition-all duration-200 hover:scale-[1.02]"
     >
       <span className="flex items-center justify-center text-white">
         {rank}
       </span>
       <div className="min-w-0 flex-1 space-y-1">
-        <p className="truncate text-base font-medium text-white group-hover:text-accent-300">
+        <p className="group-hover:text-accent-300 truncate text-base font-medium text-white">
           {movie.title}
         </p>
         <div className="flex items-center gap-1">

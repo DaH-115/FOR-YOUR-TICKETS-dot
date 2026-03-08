@@ -23,7 +23,7 @@ export default function SwiperItem({
   return (
     <article className="relative flex flex-col drop-shadow-xl">
       {/* 랭킹 번호 */}
-      <header className="absolute left-0 top-0 z-50 flex w-full items-center rounded-t-xl bg-linear-to-t from-transparent to-black/60 py-1 pl-3 pr-2 text-white">
+      <header className="absolute top-0 left-0 z-50 flex w-full items-center rounded-t-2xl bg-linear-to-t from-transparent to-black/60 py-2 pr-2 pl-3 text-white">
         <p className="text-2xl font-semibold">{idx + 1}</p>
       </header>
 
@@ -31,15 +31,13 @@ export default function SwiperItem({
       <MoviePoster posterPath={poster_path} title={displayTitle} />
 
       {/* 영화 정보 카드 - 제목, 등급, 평점, 장르 */}
-      <section className="mt-2 rounded-2xl bg-white">
+      <section className="flex flex-1 flex-col rounded-2xl bg-white p-2">
         {/* 평점 & 등급 */}
-        <div className="flex items-center justify-between px-2 pt-3">
+        <div className="mb-2 flex shrink-0 items-center justify-between">
           {/* 평점 */}
-          <div className="flex items-center justify-center gap-1 rounded-full border border-gray-300 px-2 py-1">
-            <FaStar className="text-sm text-accent-300" />
-            <span className="text-sm font-semibold">
-              {vote_average ? Math.round(vote_average * 10) / 10 : 0}
-            </span>
+          <div className="flex items-center justify-center gap-1">
+            <FaStar className="text-accent-300 text-sm" />
+            {vote_average ? Math.round(vote_average * 10) / 10 : 0}
           </div>
 
           <div className="flex items-center gap-1">
@@ -64,10 +62,10 @@ export default function SwiperItem({
         </div>
 
         {/* 영화 제목 */}
-        <div className="p-3 pb-4">
+        <div className="mt-auto mb-2 shrink-0">
           <div className="flex items-center gap-1 md:gap-2">
             <div className="flex-1">
-              <h3 className="line-clamp-1 text-base font-bold leading-tight tracking-tight">
+              <h3 className="line-clamp-1 text-base leading-tight font-bold tracking-tight">
                 {title}
               </h3>
               <p className="line-clamp-1 text-xs leading-tight tracking-tight text-gray-500">
@@ -78,12 +76,15 @@ export default function SwiperItem({
         </div>
 
         {/* 장르 */}
-        <div className="px-3 pb-4">
+        <div className="mt-auto mb-4 shrink-0">
           <GenreList genres={movie.genres || []} />
         </div>
+
+        {/* 티켓 만들기 버튼 - 항상 하단 고정 */}
+        <div className="mt-auto shrink-0">
+          <WriteButton movieId={id} />
+        </div>
       </section>
-      {/* 티켓 만들기 버튼 */}
-      <WriteButton movieId={id} size="small" />
     </article>
   );
 }

@@ -50,6 +50,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       movies: movieListWithGenres,
       totalPages: typeof data.total_pages === "number" ? data.total_pages : 0,
+      totalResults:
+        typeof data.total_results === "number" ? data.total_results : 0,
     });
   } catch (error) {
     console.error("TMDB 검색 API 실패:", error);

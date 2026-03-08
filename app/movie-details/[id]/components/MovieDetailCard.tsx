@@ -55,7 +55,7 @@ export default function MovieDetailCard({
   };
 
   return (
-    <main className="relative mx-auto -mt-12 flex max-w-7xl justify-center md:mb-8 md:mt-12">
+    <main className="relative mx-auto -mt-12 flex max-w-7xl justify-center md:mt-12 md:mb-8">
       <div className="flex flex-col justify-center md:w-2/3 md:flex-row md:gap-6">
         {/* 영화 포스터 */}
         <section className="mx-auto w-full md:w-3/4">
@@ -68,11 +68,11 @@ export default function MovieDetailCard({
         <div className="mx-auto w-full overflow-hidden">
           {/* 영화 정보 */}
           <article className="w-full shadow-lg">
-            <div className="w-full rounded-2xl bg-white px-6 pb-4 pt-6 md:px-8">
+            <div className="w-full rounded-2xl bg-white px-6 pt-6 pb-4 md:px-8">
               {/* 영화 정보 & 제목 */}
               <h1 className="sr-only">MOVIE DETAILS</h1>
               <div className="flex items-center">
-                <h2 className="mr-3 break-keep text-xl font-bold md:text-3xl">
+                <h2 className="mr-3 text-xl font-bold break-keep md:text-3xl">
                   {title}
                 </h2>
                 {certification && (
@@ -97,7 +97,7 @@ export default function MovieDetailCard({
               {/* 평점 */}
               <div className="py-4">
                 <div className="flex items-center">
-                  <FaStar className="text-2xl text-accent-300" />
+                  <FaStar className="text-accent-300 text-2xl" />
                   <p className="ml-2 text-3xl font-bold">
                     {Math.round(vote_average * 10) / 10 || 0}
                   </p>
@@ -107,13 +107,13 @@ export default function MovieDetailCard({
               {/* 줄거리 */}
               {overview && (
                 <div className="mb-6">
-                  <p className="break-keep text-sm leading-relaxed text-gray-800">
+                  <p className="text-sm leading-relaxed break-keep text-gray-800">
                     {overview}
                   </p>
                 </div>
               )}
               {/* 출연진 */}
-              <div className="border-t-4 border-dotted pb-4 pt-8">
+              <div className="border-t-4 border-dotted pt-8 pb-4">
                 <h3 className="mb-3 text-xs font-bold">출연진</h3>
                 {casts.length > 0 ? (
                   <ul className="space-y-4">
@@ -222,7 +222,7 @@ export default function MovieDetailCard({
               {/* 리뷰 작성 버튼 */}
               <div className="flex w-full items-center border-t-4 border-dotted pt-4">
                 <div className="flex-1">
-                  <WriteButton movieId={movieDetails.id} size="large" />
+                  <WriteButton movieId={movieDetails.id} />
                 </div>
               </div>
             </div>

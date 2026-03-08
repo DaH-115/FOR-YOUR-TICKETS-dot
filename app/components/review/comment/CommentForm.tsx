@@ -74,7 +74,7 @@ export default function CommentForm({
           {editingId && (
             <button
               type="button"
-              className="mr-4 text-gray-700 hover:text-gray-500"
+              className="mr-4 cursor-pointer text-gray-700 hover:text-gray-500"
               onClick={onCancelEdit}
               aria-label="댓글 수정 취소"
             >
@@ -85,7 +85,7 @@ export default function CommentForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="border-primary-600 bg-primary-600 hover:bg-primary-400 rounded-full border px-4 py-2 text-white transition-colors duration-300 disabled:bg-gray-400"
+            className="bg-primary-600 hover:bg-primary-400 cursor-pointer rounded-full px-4 py-2 text-white transition-colors duration-300 disabled:bg-gray-400"
             aria-label={editingId ? "댓글 수정 완료" : "댓글 등록"}
           >
             {editingId ? "수정 완료" : "등록"}

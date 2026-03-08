@@ -92,7 +92,10 @@ export default function ReviewFormRating() {
                   </div>
                 </ListboxButton>
 
-                <ListboxOptions className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg focus:outline-hidden">
+                <ListboxOptions
+                  modal={false}
+                  className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg focus:outline-hidden"
+                >
                   {ratingOptions.map((option) => (
                     <ListboxOption
                       key={option.value}

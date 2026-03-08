@@ -51,12 +51,12 @@ export default function CommentList({
 
   return (
     <div className="mx-auto mt-6 w-full max-w-md">
-      <p className="mb-2 font-bold text-white">댓글 {comments.length}개</p>
+      <p className="mb-2 text-white">댓글 {comments.length}개</p>
       <section className="rounded-2xl border bg-white p-4">
         {/* 로딩 스피너 */}
         {isLoading && (
           <div className="flex items-center justify-center py-8">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-primary-600"></div>
+            <div className="border-t-primary-600 h-4 w-4 animate-spin rounded-full border-2 border-gray-300"></div>
             <span className="ml-2 text-sm text-gray-600">
               댓글을 불러오는 중...
             </span>
@@ -65,7 +65,7 @@ export default function CommentList({
 
         {/* 댓글 목록 */}
         <div
-          className={`${!isLoading && comments.length > 0 ? "overflow-y-auto scrollbar-hide" : "hidden"}`}
+          className={`${!isLoading && comments.length > 0 ? "scrollbar-hide overflow-y-auto" : "hidden"}`}
         >
           <ul className="space-y-2">
             {comments.map((comment, idx) => (

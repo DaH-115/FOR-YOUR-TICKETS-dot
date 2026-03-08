@@ -53,7 +53,7 @@ export default function ReviewForm({
       {movieData.backdrop_path && (
         <Background imageUrl={movieData.backdrop_path} isFixed={true} />
       )}
-      <main className="relative mb-16 mt-8 drop-shadow-lg lg:mb-20 lg:mt-16">
+      <main className="relative mt-8 mb-16 drop-shadow-lg lg:mt-16 lg:mb-20">
         <div className="mx-auto w-11/12 max-w-2xl">
           {/* 티켓 헤더 */}
           <h1 className="sr-only">
@@ -64,7 +64,7 @@ export default function ReviewForm({
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(submitHandler)}>
                 {/* 영화 정보 */}
-                <div className="mb-8 text-center">
+                <div className="mb-4 text-center">
                   <h2 className="mb-1 text-2xl font-bold text-gray-800">
                     {`${movieData.title}(${movieData.original_title})`}
                   </h2>
@@ -79,9 +79,8 @@ export default function ReviewForm({
                 {isDirty && (
                   <div className="mb-4 rounded-lg">
                     <div className="flex items-center justify-center">
-                      <MdWarning className="text-yellow-500" size={20} />
                       <div className="ml-1">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-400">
                           <strong>작성 중입니다!</strong> 페이지를 떠나면 작성한
                           내용이 사라집니다.
                         </p>
@@ -91,7 +90,7 @@ export default function ReviewForm({
                 )}
 
                 {/* 폼 필드 */}
-                <div className="space-y-6">
+                <div className="space-y-6 pt-2">
                   <ReviewFormTitle />
                   <ReviewFormRating />
                   <ReviewFormContent />
@@ -99,7 +98,7 @@ export default function ReviewForm({
                   <div className="pt-4">
                     <button
                       type="submit"
-                      className="w-full rounded-xl bg-accent-400 p-4 text-white transition-all duration-300 hover:bg-accent-500 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+                      className="bg-accent-400 hover:bg-accent-500 w-full cursor-pointer rounded-xl p-4 text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={!isValid}
                     >
                       {onSubmitMode === "edit" ? "리뷰 수정" : "리뷰 등록"}

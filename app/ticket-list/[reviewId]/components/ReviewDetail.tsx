@@ -199,16 +199,8 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
           <p className="font-bold text-white">{content.rating}</p>
         </div>
 
-        <div className="flex gap-2">
-          <h3 className="text-4xl font-bold text-white">
-            {content.reviewTitle}
-          </h3>
-          {review.orderNumber && (
-            <span className="text-sm font-medium text-gray-400">
-              #{review.orderNumber}
-            </span>
-          )}
-        </div>
+        <h3 className="text-4xl font-bold text-white">{content.reviewTitle}</h3>
+
         <div className="text-gray-400">
           <Link
             href={`/movie-details/${content.movieId}`}
@@ -220,26 +212,28 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
       </header>
 
       {/* 좋아요 버튼 */}
-      {!isLoggedIn ? (
-        <Tooltip content="로그인 후 좋아요를 누를 수 있습니다">
+      <div className="mb-6">
+        {!isLoggedIn ? (
+          <Tooltip content="로그인 후 좋아요를 누를 수 있습니다">
+            <button
+              disabled
+              className="flex cursor-not-allowed items-center text-red-500 opacity-50"
+            >
+              <FaRegHeart size={18} />
+              <p className="ml-1 text-gray-300">{likeCount}</p>
+            </button>
+          </Tooltip>
+        ) : (
           <button
-            disabled
-            className="flex cursor-not-allowed items-center rounded-full border border-gray-600 px-4 py-2 text-red-500 opacity-50"
+            onClick={likeToggleHandler}
+            disabled={isLikeLoading}
+            className="flex cursor-pointer items-center rounded-full text-red-500 transition-colors hover:text-red-400 disabled:opacity-50"
           >
-            <FaRegHeart size={14} />
+            {isLiked ? <FaHeart size={18} /> : <FaRegHeart size={18} />}
             <p className="ml-1 text-gray-300">{likeCount}</p>
           </button>
-        </Tooltip>
-      ) : (
-        <button
-          onClick={likeToggleHandler}
-          disabled={isLikeLoading}
-          className="flex items-center rounded-full border border-gray-600 px-4 py-2 text-red-500 transition-colors hover:border-gray-500 hover:text-red-400 disabled:opacity-50"
-        >
-          {isLiked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
-          <p className="ml-1 text-gray-300">{likeCount}</p>
-        </button>
-      )}
+        )}
+      </div>
 
       <div className="mx-auto max-w-md">
         {/* 영화 포스터 */}
@@ -251,6 +245,12 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
       {/* 리뷰 정보 */}
       <div className="mx-auto max-w-md rounded-2xl border bg-white p-4">
+        {review.orderNumber && (
+          <p className="mb-2 text-xs text-gray-400">
+            Review #{review.orderNumber}
+          </p>
+        )}
+
         {/* 프로필, 닉네임, 등급, 수정/삭제 버튼(본인만) */}
         <div className="mb-6 flex items-center justify-between">
           {/* 프로필, 닉네임, 등급 */}
@@ -268,36 +268,24 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
 
           {/* 수정/삭제 버튼(본인만) */}
           {isOwnReview && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               {/* 수정 버튼 */}
               <button
                 onClick={editHandler}
-                className="group flex cursor-pointer items-center rounded-full bg-gray-300 px-3 py-1.5 transition-colors duration-100 hover:bg-gray-400"
+                className="group flex cursor-pointer items-center transition-colors duration-100"
                 title="리뷰 수정"
                 type="button"
               >
-                <FaEdit
-                  className="text-gray-600 group-hover:text-white"
-                  size={12}
-                />
-                <span className="ml-1 text-xs text-gray-600 transition-colors group-hover:text-white">
-                  수정
-                </span>
+                <span className="text-xs text-gray-600">수정</span>
               </button>
               {/* 삭제 버튼 */}
               <button
                 onClick={deleteHandler}
-                className="group flex cursor-pointer items-center rounded-full bg-gray-300 px-3 py-1.5 transition-colors duration-100 hover:bg-gray-400"
+                className="group flex cursor-pointer items-center transition-colors duration-100"
                 title="리뷰 삭제"
                 type="button"
               >
-                <FaTrash
-                  className="text-gray-600 group-hover:text-white"
-                  size={12}
-                />
-                <span className="ml-1 text-xs text-gray-600 transition-colors group-hover:text-white">
-                  삭제
-                </span>
+                <span className="text-xs text-gray-600">삭제</span>
               </button>
             </div>
           )}

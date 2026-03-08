@@ -52,9 +52,7 @@ export default function CommentItem({
             </span>
           )}
           {isTemporary && (
-            <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-xs text-blue-600">
-              등록 중...
-            </span>
+            <span className="text-xs text-gray-600">등록 중</span>
           )}
         </div>
 
@@ -63,14 +61,14 @@ export default function CommentItem({
           <div className="flex items-center space-x-2">
             <button
               onClick={() => onEdit(comment.id, comment.content)}
-              className="text-xs text-black"
+              className="cursor-pointer text-xs text-gray-600"
               aria-label="댓글 수정"
             >
               수정
             </button>
             <button
               onClick={() => onDelete(comment.id)}
-              className="text-xs text-red-600"
+              className="cursor-pointer text-xs text-gray-600"
               aria-label="댓글 삭제"
             >
               삭제

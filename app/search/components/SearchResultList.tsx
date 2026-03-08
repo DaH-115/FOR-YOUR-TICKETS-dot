@@ -10,14 +10,19 @@ import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 interface SearchMovieResponse {
   movies: MovieList[];
   totalPages: number;
+  totalResults: number;
   error?: string;
+}
+
+interface SearchResultListProps {
+  searchQuery: string;
+  onResultsLoaded?: (totalResults: number) => void;
 }
 
 export default function SearchResultList({
   searchQuery,
-}: {
-  searchQuery: string;
-}) {
+  onResultsLoaded,
+}: SearchResultListProps) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -40,6 +45,7 @@ export default function SearchResultList({
     if (!searchQuery) {
       setSearchResults([]);
       setTotalPages(0);
+      onResultsLoaded?.(0);
       return;
     }
 
@@ -60,15 +66,17 @@ export default function SearchResultList({
 
         setSearchResults(data.movies);
         setTotalPages(data.totalPages);
+        onResultsLoaded?.(data.totalResults ?? 0);
       } catch (error) {
         console.error("영화 검색 중 오류:", (error as Error).message);
         setSearchResults([]);
         setTotalPages(0);
+        onResultsLoaded?.(0);
       } finally {
         setIsLoading(false);
       }
     })();
-  }, [searchQuery, currentPage]);
+  }, [searchQuery, currentPage, onResultsLoaded]);
 
   if (isLoading) {
     return (
@@ -90,7 +98,7 @@ export default function SearchResultList({
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-x-2 gap-y-6 sm:grid-cols-4 sm:gap-x-3 sm:gap-y-8 md:grid-cols-5 md:gap-x-3 md:gap-y-8 lg:grid-cols-7 lg:gap-x-4 lg:gap-y-10 xl:gap-x-4 xl:gap-y-12">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5">
         {searchResults.map((movie, idx) => (
           <SwiperItem key={movie.id} movie={movie} idx={idx} />
         ))}

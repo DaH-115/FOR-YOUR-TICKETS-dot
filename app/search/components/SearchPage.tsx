@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDebounce } from "use-debounce";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoSearchOutline } from "react-icons/io5";
 import * as z from "zod";
@@ -41,6 +41,7 @@ export default function SearchPage({
   const watchedQuery = watch("searchQuery");
 
   const [debouncedQuery] = useDebounce(watchedQuery, 300);
+  const [totalResults, setTotalResults] = useState<number | null>(null);
 
   useEffect(() => {
     const query = debouncedQuery ?? "";
@@ -51,29 +52,38 @@ export default function SearchPage({
     router.replace(`${pathname}${queryString}`);
   }, [debouncedQuery, router, pathname]);
 
+  useEffect(() => {
+    if (!searchTerm) setTotalResults(null);
+  }, [searchTerm]);
+
   return (
-    <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+    <main className="3xl:max-w-[1600px] mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl">
       {/* 헤더 영역 */}
       <header className="sr-only">
         <h1 className="text-xl font-bold tracking-tight text-white">검색</h1>
       </header>
 
       {/* 검색 입력폼 */}
-      <section className="mx-auto mb-8 lg:w-1/3">
-        <div className="relative flex items-center">
+      <section className="mx-auto mb-8 lg:w-1/3" aria-label="영화 검색">
+        <form
+          role="search"
+          onSubmit={(e) => e.preventDefault()}
+          className="relative flex items-center"
+        >
           <input
             {...register("searchQuery")}
             type="search"
             placeholder="영화 제목으로 검색해 보세요"
-            className="w-full rounded-xl bg-gray-600 py-2 pl-4 pr-12 text-sm tracking-tight text-white outline-hidden"
+            className="focus:ring-accent-300 w-full rounded-full bg-white py-2 pr-12 pl-4 text-sm tracking-tight text-gray-900 outline-hidden focus:ring-1"
+            aria-label="영화 제목 검색"
           />
-          <button type="button" className="absolute right-3">
-            <IoSearchOutline className="text-gray-400" size={20} />
+          <button type="submit" className="absolute right-3" aria-label="검색">
+            <IoSearchOutline size={20} />
           </button>
-        </div>
+        </form>
       </section>
 
-      {/* 인기 검색어 TOP 10 */}
+      {/* 검색어가 없을 때만 인기 검색어 TOP 10 표시 */}
       {!searchTerm && (
         <TrendingSearchSection
           trendingMovies={trendingMovies}
@@ -84,13 +94,21 @@ export default function SearchPage({
       {/* 검색 결과 또는 상영 중인 영화 */}
       {searchTerm ? (
         <section>
-          <div className="mb-6">
+          <div className="mb-6 flex items-center">
             <h2 className="text-xl font-bold tracking-tight text-white">
               검색 결과
+              {totalResults !== null && (
+                <span className="text-accent-300 ml-2 font-bold">
+                  {totalResults.toLocaleString()}
+                </span>
+              )}
             </h2>
           </div>
           <div>
-            <SearchResultList searchQuery={searchTerm} />
+            <SearchResultList
+              searchQuery={searchTerm}
+              onResultsLoaded={setTotalResults}
+            />
           </div>
         </section>
       ) : (
@@ -100,7 +118,7 @@ export default function SearchPage({
               상영 중인 영화
             </h2>
           </div>
-          <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
+          <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5">
             {nowPlayingMovies.map((movie, idx) => (
               <SwiperItem key={movie.id} movie={movie} idx={idx} />
             ))}
