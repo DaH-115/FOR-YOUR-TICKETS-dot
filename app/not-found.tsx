@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex h-screen flex-col items-center justify-center">
+    <div className="flex h-screen flex-col items-center justify-center p-8">
       <h2 className="mb-4 text-2xl font-bold text-gray-300">
         죄송합니다. 현재 영화 정보를 불러올 수 없습니다.
       </h2>

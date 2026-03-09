@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminFirestore } from "firebase-admin-config";
-import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
+import { getReviewById } from "lib/reviews/getReviewById";
 import { verifyAuthToken } from "lib/auth/verifyToken";
 
 // GET /api/reviews/[id] - 개별 리뷰 조회
@@ -19,69 +18,16 @@ export async function GET(
       uid = req.nextUrl.searchParams.get("uid");
     }
 
-    const doc = await adminFirestore.collection("movie-reviews").doc(id).get();
-    if (!doc.exists) {
+    const review = await getReviewById(id, uid);
+
+    if (!review) {
       return NextResponse.json(
         { error: "리뷰를 찾을 수 없습니다." },
         { status: 404 },
       );
     }
 
-    const data = doc.data();
-    if (!data) {
-      return NextResponse.json(
-        { error: "리뷰 데이터가 없습니다." },
-        { status: 404 },
-      );
-    }
-
-    // 좋아요 상태 확인
-    let isLiked = false;
-    if (uid) {
-      const likeDoc = await adminFirestore
-        .collection("movie-reviews")
-        .doc(id)
-        .collection("likedBy")
-        .doc(uid)
-        .get();
-      isLiked = likeDoc.exists;
-    }
-
-    // 리뷰 순서 계산 (해당 리뷰보다 오래된 리뷰 개수 + 1)
-    const createdAt = data.review.createdAt;
-    let orderNumber = 1;
-
-    if (createdAt && typeof createdAt.toDate === "function") {
-      // 해당 리뷰보다 오래된 리뷰 개수 조회
-      const olderReviewsQuery = await adminFirestore
-        .collection("movie-reviews")
-        .where("review.createdAt", "<", createdAt)
-        .count()
-        .get();
-
-      orderNumber = olderReviewsQuery.data().count + 1;
-    }
-
-    const reviewData: ReviewDoc = {
-      id: doc.id,
-      user: data.user,
-      review: {
-        ...data.review,
-        likeCount: data.likeCount || data.review.likeCount || 0,
-        createdAt:
-          typeof data.review.createdAt?.toDate === "function"
-            ? data.review.createdAt.toDate().toISOString()
-            : "",
-        updatedAt:
-          typeof data.review.updatedAt?.toDate === "function"
-            ? data.review.updatedAt.toDate().toISOString()
-            : "",
-        isLiked, // 동적으로 계산한 값
-      },
-      orderNumber, // 리뷰 순서 추가
-    };
-
-    return NextResponse.json(reviewData);
+    return NextResponse.json(review);
   } catch (error) {
     console.error("리뷰 조회 실패:", error);
     console.error(

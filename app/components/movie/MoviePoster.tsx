@@ -1,25 +1,15 @@
 import MovieImage from "@/components/movie/MovieImage";
 
-type Importance = "hero" | "list" | "background";
+type Importance = "hero" | "list";
 
-const POLICY: Record<
-  Importance,
-  { lazy: boolean; priority: boolean; sizes: string }
-> = {
+const POLICY: Record<Importance, { priority: boolean; sizes: string }> = {
   hero: {
-    lazy: false,
     priority: true,
     sizes: "(max-width: 768px) 100vw, 60vw",
   },
   list: {
-    lazy: true,
     priority: false,
     sizes: "(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw",
-  },
-  background: {
-    lazy: true,
-    priority: false,
-    sizes: "100vw",
   },
 };
 
@@ -44,7 +34,6 @@ export default function MoviePoster({
       <MovieImage
         posterPath={posterPath}
         title={title}
-        lazy={policy.lazy}
         priority={policy.priority}
         sizes={policy.sizes}
       />

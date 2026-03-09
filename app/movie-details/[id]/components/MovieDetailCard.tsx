@@ -56,16 +56,16 @@ export default function MovieDetailCard({
 
   return (
     <main className="relative mx-auto -mt-12 flex max-w-7xl justify-center md:mt-12 md:mb-8">
-      <div className="flex flex-col justify-center md:w-2/3 md:flex-row md:gap-6">
+      <div className="mx-4 flex flex-col justify-center md:w-2/3 md:flex-row md:gap-6">
         {/* 영화 포스터 */}
-        <section className="mx-auto w-full md:w-3/4">
+        <div className="mx-auto w-full md:w-3/4">
           <MoviePoster
             posterPath={poster_path || ""}
             title={title}
             importance="hero"
           />
-        </section>
-        <div className="mx-auto w-full overflow-hidden">
+        </div>
+        <div className="mx-auto w-full">
           {/* 영화 정보 */}
           <article className="w-full shadow-lg">
             <div className="w-full rounded-2xl bg-white px-6 py-4">

@@ -36,7 +36,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
         </TransitionChild>
 
         {/* 패널 컨테이너 */}
-        <div className="fixed inset-0 flex items-start justify-center pt-20 md:items-center md:pt-0">
+        <div className="fixed inset-0 flex items-start justify-center pt-88 md:items-center md:pt-0">
           {/* 패널: 슬라이드업 + 페이드 */}
           <TransitionChild
             as={Fragment}
@@ -47,7 +47,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-full"
           >
-            <DialogPanel className="relative w-full max-w-sm transform overflow-y-auto rounded-2xl bg-white p-4 shadow-xl scrollbar-hide">
+            <DialogPanel className="scrollbar-hide relative w-full max-w-sm transform overflow-y-auto rounded-2xl bg-white p-4 shadow-xl">
               {children}
             </DialogPanel>
           </TransitionChild>

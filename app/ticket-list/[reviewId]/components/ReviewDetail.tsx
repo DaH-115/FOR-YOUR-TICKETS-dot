@@ -138,10 +138,19 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
     }
   }, [reviewId, isLiked, isLikeLoading, content.movieTitle, showErrorHandler]);
 
-  // 리뷰 수정 핸들러
-  const editHandler = useCallback(() => {
+  // 리뷰 수정 확인 후 이동
+  const executeEdit = useCallback(() => {
     router.push(`/write-review/${reviewId}?movieId=${content.movieId}`);
   }, [router, reviewId, content.movieId]);
+
+  // 리뷰 수정 핸들러 (확인 모달 사용)
+  const editHandler = useCallback(() => {
+    showConfirmHandler(
+      "리뷰 수정",
+      "이 리뷰를 수정하시겠습니까?",
+      executeEdit,
+    );
+  }, [showConfirmHandler, executeEdit]);
 
   // 실제 삭제 요청 처리
   const executeDelete = useCallback(async () => {
