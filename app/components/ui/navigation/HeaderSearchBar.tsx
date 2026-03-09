@@ -137,7 +137,7 @@ export default function HeaderSearchBar() {
                 <div className="border-t border-white/10">
                   <button
                     onClick={() => setVisibleCount((prev) => prev + 5)}
-                    className="w-full cursor-pointer px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10"
+                    className="w-full px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10"
                   >
                     더 보기
                   </button>

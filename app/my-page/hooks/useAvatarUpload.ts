@@ -4,7 +4,11 @@
 import { useState, useRef, ChangeEvent, useEffect } from "react";
 import { validateFileExtension } from "app/utils/file/validateFileExtension";
 import { validateFileType } from "app/utils/file/validateFileType";
-import { validateFileSize } from "app/utils/file/validateFileSize";
+import {
+  validateFileSize,
+  MAX_FILE_SIZE,
+} from "app/utils/file/validateFileSize";
+import { formatFileSize } from "app/utils/file/formatFileSize";
 
 // 콜백 타입 정의
 export interface AvatarUploadCallbacks {
@@ -53,6 +57,10 @@ export function useAvatarUpload(callbacks: AvatarUploadCallbacks = {}) {
     setError(null);
     // 편집 종료 시 프리뷰/파일/입력값 초기화
     if (!nextIsEditing) {
+      // 부모가 previewSrc를 먼저 비우도록 콜백을 먼저 호출 (revoked URL 표시 방지)
+      callbacks.onCancelPreview?.();
+      callbacks.onFileSelect?.(null);
+      callbacks.onImageChange?.(false);
       // 기존 URL 해제
       if (previewUrl) {
         cleanupUrl(previewUrl);
@@ -60,10 +68,6 @@ export function useAvatarUpload(callbacks: AvatarUploadCallbacks = {}) {
       setPreviewUrl(null);
       setFile(null);
       if (inputRef.current) inputRef.current.value = "";
-      // 콜백 호출
-      callbacks.onCancelPreview?.();
-      callbacks.onFileSelect?.(null);
-      callbacks.onImageChange?.(false);
     }
   };
 
@@ -76,15 +80,16 @@ export function useAvatarUpload(callbacks: AvatarUploadCallbacks = {}) {
     const file = e.target.files?.[0] ?? null;
     setError(null);
     if (!file) {
+      // 부모가 previewSrc를 먼저 비우도록 콜백을 먼저 호출 (revoked URL 표시 방지)
+      callbacks.onFileSelect?.(null);
+      callbacks.onCancelPreview?.();
+      callbacks.onImageChange?.(false);
       // 기존 URL 해제
       if (previewUrl) {
         cleanupUrl(previewUrl);
       }
       setFile(null);
       setPreviewUrl(null);
-      callbacks.onFileSelect?.(null);
-      callbacks.onCancelPreview?.();
-      callbacks.onImageChange?.(false);
       return;
     }
     // 확장자 검증 (예: .jpg, .png 등)
@@ -106,7 +111,7 @@ export function useAvatarUpload(callbacks: AvatarUploadCallbacks = {}) {
     }
     // 용량 제한 검증
     if (!validateFileSize(file.size)) {
-      const msg = `파일 크기가 너무 큽니다. (최대 1MB, 현재 파일: ${file.size} bytes)`;
+      const msg = `파일 크기가 너무 큽니다. (최대 ${formatFileSize(MAX_FILE_SIZE)}, 현재 파일: ${formatFileSize(file.size)})`;
       setError(msg);
       callbacks.onError?.(msg);
       if (inputRef.current) inputRef.current.value = "";

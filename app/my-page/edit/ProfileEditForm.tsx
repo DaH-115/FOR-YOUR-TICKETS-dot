@@ -116,15 +116,15 @@ export default function ProfileEditForm() {
 
   return (
     <main
-      className="flex min-h-full w-full flex-col pl-0 md:w-3/4 md:pl-4"
+      className="mx-auto flex min-h-full w-full max-w-2xl flex-col"
       aria-busy={isSubmitting}
     >
       {/* 헤더 */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex w-full items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={handleCancel}
-            className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100"
+            className="text-gray-400"
             disabled={isSubmitting}
             aria-label="뒤로가기"
           >
@@ -138,7 +138,7 @@ export default function ProfileEditForm() {
           disabled={!canSubmit}
           className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
             canSubmit
-              ? "bg-accent-300 text-white hover:bg-accent-500"
+              ? "bg-accent-300 hover:bg-accent-500 text-white"
               : "cursor-not-allowed bg-gray-200 text-gray-400"
           }`}
           aria-label={isSubmitting ? "저장 중" : "변경사항 저장"}
@@ -149,9 +149,13 @@ export default function ProfileEditForm() {
       </div>
 
       <FormProvider {...methods}>
-        <form id="profile-edit-form" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          id="profile-edit-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex w-full flex-col items-center lg:items-stretch"
+        >
           {/* 프로필 이미지 섹션 */}
-          <div className="mb-8 rounded-2xl bg-white p-6 shadow-xs">
+          <div className="mb-8 w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xs">
             <h2 className="mb-4 text-lg font-bold">프로필 사진</h2>
             <div className="flex flex-col items-center gap-4">
               <ProfileAvatar
@@ -175,7 +179,7 @@ export default function ProfileEditForm() {
           </div>
 
           {/* 기본 정보 섹션 */}
-          <div className="mb-8 rounded-2xl bg-white p-6 shadow-xs">
+          <div className="mb-8 w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xs">
             <h2 className="mb-4 text-lg font-bold">기본 정보</h2>
             <div className="space-y-6">
               {user?.email && (
@@ -201,7 +205,7 @@ export default function ProfileEditForm() {
 
           {/* 비밀번호 변경 섹션 */}
           {user?.provider === "email" && (
-            <div className="mb-8 rounded-2xl bg-white p-6 shadow-xs">
+            <div className="mb-8 w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xs">
               <ChangePassword />
             </div>
           )}

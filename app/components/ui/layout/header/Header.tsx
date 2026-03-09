@@ -137,7 +137,7 @@ export default function Header() {
             ) : (
               <button
                 type="button"
-                className="rounded-full bg-white px-4 py-3 text-sm text-black"
+                className="rounded-full bg-white px-4 py-2 text-sm text-black"
               >
                 <Link href="/login">로그인</Link>
               </button>
@@ -150,7 +150,7 @@ export default function Header() {
           {/* 모바일 메뉴 */}
           <button
             onClick={() => setIsSideMenuOpen((prev) => !prev)}
-            className="cursor-pointer px-2 text-white lg:hidden"
+            className="px-2 text-white lg:hidden"
             aria-label="메뉴 열기"
           >
             <IoIosMenu size={28} aria-hidden />

@@ -53,8 +53,8 @@ export default function AvatarUploader(props: AvatarUploadCallbacks) {
 
           {/* 파일 제한 안내 */}
           <div className="space-y-1 text-xs text-gray-500">
-            <p>• 지원 형식: JPG, PNG, GIF</p>
-            <p>• 최대 크기: {formatFileSize(MAX_FILE_SIZE)}</p>
+            <p>지원 형식: JPG, PNG, GIF</p>
+            <p>최대 크기: {formatFileSize(MAX_FILE_SIZE)}</p>
           </div>
         </div>
       )}

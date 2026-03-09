@@ -85,7 +85,7 @@ export default function HeaderSideMenu({
           <h2 className="font-semibold text-white">메뉴</h2>
           <button
             onClick={onClose}
-            className="cursor-pointer rounded-full p-2 text-white hover:bg-white/20"
+            className="rounded-full p-2 text-white hover:bg-white/20"
           >
             <IoMdClose size={24} />
           </button>

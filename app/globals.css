@@ -131,6 +131,14 @@
 /* ========================================================================= */
 
 @layer base {
+  /* Tailwind Preflight이 버튼의 cursor: pointer를 제거함 → 클릭 가능한 버튼에 pointer 복원 */
+  button,
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
+    cursor: pointer;
+  }
+
   html {
     /* overflow: hidden 시 스크롤바 공간 유지 → 레이아웃 시프트/깜빡임 방지 */
     scrollbar-gutter: stable;
@@ -160,14 +168,14 @@
   }
 }
 
-/* Swiper 페이지네이션 (다크 테마) */
+/* Swiper 페이지네이션 (다크 테마) - 프로덕션 CSS 로드 순서와 무관하게 적용 */
 .swiper-pagination-bullet {
-  background: rgba(255, 255, 255, 0.5);
-  opacity: 1;
+  background: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1 !important;
 }
 
 .swiper-pagination-bullet-active {
-  background: white;
+  background: white !important;
   transform: scale(1.2);
 }
 

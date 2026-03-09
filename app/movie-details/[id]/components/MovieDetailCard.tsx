@@ -68,7 +68,7 @@ export default function MovieDetailCard({
         <div className="mx-auto w-full overflow-hidden">
           {/* 영화 정보 */}
           <article className="w-full shadow-lg">
-            <div className="w-full rounded-2xl bg-white px-6 pt-6 pb-4 md:px-8">
+            <div className="w-full rounded-2xl bg-white px-6 py-4">
               {/* 영화 정보 & 제목 */}
               <h1 className="sr-only">MOVIE DETAILS</h1>
               <div className="flex items-center">
@@ -136,7 +136,7 @@ export default function MovieDetailCard({
                               </p>
                             )}
                           </div>
-                          <p className="text-xs text-gray-600">
+                          <p className="text-xs font-semibold text-gray-600">
                             {cast.character}
                           </p>
                         </div>

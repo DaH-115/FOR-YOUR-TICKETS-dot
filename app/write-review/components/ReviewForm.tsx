@@ -1,7 +1,6 @@
 "use client";
 
 import { FormProvider, useForm } from "react-hook-form";
-import { MdWarning } from "react-icons/md";
 import type { MovieDetails } from "lib/movies/fetchMovieDetails";
 import type { ReviewFormValues, ReviewMode } from "@/write-review/types";
 import useReviewForm from "@/write-review/hooks/useReviewForm";
@@ -98,7 +97,7 @@ export default function ReviewForm({
                   <div className="pt-4">
                     <button
                       type="submit"
-                      className="bg-accent-400 hover:bg-accent-500 w-full cursor-pointer rounded-xl p-4 text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="bg-accent-400 hover:bg-accent-500 w-full rounded-xl p-4 text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={!isValid}
                     >
                       {onSubmitMode === "edit" ? "리뷰 수정" : "리뷰 등록"}

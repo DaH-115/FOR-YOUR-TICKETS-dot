@@ -26,15 +26,15 @@ export default function SocialLogin({ rememberMe }: { rememberMe: boolean }) {
     async (provider: SocialProvider) => {
       setIsLoadingProvider(provider);
       try {
-        // 1. 소셜 로그인
+        // 1. 로그인 상태 유지 설정 (Firebase 권장: signIn 전에 호출)
+        await setRememberMe(rememberMe);
+
+        // 2. 소셜 로그인
         const authProvider =
           provider === "google"
             ? new GoogleAuthProvider()
             : new GithubAuthProvider();
         await signInWithPopup(isAuth, authProvider);
-
-        // 2. 로그인 상태 유지 설정 저장
-        await setRememberMe(rememberMe);
 
         // 3. Firebase ID Token 가져오기
         const idToken = await getIdToken();

@@ -59,11 +59,11 @@ export default function LoginPage() {
       setIsLoading(true);
 
       try {
-        // 1. 로그인 시도
-        await signInWithEmailAndPassword(isAuth, data.email, data.password);
-
-        // 2. 로그인 상태 유지 설정 저장
+        // 1. 로그인 상태 유지 설정 (Firebase 권장: signIn 전에 호출)
         await setRememberMe(data.rememberMe);
+
+        // 2. 로그인 시도
+        await signInWithEmailAndPassword(isAuth, data.email, data.password);
 
         // 3. 로그인 성공시 리다이렉트
         router.push("/");

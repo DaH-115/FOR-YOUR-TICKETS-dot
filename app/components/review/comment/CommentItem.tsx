@@ -61,14 +61,14 @@ export default function CommentItem({
           <div className="flex items-center space-x-2">
             <button
               onClick={() => onEdit(comment.id, comment.content)}
-              className="cursor-pointer text-xs text-gray-600"
+              className="text-xs text-gray-600"
               aria-label="댓글 수정"
             >
               수정
             </button>
             <button
               onClick={() => onDelete(comment.id)}
-              className="cursor-pointer text-xs text-gray-600"
+              className="text-xs text-gray-600"
               aria-label="댓글 삭제"
             >
               삭제

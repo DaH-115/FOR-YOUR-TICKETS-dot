@@ -244,7 +244,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
             <button
               onClick={likeToggleHandler}
               disabled={isLikeLoading}
-              className="flex cursor-pointer items-center rounded-full text-red-500 transition-colors hover:text-red-400 disabled:opacity-50"
+              className="flex items-center rounded-full text-red-500 transition-colors hover:text-red-400 disabled:opacity-50"
             >
               {isLiked ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
               <p className="ml-1">{likeCount}</p>
@@ -272,7 +272,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
               {/* 수정 버튼 */}
               <button
                 onClick={editHandler}
-                className="group flex cursor-pointer items-center transition-colors duration-100"
+                className="group flex items-center transition-colors duration-100"
                 title="리뷰 수정"
                 type="button"
               >
@@ -281,7 +281,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
               {/* 삭제 버튼 */}
               <button
                 onClick={deleteHandler}
-                className="group flex cursor-pointer items-center transition-colors duration-100"
+                className="group flex items-center transition-colors duration-100"
                 title="리뷰 삭제"
                 type="button"
               >

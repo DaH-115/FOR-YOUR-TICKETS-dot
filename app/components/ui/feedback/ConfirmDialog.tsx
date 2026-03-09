@@ -36,14 +36,14 @@ export default function ConfirmDialog({
         <div className="flex gap-2">
           <button
             type="button"
-            className="flex-1 cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
             onClick={onCancel}
           >
             취소
           </button>
           <button
             type="button"
-            className="flex-1 cursor-pointer rounded-lg bg-amber-500 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600"
+            className="flex-1 rounded-lg bg-amber-500 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600"
             onClick={onConfirm}
           >
             확인
