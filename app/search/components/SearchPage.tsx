@@ -94,7 +94,7 @@ export default function SearchPage({
       {/* 검색 결과 또는 상영 중인 영화 */}
       {searchTerm ? (
         <section>
-          <div className="mb-6 flex items-center">
+          <div className="mb-6 flex flex-col gap-2">
             <h2 className="text-xl font-bold tracking-tight text-white">
               검색 결과
               {totalResults !== null && (
@@ -103,6 +103,9 @@ export default function SearchPage({
                 </span>
               )}
             </h2>
+            <div className="text-sm text-gray-500">
+              <span className="font-medium">{`"${searchTerm}" 검색 결과 ${totalResults !== null ? totalResults.toLocaleString() : "..."}`}</span>
+            </div>
           </div>
           <div>
             <SearchResultList

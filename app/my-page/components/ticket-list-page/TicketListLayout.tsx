@@ -10,6 +10,7 @@ import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
 import { useAppSelector } from "store/redux-toolkit/hooks";
 import { selectUser } from "store/redux-toolkit/slice/userSlice";
 import Link from "next/link";
+import Loading from "@/loading";
 
 interface TicketListLayoutProps {
   title: string;
@@ -54,9 +55,11 @@ export default function TicketListLayout({
       {/* 헤더 */}
       <header className="flex items-center">
         <h1 className="text-xl font-bold tracking-tight text-white">{title}</h1>
-        <span className="text-accent-300 ml-2 text-lg font-bold">
-          {reviews.length}
-        </span>
+        {!loading && (
+          <span className="text-accent-300 ml-2 text-lg font-bold">
+            {reviews.length}
+          </span>
+        )}
       </header>
 
       {/* 검색 폼 & 결과 정보 */}
@@ -64,11 +67,12 @@ export default function TicketListLayout({
         searchTerm={searchTerm}
         resultCount={reviews.length}
         onSearch={searchHandler}
+        showResultCount={!loading}
       />
 
       {/* 리뷰 목록 */}
       {loading ? (
-        <EmptyState message="불러오는 중..." />
+        <Loading />
       ) : error ? (
         <div className="rounded-lg bg-red-50 p-4 text-center">
           <p className="font-medium text-red-600">오류가 발생했습니다</p>

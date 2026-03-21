@@ -13,7 +13,7 @@ export default function SideMenu() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-1/3 space-y-1 lg:block xl:space-y-2">
+    <aside className="mr-0 hidden w-1/4 space-y-1 lg:block xl:space-y-2">
       {MY_PAGE_MENU_ITEMS.map(({ href, label }) => {
         const isActive = pathname === href;
 
@@ -23,8 +23,8 @@ export default function SideMenu() {
               href={href}
               className={`block w-full transition-all duration-300 ease-in-out ${
                 isActive
-                  ? "my-2 text-xl font-bold text-accent-300 xl:my-4 xl:text-2xl"
-                  : "text-lg text-gray-300 hover:text-accent-300 xl:text-xl"
+                  ? "text-accent-300 my-2 text-xl font-bold xl:my-4 xl:text-2xl"
+                  : "hover:text-accent-300 text-lg text-gray-300 xl:text-xl"
               }`}
             >
               {label}

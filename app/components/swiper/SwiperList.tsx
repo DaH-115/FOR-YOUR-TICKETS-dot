@@ -37,7 +37,6 @@ function SwiperList({ movieList }: { movieList: MovieList[] }) {
           768: { slidesPerView: 4, spaceBetween: 10 },
           1000: { slidesPerView: 5, spaceBetween: 10 },
           1080: { slidesPerView: 6, spaceBetween: 10 },
-          1440: { slidesPerView: 7, spaceBetween: 10 },
         }}
       >
         {movieList.map((movie, idx) => (

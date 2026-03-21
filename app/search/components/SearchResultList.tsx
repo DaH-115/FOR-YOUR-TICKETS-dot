@@ -96,11 +96,19 @@ export default function SearchResultList({
     );
   }
 
+  // TMDB API는 페이지당 20개 결과를 반환함
+  const RESULTS_PER_PAGE = 20;
+  const startIndex = (currentPage - 1) * RESULTS_PER_PAGE;
+
   return (
     <>
       <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5">
         {searchResults.map((movie, idx) => (
-          <SwiperItem key={movie.id} movie={movie} idx={idx} />
+          <SwiperItem
+            key={movie.id}
+            movie={movie}
+            idx={startIndex + idx}
+          />
         ))}
       </div>
       <Pagination

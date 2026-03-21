@@ -7,7 +7,7 @@ import Loading from "app/loading";
 // YouTube 전용 플레이어만 import하여 번들 크기 최적화
 const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   loading: () => (
-    <div className="aspect-video bg-primary-700 md:rounded-xl">
+    <div className="aspect-video rounded-xl bg-primary-700">
       <div className="flex h-full w-full items-center justify-center">
         <Loading />
       </div>
@@ -70,7 +70,7 @@ const VideoPlayer = ({
   return (
     <div ref={containerRef} className="relative aspect-video h-full w-full">
       {(isVisible || hasBeenVisible) && (
-        <div className="h-full w-full overflow-hidden md:rounded-xl">
+        <div className="h-full w-full overflow-hidden rounded-xl">
           <ReactPlayer
             url={`https://www.youtube.com/embed/${trailerKey}`}
             width="100%"

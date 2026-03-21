@@ -7,6 +7,8 @@ interface SearchSectionProps {
   resultCount: number;
   onSearch?: (term: string) => void;
   basePath?: string;
+  /** 검색 중일 때 결과 개수 숨김 (기본값: false) */
+  showResultCount?: boolean;
 }
 
 export default function SearchSection({
@@ -14,6 +16,7 @@ export default function SearchSection({
   resultCount,
   onSearch,
   basePath,
+  showResultCount = true,
 }: SearchSectionProps) {
   return (
     <div className="mt-4 mb-8 flex flex-col gap-2">
@@ -24,10 +27,9 @@ export default function SearchSection({
         initialValue={searchTerm}
       />
 
-      {searchTerm && (
+      {searchTerm && showResultCount && (
         <div className="text-sm text-gray-500">
-          <span className="font-medium">{`"${searchTerm}"`}</span> 검색 결과:
-          {resultCount}개
+          <span className="font-medium">{`"${searchTerm}" 검색 결과 ${resultCount !== null ? resultCount.toLocaleString() : "..."}`}</span>
         </div>
       )}
     </div>
