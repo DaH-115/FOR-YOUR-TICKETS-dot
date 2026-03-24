@@ -53,9 +53,9 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
         // 로그인하지 않은 경우 서버 동기화 불필요
         if (!isAuth.currentUser || isCancelled) return;
 
-        // 인증 헤더 생성 후 like-statuses API 호출
+        // 인증 헤더 생성 후 좋아요 일괄 조회 API 호출
         const authHeaders = await getAuthHeaders();
-        const response = await fetch("/api/reviews/like-statuses", {
+        const response = await fetch("/api/reviews/likes", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -92,24 +92,14 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
     try {
       const authHeaders = await getAuthHeaders();
 
-      const requestOptions: RequestInit = {
+      const likeUrl = isLiked
+        ? `/api/reviews/${reviewId}/likes/me`
+        : `/api/reviews/${reviewId}/likes`;
+
+      const response = await fetch(likeUrl, {
         method: isLiked ? "DELETE" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders,
-        },
-      };
-
-      if (!isLiked) {
-        requestOptions.body = JSON.stringify({
-          movieTitle: content.movieTitle,
-        });
-      }
-
-      const response = await fetch(
-        `/api/reviews/${reviewId}/like`,
-        requestOptions,
-      );
+        headers: authHeaders,
+      });
 
       const text = await response.text();
       let data: { isLiked: boolean; likeCount: number; error?: string };
@@ -136,7 +126,7 @@ export default function ReviewDetail({ review, reviewId }: ReviewDetailProps) {
     } finally {
       setIsLikeLoading(false);
     }
-  }, [reviewId, isLiked, isLikeLoading, content.movieTitle, showErrorHandler]);
+  }, [reviewId, isLiked, isLikeLoading, showErrorHandler]);
 
   // 리뷰 수정 확인 후 이동
   const executeEdit = useCallback(() => {

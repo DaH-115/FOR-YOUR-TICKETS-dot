@@ -11,7 +11,7 @@ export async function checkDuplicate(
   type: "displayName" | "email",
   value: string,
 ): Promise<{ available: boolean; message: string }> {
-  const response = await fetch("/api/auth/check-availability", {
+  const response = await fetch("/api/auth/identifiers/availability", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ type, value }),
@@ -48,8 +48,8 @@ export async function updateActivityLevel(
   try {
     const authHeaders = await getAuthHeaders();
 
-    const response = await fetch(`/api/users/${uid}/activity-level`, {
-      method: "PUT",
+    const response = await fetch(`/api/users/${uid}`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         ...authHeaders,

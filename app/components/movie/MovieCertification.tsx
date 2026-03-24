@@ -17,6 +17,7 @@ const certificationLabels: Record<string, string> = {
   "12": "12",
   "15": "15",
   "18": "18",
+  default: "0",
 };
 
 export default function MovieCertification({
@@ -24,20 +25,30 @@ export default function MovieCertification({
   className,
   showLabel = true,
 }: MovieCertificationProps) {
-  if (!certification) {
-    return null;
-  }
+  // 등급 정보가 없을 때는 기본(회색) 배지로 폴백
+  const isMissing = !certification;
 
-  const colorClass =
-    certificationColors[certification] || certificationColors.default;
-  const label = certificationLabels[certification];
+  const colorClass = isMissing
+    ? certificationColors.default
+    : certificationColors[certification] || certificationColors.default;
+  const knownLabel = certification
+    ? certificationLabels[certification]
+    : undefined;
+  const label = isMissing
+    ? certificationLabels.default
+    : (knownLabel ?? certificationLabels.default);
+  const ariaLabel = isMissing
+    ? "관람 등급 정보 없음"
+    : knownLabel
+      ? `${knownLabel} 관람 등급`
+      : `관람 등급 ${certification}`;
 
   return (
     <div
-      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold text-white ${colorClass} ${
+      className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-white ${colorClass} ${
         className || ""
       }`}
-      aria-label={`${label} 관람 등급`}
+      aria-label={ariaLabel}
     >
       {showLabel && label}
     </div>

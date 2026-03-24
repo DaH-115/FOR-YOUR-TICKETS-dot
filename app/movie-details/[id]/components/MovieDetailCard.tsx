@@ -75,12 +75,10 @@ export default function MovieDetailCard({
                 <h2 className="mr-3 text-xl font-bold break-keep md:text-3xl">
                   {title}
                 </h2>
-                {certification && (
-                  <MovieCertification
-                    certification={certification}
-                    showLabel={true}
-                  />
-                )}
+                <MovieCertification
+                  certification={certification ?? null}
+                  showLabel={true}
+                />
               </div>
               <div className="flex items-center">
                 <p className="text-gray-600">

@@ -35,7 +35,7 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
   const fetchComments = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/comments/${reviewId}`);
+      const response = await fetch(`/api/reviews/${reviewId}/comments`);
       if (response.ok) {
         const data = await response.json();
         setComments(data.comments || []);
@@ -77,7 +77,7 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
 
       try {
         const result = await apiCallWithTokenRefresh(async (authHeaders) => {
-          const response = await fetch(`/api/comments/${reviewId}`, {
+          const response = await fetch(`/api/reviews/${reviewId}/comments`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -149,7 +149,7 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
       try {
         await apiCallWithTokenRefresh(async (authHeaders) => {
           const response = await fetch(
-            `/api/comments/${reviewId}/${commentId}`,
+            `/api/reviews/${reviewId}/comments/${commentId}`,
             {
               method: "PUT",
               headers: {
@@ -206,7 +206,7 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
       try {
         await apiCallWithTokenRefresh(async (authHeaders) => {
           const response = await fetch(
-            `/api/comments/${reviewId}/${commentId}`,
+            `/api/reviews/${reviewId}/comments/${commentId}`,
             {
               method: "DELETE",
               headers: {

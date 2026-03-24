@@ -42,7 +42,7 @@ export default function useLikedReviews({
       );
       const authHeaders = await getAuthHeaders();
       const response = await fetch(
-        `/api/reviews/liked-by-user?${searchParams.toString()}`,
+        `/api/users/me/liked-reviews?${searchParams.toString()}`,
         {
           headers: {
             ...authHeaders,

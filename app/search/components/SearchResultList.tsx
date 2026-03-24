@@ -53,7 +53,7 @@ export default function SearchResultList({
     (async () => {
       try {
         const res = await fetch(
-          `/api/tmdb/search?query=${encodeURIComponent(
+          `/api/tmdb/movies?query=${encodeURIComponent(
             searchQuery,
           )}&page=${currentPage}`,
         );

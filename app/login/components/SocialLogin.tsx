@@ -43,7 +43,7 @@ export default function SocialLogin({ rememberMe }: { rememberMe: boolean }) {
         }
 
         // 4. REST API로 소셜 로그인 후처리
-        const response = await fetch("/api/auth/social-setup", {
+        const response = await fetch("/api/users/me/profile", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

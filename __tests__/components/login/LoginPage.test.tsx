@@ -215,7 +215,7 @@ describe("LoginPage 컴포넌트", () => {
         expect(mockSetRememberMe).toHaveBeenCalledWith(false);
         expect(mockGetIdToken).toHaveBeenCalled();
         expect(mockFetch).toHaveBeenCalledWith(
-          "/api/auth/social-setup",
+          "/api/users/me/profile",
           expect.objectContaining({
             method: "POST",
             headers: expect.objectContaining({

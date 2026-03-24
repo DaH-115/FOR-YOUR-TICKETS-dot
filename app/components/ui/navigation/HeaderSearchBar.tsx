@@ -53,7 +53,7 @@ export default function HeaderSearchBar() {
       if (query.trim()) {
         try {
           const res = await fetch(
-            `/api/tmdb/search?query=${encodeURIComponent(query)}&page=1`,
+            `/api/tmdb/movies?query=${encodeURIComponent(query)}&page=1`,
           );
           if (!res.ok) throw new Error("검색 실패");
           const data = await res.json();
