@@ -1,56 +1,61 @@
 interface MovieCertificationProps {
   certification: string | null;
-  className?: string;
   showLabel?: boolean;
 }
 
+// 투더탑·기본 프로필 아바타와 동일하게 대각선 그라데이션 + 그림자
 const certificationColors: Record<string, string> = {
-  ALL: "bg-green-500",
-  "12": "bg-blue-500",
-  "15": "bg-yellow-500",
-  "18": "bg-red-500",
-  default: "bg-gray-500",
+  ALL: "bg-linear-to-br from-green-400 to-green-600",
+  "12": "bg-linear-to-br from-blue-400 to-blue-600",
+  "15": "bg-linear-to-br from-yellow-500 to-yellow-700",
+  "18": "bg-linear-to-br from-red-400 to-red-600",
+  // 정보 없음·미지원: 밝은 회색(내부 텍스트 없음 → 대비 부담 적음)
+  default: "bg-linear-to-br from-gray-200 to-gray-400",
 };
 
+// API에서 내려오는 값과 화면 표기 매핑 (이 목록에만 라벨 표시)
 const certificationLabels: Record<string, string> = {
   ALL: "전체",
   "12": "12",
   "15": "15",
   "18": "18",
-  default: "0",
 };
+
+const knownCertificationKeys = new Set(Object.keys(certificationLabels));
+
+function isKnownCertification(
+  value: string | null,
+): value is keyof typeof certificationLabels {
+  return value !== null && knownCertificationKeys.has(value);
+}
 
 export default function MovieCertification({
   certification,
-  className,
   showLabel = true,
 }: MovieCertificationProps) {
-  // 등급 정보가 없을 때는 기본(회색) 배지로 폴백
   const isMissing = !certification;
 
-  const colorClass = isMissing
-    ? certificationColors.default
-    : certificationColors[certification] || certificationColors.default;
-  const knownLabel = certification
-    ? certificationLabels[certification]
-    : undefined;
-  const label = isMissing
-    ? certificationLabels.default
-    : (knownLabel ?? certificationLabels.default);
+  const colorClass = isKnownCertification(certification)
+    ? certificationColors[certification]
+    : certificationColors.default;
+
+  const visibleLabel =
+    showLabel && isKnownCertification(certification)
+      ? certificationLabels[certification]
+      : null;
+
   const ariaLabel = isMissing
     ? "관람 등급 정보 없음"
-    : knownLabel
-      ? `${knownLabel} 관람 등급`
+    : isKnownCertification(certification)
+      ? `${certificationLabels[certification]} 관람 등급`
       : `관람 등급 ${certification}`;
 
   return (
     <div
-      className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-white ${colorClass} ${
-        className || ""
-      }`}
+      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg ${colorClass}`}
       aria-label={ariaLabel}
     >
-      {showLabel && label}
+      {visibleLabel}
     </div>
   );
 }

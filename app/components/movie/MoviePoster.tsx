@@ -24,12 +24,17 @@ export default function MoviePoster({
   posterPath,
   title,
   importance = "list",
-  className = "",
+  className,
 }: MoviePosterProps) {
   const policy = POLICY[importance];
   return (
     <div
-      className={`group relative aspect-2/3 overflow-hidden rounded-2xl ${className}`}
+      className={[
+        "group relative aspect-2/3 overflow-hidden rounded-2xl",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <MovieImage
         posterPath={posterPath}
