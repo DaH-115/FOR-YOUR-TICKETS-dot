@@ -78,7 +78,7 @@ describe("CommentList", () => {
   test("댓글 목록이 올바르게 렌더링되어야 함", () => {
     render(<CommentList id="review123" reviewAuthorId="reviewer123" />);
 
-    expect(screen.getByText("댓글 2개")).toBeInTheDocument();
+    expect(screen.getByText("댓글 2")).toBeInTheDocument();
     expect(screen.getByText("첫 번째 댓글")).toBeInTheDocument();
     expect(screen.getByText("두 번째 댓글")).toBeInTheDocument();
   });
@@ -102,7 +102,7 @@ describe("CommentList", () => {
 
     render(<CommentList id="review123" reviewAuthorId="reviewer123" />);
 
-    expect(screen.getByText("댓글 0개")).toBeInTheDocument();
+    expect(screen.getByText("댓글 0")).toBeInTheDocument();
     expect(screen.queryByText("첫 번째 댓글")).not.toBeInTheDocument();
   });
 

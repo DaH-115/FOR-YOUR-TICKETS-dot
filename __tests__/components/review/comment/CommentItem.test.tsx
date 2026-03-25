@@ -168,7 +168,7 @@ describe("CommentItem", () => {
       />,
     );
 
-    expect(screen.getByText("등록 중...")).toBeInTheDocument();
+    expect(screen.getByText("등록 중")).toBeInTheDocument();
   });
 
   test("임시 댓글일 때 수정/삭제 버튼이 표시되지 않아야 함", () => {

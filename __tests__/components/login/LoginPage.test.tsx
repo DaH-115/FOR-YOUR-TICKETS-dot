@@ -247,13 +247,10 @@ describe("LoginPage 컴포넌트", () => {
   });
 
   describe("회원가입 링크", () => {
-    test("회원가입 버튼이 존재하고 올바른 링크를 가져야 한다", () => {
+    test("회원가입 링크가 존재하고 올바른 경로를 가리킨다", () => {
       render(<LoginPage />);
 
-      const signupButton = screen.getByRole("button", { name: "회원가입" });
-      const signupLink = screen.getByRole("link");
-
-      expect(signupButton).toBeInTheDocument();
+      const signupLink = screen.getByRole("link", { name: /회원가입/ });
       expect(signupLink).toHaveAttribute("href", "/sign-up");
     });
   });

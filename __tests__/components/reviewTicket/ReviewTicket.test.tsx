@@ -6,6 +6,7 @@ describe("ReviewTicket 렌더링 테스트", () => {
   const mockReviews = [
     {
       id: "review1",
+      orderNumber: 1,
       user: {
         uid: "user1",
         displayName: "테스터1",
@@ -33,6 +34,7 @@ describe("ReviewTicket 렌더링 테스트", () => {
   const mockReviewLiked = [
     {
       id: "review1",
+      orderNumber: 2,
       user: {
         uid: "user1",
         displayName: "테스터1",
@@ -63,8 +65,12 @@ describe("ReviewTicket 렌더링 테스트", () => {
     expect(screen.getByText("테스터1")).toBeInTheDocument();
     expect(screen.getByText('"재미있는 영화1"')).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument();
-    expect(screen.getByText("0")).toBeInTheDocument();
-    expect(screen.getByText("영화 제목1 (2023)")).toBeInTheDocument();
+    // 티켓 우측 상단 전역 순번(ReviewTicket의 orderNumber)
+    expect(screen.getByTestId("review-ticket-order")).toHaveTextContent(
+      "No.1",
+    );
+    expect(screen.getByText("영화 제목1")).toBeInTheDocument();
+    expect(screen.getByText("Movie Title 1 (2023)")).toBeInTheDocument();
   });
 
   test("좋아요한 리뷰가 올바르게 렌더링된다", () => {
@@ -74,8 +80,9 @@ describe("ReviewTicket 렌더링 테스트", () => {
     expect(screen.getByText("테스터1")).toBeInTheDocument();
     expect(screen.getByText('"재미있는 영화1"')).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument();
-    expect(screen.getByText("1")).toBeInTheDocument();
-    expect(screen.getByText("영화 제목1 (2023)")).toBeInTheDocument();
+    expect(screen.getByTestId("review-ticket-order")).toHaveTextContent("No.2");
+    expect(screen.getByText("영화 제목1")).toBeInTheDocument();
+    expect(screen.getByText("Movie Title 1 (2023)")).toBeInTheDocument();
   });
 
   test("프로필 아바타가 올바르게 렌더링된다", () => {

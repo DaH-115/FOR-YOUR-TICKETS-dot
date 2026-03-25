@@ -1,8 +1,9 @@
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, type Timestamp } from "firebase-admin/firestore";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
+import { computeGlobalReviewOrderNumber } from "lib/reviews/computeGlobalReviewOrderNumber";
 import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
 
 // POST /api/reviews - 리뷰 생성
@@ -53,6 +54,18 @@ export async function POST(req: NextRequest) {
     const docRef = await adminFirestore
       .collection("movie-reviews")
       .add(newReview);
+
+    try {
+      const createdSnap = await docRef.get();
+      const createdAt = createdSnap.get("review.createdAt") as Timestamp | undefined;
+      if (createdAt && typeof createdAt.toDate === "function") {
+        const orderNumber = await computeGlobalReviewOrderNumber(createdAt);
+        await docRef.update({ orderNumber });
+      }
+    } catch (orderErr) {
+      // 순번 기록 실패해도 리뷰 생성은 유효 — 상세/목록에서 계산·역산으로 보완
+      console.error("리뷰 순번(orderNumber) 기록 실패:", orderErr);
+    }
 
     try {
       // reviewCount를 +1 증가시키고 등급 계산

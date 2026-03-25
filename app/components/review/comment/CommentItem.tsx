@@ -1,7 +1,7 @@
-import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
-import ProfileAvatar from "@/components/user/ProfileAvatar";
 import formatDate from "@/utils/formatDate";
 import { Comment } from "@/components/review/comment/hooks/useComments";
+import ProfileAvatar from "@/components/user/ProfileAvatar";
+import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
 
 interface CommentItemProps {
   comment: Comment;
@@ -27,37 +27,43 @@ export default function CommentItem({
   const isTemporary = comment.id.startsWith("temp-"); // 임시 댓글인지 확인
 
   return (
-    <li
-      className={`py-2 ${!isLast ? "border-b-4 border-dotted" : ""} ${
-        isTemporary ? "opacity-70" : ""
-      }`}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-800">{`${index + 1}.`}</span>
-            <ProfileAvatar
-              s3photoKey={comment.photoKey || undefined}
-              userDisplayName={comment.displayName || "익명"}
-              size={24}
-            />
-            <p className="text-sm text-gray-800">
-              {comment.displayName || "익명"}
-            </p>
-            <ActivityBadge activityLevel={comment.activityLevel} />
-          </div>
-          {isAuthor && (
+    <li className={`pb-2 ${!isLast ? "border-b-2 border-dashed" : ""}`}>
+      <div className="flex items-start justify-between gap-4 pb-6">
+        <div className="flex shrink-0 items-center gap-2">
+          {/* 코멘트 인덱스 */}
+          <span className="text-xs tracking-tight text-gray-800">
+            {index + 1}.
+          </span>
+          {/* 유저 프로필 */}
+          <ProfileAvatar
+            s3photoKey={comment.photoKey}
+            userDisplayName={comment.displayName}
+            size={24}
+          />
+          <p className="text-xs font-semibold tracking-tight text-gray-800">
+            {comment.displayName}
+          </p>
+
+          {isAuthor ? (
             <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
               작성자
             </span>
+          ) : (
+            <ActivityBadge activityLevel={comment.activityLevel} />
           )}
           {isTemporary && (
             <span className="text-xs text-gray-600">등록 중</span>
           )}
         </div>
 
-        {/* 댓글 작성자와 로그인한 유저가 같을 때만 수정/삭제 버튼 노출 */}
-        {isOwner && !isTemporary && (
+        {/* 코멘트 내용 */}
+        <p className="w-full text-sm tracking-tight whitespace-pre-line">
+          {comment.content}
+        </p>
+      </div>
+
+      {isOwner && !isTemporary && (
+        <div className="mb-1 flex items-center justify-end">
           <div className="flex items-center space-x-2">
             <button
               onClick={() => onEdit(comment.id, comment.content)}
@@ -74,14 +80,12 @@ export default function CommentItem({
               삭제
             </button>
           </div>
-        )}
-      </div>
-
-      <p className="py-4 text-sm text-gray-800">{comment.content}</p>
-
-      <span className="mt-2 block text-right text-xs text-gray-400">
-        {formatDate(comment.createdAt)}
-      </span>
+        </div>
+      )}
+      {/* 작성 날짜 */}
+      <p className="text-right text-xs tracking-tight text-gray-400">
+        {formatDate(comment.createdAt, false)}
+      </p>
     </li>
   );
 }

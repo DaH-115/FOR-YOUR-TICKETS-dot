@@ -172,19 +172,25 @@ export default function LoginPage() {
                     </span>
                   )}
 
-                  <Link href="/sign-up" className="mt-4 block">
-                    <button
-                      type="button"
-                      className={`flex w-full items-center justify-center rounded-2xl border border-gray-300 bg-gray-50 p-4 text-sm text-gray-700 transition-all duration-300 ${
-                        isLoading
-                          ? "cursor-not-allowed opacity-50"
-                          : "hover:border-gray-400 hover:bg-gray-100"
-                      }`}
-                      disabled={isLoading}
-                    >
-                      회원가입
-                      <FaArrowRight size={14} className="ml-2" />
-                    </button>
+                  <Link
+                    href="/sign-up"
+                    className={`mt-4 flex w-full items-center justify-center rounded-2xl border border-gray-300 bg-gray-50 p-4 text-sm text-gray-700 transition-all duration-300 ${
+                      isLoading
+                        ? "pointer-events-none cursor-not-allowed opacity-50"
+                        : "hover:border-gray-400 hover:bg-gray-100"
+                    }`}
+                    aria-disabled={isLoading}
+                    tabIndex={isLoading ? -1 : undefined}
+                    onClick={(e) => {
+                      if (isLoading) e.preventDefault();
+                    }}
+                  >
+                    회원가입
+                    <FaArrowRight
+                      size={14}
+                      className="ml-2"
+                      aria-hidden
+                    />
                   </Link>
                 </div>
               </form>

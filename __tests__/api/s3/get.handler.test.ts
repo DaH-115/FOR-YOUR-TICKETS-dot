@@ -237,7 +237,8 @@ describe("GET /api/s3 - Presigned URL 다운로드", () => {
       const body = await response.json();
 
       expect(response.status).toBe(400);
-      expect(body.message).toBe("허용되지 않는 key 경로입니다.");
+      // searchParams.get("key")가 ""이면 falsy로 취급되어 '없음'과 동일 분기
+      expect(body.message).toBe("key 파라미터가 필요합니다.");
     });
   });
 

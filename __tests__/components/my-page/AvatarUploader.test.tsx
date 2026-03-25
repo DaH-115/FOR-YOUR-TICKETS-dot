@@ -73,7 +73,7 @@ describe("AvatarUploader", () => {
 
   test("프로필 이미지 수정 버튼이 렌더링된다", () => {
     render(<AvatarUploader {...defaultProps} />);
-    expect(screen.getByText("프로필 이미지 수정")).toBeInTheDocument();
+    expect(screen.getByText("프로필 사진 수정")).toBeInTheDocument();
   });
 
   test("편집 모드에서 파일 제한 안내가 표시된다", () => {
@@ -90,8 +90,8 @@ describe("AvatarUploader", () => {
     });
 
     render(<AvatarUploader {...defaultProps} />);
-    expect(screen.getByText("• 지원 형식: JPG, PNG, GIF")).toBeInTheDocument();
-    expect(screen.getByText("• 최대 크기: 5 MB")).toBeInTheDocument();
+    expect(screen.getByText("지원 형식: JPG, PNG, GIF")).toBeInTheDocument();
+    expect(screen.getByText("최대 크기: 5 MB")).toBeInTheDocument();
 
     // formatFileSize가 MAX_FILE_SIZE로 호출되는지 확인
     expect(formatFileSize).toHaveBeenCalledWith(5 * 1024 * 1024);

@@ -8,12 +8,6 @@ const mockFetchPresignedUrl = fetchPresignedUrl as jest.MockedFunction<
   typeof fetchPresignedUrl
 >;
 
-// useAuth 모킹
-const mockUseAuth = jest.fn();
-jest.mock("store/context/auth/authContext", () => ({
-  useAuth: () => mockUseAuth(),
-}));
-
 // isAuth 모킹
 const mockIsAuth = {
   currentUser: null,
@@ -25,10 +19,6 @@ jest.mock("firebase-config", () => ({
 describe("usePresignedUrl", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAuth.mockReturnValue({
-      isAuthenticated: true,
-      isLoading: false,
-    });
     mockIsAuth.currentUser = null;
   });
 

@@ -11,10 +11,33 @@ jest.mock("lib/reviews/fetchReviewsPaginated");
 jest.mock("lib/auth/verifyToken");
 jest.mock("lib/users/updateUserActivityLevel");
 jest.mock("next/cache");
+const mockCreatedAt = { toDate: () => new Date("2024-06-01T00:00:00Z") };
+const mockDocSnapshot = {
+  get: jest.fn((path: string) =>
+    path === "review.createdAt" ? mockCreatedAt : undefined,
+  ),
+};
+const mockDocRef = {
+  id: "new-review-id",
+  get: jest.fn().mockResolvedValue(mockDocSnapshot),
+  update: jest.fn().mockResolvedValue(undefined),
+};
+const mockMovieReviewsCollection = {
+  add: jest.fn().mockResolvedValue(mockDocRef),
+  where: jest.fn().mockReturnValue({
+    count: jest.fn().mockReturnValue({
+      get: jest.fn().mockResolvedValue({
+        data: () => ({ count: 4 }),
+      }),
+    }),
+  }),
+};
+
 jest.mock("firebase-admin-config", () => ({
   adminFirestore: {
-    collection: jest.fn().mockReturnThis(),
-    add: jest.fn(),
+    collection: jest.fn((name: string) =>
+      name === "movie-reviews" ? mockMovieReviewsCollection : {},
+    ),
   },
 }));
 
@@ -25,8 +48,7 @@ const mockedVerifyResourceOwnership = verifyResourceOwnership as jest.Mock;
 const mockedUpdateUserActivityLevel = updateUserActivityLevel as jest.Mock;
 const mockedRevalidatePath = revalidatePath as jest.Mock;
 const mockedRevalidateTag = revalidateTag as jest.Mock;
-const mockedFirestoreAdd = adminFirestore.collection("movie-reviews")
-  .add as jest.Mock;
+const mockedFirestoreAdd = mockMovieReviewsCollection.add;
 
 describe("리뷰 API 라우트 (/api/reviews)", () => {
   afterEach(() => {
@@ -54,7 +76,9 @@ describe("리뷰 API 라우트 (/api/reviews)", () => {
       // 정상적인 인증, 소유권, Firestore 저장, 등급 업데이트, 캐시 무효화까지 모두 성공하는 경우
       mockedVerifyAuthToken.mockResolvedValue({ success: true, uid: mockUid });
       mockedVerifyResourceOwnership.mockReturnValue({ success: true });
-      mockedFirestoreAdd.mockResolvedValue({ id: "new-review-id" });
+      mockDocRef.get.mockResolvedValue(mockDocSnapshot);
+      mockDocRef.update.mockResolvedValue(undefined);
+      mockedFirestoreAdd.mockResolvedValue(mockDocRef);
       mockedUpdateUserActivityLevel.mockResolvedValue("새싹");
       const request = createMockRequest({
         method: "POST",
@@ -79,6 +103,8 @@ describe("리뷰 API 라우트 (/api/reviews)", () => {
           }),
         }),
       );
+      expect(mockDocRef.get).toHaveBeenCalled();
+      expect(mockDocRef.update).toHaveBeenCalledWith({ orderNumber: 5 });
       // 등급 업데이트, 캐시 무효화 함수 호출 확인
       await new Promise(process.nextTick);
       expect(mockedUpdateUserActivityLevel).toHaveBeenCalledWith(mockUid, 1);

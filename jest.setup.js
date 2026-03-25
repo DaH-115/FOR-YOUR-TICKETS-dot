@@ -53,8 +53,13 @@ Object.defineProperty(URL, "revokeObjectURL", {
   value: jest.fn(),
 });
 
-// Mock fetch API
+// Mock fetch API — 테스트 간 누락된 mock 응답으로 인한 오염 방지
 global.fetch = jest.fn();
+beforeEach(() => {
+  if (jest.isMockFunction(global.fetch)) {
+    global.fetch.mockReset();
+  }
+});
 
 // Mock Web APIs for Node.js environment
 global.TextEncoder = TextEncoder;
@@ -202,44 +207,32 @@ jest.mock("next/cache", () => ({
 // 상태 관리 모킹
 // =============================================================================
 
-// Mock Redux Toolkit (조건부 모킹)
-try {
-  jest.mock("@/store/redux-toolkit/hooks", () => ({
-    useAppDispatch: () => jest.fn(),
-    useAppSelector: jest.fn(),
-  }));
+// Mock Redux Toolkit (앱은 `store/...` 경로로 import — 동일 문자열로 mock 해야 적용됨)
+jest.mock("store/redux-toolkit/hooks", () => ({
+  useAppDispatch: () => jest.fn(),
+  useAppSelector: jest.fn(),
+}));
 
-  jest.mock("@/store/redux-toolkit/slice/userSlice", () => ({
-    selectUser: (state) => state.user,
-    clearUser: () => ({ type: "user/clearUser" }),
-  }));
-} catch (error) {
-  // 모듈이 없으면 무시
-}
+jest.mock("store/redux-toolkit/slice/userSlice", () => ({
+  selectUser: (state) => state.user,
+  clearUser: () => ({ type: "user/clearUser" }),
+}));
 
 // =============================================================================
 // Context API 모킹
 // =============================================================================
 
-// Mock Alert Context (조건부 모킹)
-try {
-  jest.mock("@/store/context/alertContext", () => ({
-    useAlert: () => ({
-      showSuccessHandler: jest.fn(),
-      showErrorHandler: jest.fn(),
-    }),
-  }));
-
-  jest.mock("@/store/context/auth/authContext", () => ({
-    useAuth: () => ({
-      isAuthenticated: false,
-      isLoading: false,
-    }),
-    AuthProvider: ({ children }) => children,
-  }));
-} catch (error) {
-  // 모듈이 없으면 무시
-}
+// Mock Alert Context (`store/context/alertContext`와 동일 모듈 ID)
+jest.mock("store/context/alertContext", () => ({
+  AlertProvider: ({ children }) => children,
+  useAlert: () => ({
+    showSuccessHandler: jest.fn(),
+    showErrorHandler: jest.fn(),
+    showConfirmHandler: jest.fn(),
+    hideErrorHandler: jest.fn(),
+    hideSuccessHandler: jest.fn(),
+  }),
+}));
 
 // =============================================================================
 // 외부 라이브러리 모킹
@@ -287,10 +280,3 @@ jest.mock("use-debounce", () => ({
   },
 }));
 
-// Mock React Icons
-jest.mock("react-icons", () => ({
-  IoSearchOutline: () => <div data-testid="search-icon" />,
-  IoCloseOutline: () => <div data-testid="close-icon" />,
-  IoEyeOutline: () => <div data-testid="eye-icon" />,
-  IoEyeOffOutline: () => <div data-testid="eye-off-icon" />,
-}));
