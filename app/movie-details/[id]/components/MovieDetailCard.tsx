@@ -2,7 +2,7 @@ import MovieCertification from "@/components/movie/MovieCertification";
 import MoviePoster from "@/components/movie/MoviePoster";
 import MetaInfoItem from "@/movie-details/[id]/components/MetaInfoItem";
 import convertRuntime from "@/movie-details/[id]/utils/convertRuntime";
-import formatMovieDate from "@/utils/formatMovieDate";
+import { formatMovieDate } from "@/utils/formatMovieDate";
 import { MovieCredits } from "lib/movies/fetchMovieCredits";
 import { MovieDetails } from "lib/movies/fetchMovieDetails";
 import ProfileAvatar from "@/components/user/ProfileAvatar";

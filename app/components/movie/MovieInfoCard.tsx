@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { CrewMember, MovieList } from "types";
 import { FaStar } from "react-icons/fa";
 import { IoInformationCircle } from "react-icons/io5";
-import formatMovieDate from "@/utils/formatMovieDate";
+import { formatMovieDate } from "@/utils/formatMovieDate";
 import MovieCertification from "@/components/movie/MovieCertification";
 import Tooltip from "@/components/ui/feedback/Tooltip";
 import AddTicketButton from "@/components/ui/buttons/AddTicketButton";

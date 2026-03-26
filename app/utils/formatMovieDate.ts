@@ -1,4 +1,4 @@
-export default function formatMovieDate(dateString: string | undefined) {
+export function formatMovieDate(dateString: string | undefined) {
   if (dateString) {
     const [year, month, day] = dateString.split("-");
     const monthNames = [
@@ -20,4 +20,13 @@ export default function formatMovieDate(dateString: string | undefined) {
   } else {
     return "";
   }
+}
+
+/** 리뷰 작성일 기준 오늘 날짜를 `formatMovieDate`와 동일한 한글 형식으로 */
+export function formatTodayKorean(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return formatMovieDate(`${y}-${m}-${day}`);
 }
