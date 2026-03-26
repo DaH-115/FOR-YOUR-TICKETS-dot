@@ -33,7 +33,8 @@ export interface ReviewDoc {
     // 목록에서는 사용자 컨텍스트가 없어 미확정 상태일 수 있음
     isLiked?: boolean;
   };
-  orderNumber?: number; // 전체 리뷰 중 순서 (오래된 순 기준, 1부터 시작)
+  /** 전역 순번(오래된 글이 1). 작성 시 Firestore에 기록 */
+  orderNumber?: number;
 }
 
 // 리뷰 작성/수정 폼 데이터 타입

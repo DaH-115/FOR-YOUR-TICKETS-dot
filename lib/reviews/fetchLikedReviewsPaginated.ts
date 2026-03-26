@@ -14,6 +14,8 @@ interface FetchLikedReviewsParams {
 interface RawReview {
   id: string;
   user: ReviewUser;
+  /** 전역 순번(movie-reviews 문서 최상위) */
+  orderNumber?: number;
   likeCount?: number; // 최상위 레벨 likeCount (API 업데이트 후)
   review: {
     movieId: number;
@@ -272,7 +274,7 @@ async function addUserInfoToReviews(
     if (!user) continue; // 사용자 정보를 찾을 수 없으면 제외
 
     // 최종 리뷰 데이터 추가 (날짜를 문자열로 변환)
-    finalReviews.push({
+    const doc: ReviewDoc = {
       id: review.id,
       user,
       review: {
@@ -283,7 +285,11 @@ async function addUserInfoToReviews(
         createdAt: review.review.createdAt.toDate().toISOString(),
         updatedAt: review.review.updatedAt.toDate().toISOString(),
       },
-    });
+    };
+    if (typeof review.orderNumber === "number") {
+      doc.orderNumber = review.orderNumber;
+    }
+    finalReviews.push(doc);
   }
 
   return finalReviews;

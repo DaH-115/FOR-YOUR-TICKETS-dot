@@ -1,4 +1,5 @@
 import { adminFirestore } from "firebase-admin-config";
+import { computeGlobalReviewOrderNumber } from "lib/reviews/computeGlobalReviewOrderNumber";
 import type { ReviewDoc } from "types/review";
 
 /**
@@ -35,18 +36,16 @@ export async function getReviewById(
     isLiked = likeDoc.exists;
   }
 
-  // 리뷰 순서 계산 (해당 리뷰보다 오래된 리뷰 개수 + 1)
+  // 순번: 문서에 저장된 값 우선(생성 시 기록), 없으면 동일 규칙으로 계산(구문서 호환)
   const createdAt = data.review.createdAt;
-  let orderNumber = 1;
+  let orderNumber: number;
 
-  if (createdAt && typeof createdAt.toDate === "function") {
-    const olderReviewsQuery = await adminFirestore
-      .collection("movie-reviews")
-      .where("review.createdAt", "<", createdAt)
-      .count()
-      .get();
-
-    orderNumber = olderReviewsQuery.data().count + 1;
+  if (typeof data.orderNumber === "number" && Number.isFinite(data.orderNumber)) {
+    orderNumber = data.orderNumber;
+  } else if (createdAt && typeof createdAt.toDate === "function") {
+    orderNumber = await computeGlobalReviewOrderNumber(createdAt);
+  } else {
+    orderNumber = 1;
   }
 
   const reviewData: ReviewDoc = {

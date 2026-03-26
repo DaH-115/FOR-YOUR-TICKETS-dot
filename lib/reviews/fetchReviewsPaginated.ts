@@ -9,6 +9,8 @@ export type { ReviewDoc, ReviewUser } from "types/review";
 interface RawReview {
   id: string;
   user: ReviewUser;
+  /** 생성 시 기록된 전역 순번(검색·마이페이지 등에서도 동일 값 표시) */
+  orderNumber?: number;
   likeCount?: number;
   review: {
     movieId: number;
@@ -48,7 +50,11 @@ export async function fetchReviewsPaginated({
   pageSize,
   uid,
   search = "",
-}: FetchReviewsParams): Promise<{ reviews: ReviewDoc[]; totalPages: number; totalCount: number }> {
+}: FetchReviewsParams): Promise<{
+  reviews: ReviewDoc[];
+  totalPages: number;
+  totalCount: number;
+}> {
   try {
     // 1. 기본 쿼리 설정 ('movie-reviews' 컬렉션에서 가져오기)
     let baseQuery: Query<DocumentData> =
@@ -137,7 +143,7 @@ async function getReviews(
     (doc) => ({ id: doc.id, ...doc.data() }) as RawReview,
   );
 
-  // 4. 사용자 정보 추가
+  // 4. 사용자 정보 추가 (orderNumber는 문서에 저장된 값만 전달)
   const finalReviews = await addUserInfoToReviews(reviews);
 
   return {
@@ -274,7 +280,7 @@ async function addUserInfoToReviews(
       };
     }
 
-    return {
+    const doc: ReviewDoc = {
       id: review.id,
       user,
       review: {
@@ -286,5 +292,9 @@ async function addUserInfoToReviews(
         // 목록 응답에서는 isLiked를 포함하지 않음(미확정)
       },
     };
+    if (typeof review.orderNumber === "number") {
+      doc.orderNumber = review.orderNumber;
+    }
+    return doc;
   });
 }
