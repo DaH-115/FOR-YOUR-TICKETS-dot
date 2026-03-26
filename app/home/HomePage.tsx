@@ -35,6 +35,7 @@ export default function HomePage({
         imageUrl={recommendMovie.backdrop_path}
         height="80vh"
         aspectRatio="16/9"
+        priority
       />
       <RecommendSection
         movie={recommendMovie}

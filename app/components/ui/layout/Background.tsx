@@ -6,6 +6,8 @@ interface BackgroundProps {
   height?: string;
   aspectRatio?: string;
   className?: string;
+  /** LCP 후보 등 즉시 로드가 필요할 때만 true (기본 false, 불필요한 preload 방지) */
+  priority?: boolean;
 }
 
 export default function Background({
@@ -14,6 +16,7 @@ export default function Background({
   height = "100vh",
   aspectRatio = "16/9",
   className = "",
+  priority = false,
 }: BackgroundProps) {
   return (
     <div
@@ -29,7 +32,7 @@ export default function Background({
         role="presentation"
         width={1920}
         height={1080}
-        priority
+        priority={priority}
         quality={80}
         placeholder="blur"
         blurDataURL={`https://image.tmdb.org/t/p/w92/${imageUrl}`}

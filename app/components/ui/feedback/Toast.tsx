@@ -53,8 +53,8 @@ export default function Toast({
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
-            <p className="mt-1 text-xs text-gray-600">{description}</p>
+            <h3 className="text-md font-semibold text-gray-900">{title}</h3>
+            <p className="mt-1 text-sm text-gray-600">{description}</p>
           </div>
           <button
             type="button"

@@ -18,8 +18,6 @@ const ReactPlayer = dynamic(() => import("react-player/youtube"), {
 
 interface VideoPlayerProps {
   trailerKey: string;
-  thumbnailSize?: "large" | "small";
-  className?: string;
   onReady?: () => void;
   onStart?: () => void;
   onPlay?: () => void;
@@ -29,7 +27,6 @@ interface VideoPlayerProps {
 
 const VideoPlayer = ({
   trailerKey,
-  thumbnailSize = "small",
   onReady,
   onStart,
   onPlay,
@@ -76,8 +73,7 @@ const VideoPlayer = ({
             width="100%"
             height="100%"
             controls
-            // 썸네일 모드 활성화
-            light={`https://img.youtube.com/vi/${trailerKey}/${thumbnailSize === "large" ? "maxresdefault" : "mqdefault"}.jpg`}
+            light={`https://img.youtube.com/vi/${trailerKey}/mqdefault.jpg`}
             // 플레이어 설정 최적화
             config={{
               playerVars: {

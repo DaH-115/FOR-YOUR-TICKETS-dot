@@ -42,7 +42,7 @@ export default function RecommendSection({
             <h2 className="mb-2 text-4xl font-bold tracking-tight text-white lg:mb-4 lg:text-5xl">
               {movie.title}
             </h2>
-            <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
+            <div className="mb-4 flex flex-col gap-2 lg:flex-row lg:items-center">
               {/* 오리지널 제목 */}
               <p className="tracking-tight text-gray-300 lg:text-xl">{`${movie.original_title} (${movie.release_date.split("-")[0]})`}</p>
               <div className="flex items-center gap-2">
@@ -81,12 +81,12 @@ export default function RecommendSection({
 
           {/* 예고편 */}
           {trailerKey && (
-            <section className="mx-8 mt-6 lg:mx-0">
+            <section className="mx-8 mt-16 md:mt-24 lg:mx-0">
               <h3 className="mb-2 font-semibold tracking-tight text-gray-200">
                 예고편
               </h3>
-              <div className="aspect-video max-w-full overflow-hidden rounded-xl">
-                <VideoPlayer trailerKey={trailerKey} thumbnailSize={"large"} />
+              <div className="aspect-video max-w-md overflow-hidden rounded-xl">
+                <VideoPlayer trailerKey={trailerKey} />
               </div>
             </section>
           )}
@@ -96,7 +96,7 @@ export default function RecommendSection({
         <div className="order-1 w-full max-w-sm md:order-2">
           <div className="group mx-auto drop-shadow-xl transition-transform duration-300 ease-in-out hover:drop-shadow-2xl">
             {/* 전체 티켓을 3D 효과로 묶기 */}
-            <div className="pointer-events-auto relative scale-90 rotate-x-4 -rotate-y-6 skew-y-3 transform transition-all duration-300 ease-in-out group-hover:scale-90 group-hover:rotate-x-0 group-hover:rotate-y-0 group-hover:skew-y-0 lg:scale-80 lg:group-hover:scale-100">
+            <div className="pointer-events-auto relative scale-90 rotate-x-4 -rotate-y-6 skew-y-3 transform transition-all duration-300 ease-in-out group-hover:scale-90 group-hover:rotate-x-0 group-hover:rotate-y-0 group-hover:skew-y-0 lg:scale-80 lg:group-hover:scale-90">
               {/* 영화 포스터 */}
               <MoviePoster
                 posterPath={movie.poster_path}
