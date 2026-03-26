@@ -12,12 +12,14 @@ export default function ReviewTicket({ review }: { review: ReviewDoc }) {
 
   return (
     <div className="relative flex cursor-pointer flex-col">
-      <div
-        className="absolute top-3 right-3 z-50 text-xs font-semibold text-gray-200"
-        data-testid="review-ticket-order"
-      >
-        No.{review.orderNumber}
-      </div>
+      {typeof review.orderNumber === "number" && (
+        <div
+          className="absolute top-3 right-3 z-50 text-xs font-semibold text-gray-200"
+          data-testid="review-ticket-order"
+        >
+          No.{review.orderNumber}
+        </div>
+      )}
       <MoviePoster
         posterPath={review.review.moviePosterPath || ""}
         title={review.review.movieTitle}

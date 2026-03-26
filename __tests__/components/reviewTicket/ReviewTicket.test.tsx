@@ -91,4 +91,15 @@ describe("ReviewTicket 렌더링 테스트", () => {
     const avatar = screen.getByTestId("profile-avatar");
     expect(avatar).toBeInTheDocument();
   });
+
+  test("orderNumber가 없으면 순번 뱃지를 렌더하지 않는다", () => {
+    render(
+      <ReviewTicket
+        review={{ ...mockReviews[0], orderNumber: undefined }}
+      />,
+    );
+
+    expect(screen.queryByTestId("review-ticket-order")).not.toBeInTheDocument();
+    expect(screen.getByText("테스터1")).toBeInTheDocument();
+  });
 });

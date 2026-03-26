@@ -5,7 +5,6 @@ import Pagination from "app/components/ui/layout/Pagination";
 import SearchSection from "app/components/search/SearchSection";
 import EmptyState from "app/my-page/components/EmptyState";
 import type { ReviewDoc } from "types/review";
-import Link from "next/link";
 
 interface TicketListPageProps {
   reviews: ReviewDoc[];
@@ -30,16 +29,14 @@ export default function TicketListPage({
   };
 
   return (
-    <main className="mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+    <main className="3xl:max-w-[1600px] mx-4 lg:mx-12 xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl">
       {/* 헤더 */}
       <header className="mb-4">
         <div className="flex items-center">
           <h1 className="text-xl font-bold tracking-tight text-white">
             모든 티켓
           </h1>
-          <span className="ml-2 font-bold text-accent-300">
-            {totalCount}
-          </span>
+          <span className="text-accent-300 ml-2 font-bold">{totalCount}</span>
         </div>
       </header>
       {/* 검색 폼 & 결과 정보 */}
@@ -50,11 +47,9 @@ export default function TicketListPage({
       />
       {/* 리뷰 목록 */}
       {reviews.length > 0 ? (
-        <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
+        <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {reviews.map((review) => (
-            <Link key={review.id} href={`/ticket-list/${review.id}`}>
-              <ReviewTicket review={review} />
-            </Link>
+            <ReviewTicket key={review.id} review={review} />
           ))}
         </div>
       ) : (

@@ -41,7 +41,7 @@ export default function CommentForm({
   return (
     <>
       {/* 현재 사용자 프로필 정보 */}
-      <div className="border-t-4 border-dotted pt-6">
+      <div className="pt-6">
         <div className="mb-3 flex items-center gap-2">
           <ProfileAvatar
             s3photoKey={userState.photoKey || undefined}

@@ -15,5 +15,5 @@ export default async function ReviewDetailPage({
 
   if (!review) return notFound();
 
-  return <ReviewDetail review={review} reviewId={reviewId} />;
+  return <ReviewDetail review={review} />;
 }
