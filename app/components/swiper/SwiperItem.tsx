@@ -1,13 +1,8 @@
-import Link from "next/link";
 import MovieCertification from "@/components/movie/MovieCertification";
-import Tooltip from "@/components/ui/feedback/Tooltip";
 import getEnrichMovieTitle from "@/utils/getEnrichMovieTitle";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
-import { FaStar } from "react-icons/fa";
-import { IoInformationCircle } from "react-icons/io5";
-import WriteButton from "@/components/ui/buttons/WriteButton";
 import MoviePoster from "@/components/movie/MoviePoster";
-import GenreList from "@/components/movie/GenreList";
+import MovieListCard from "@/components/movie/MovieListCard";
 
 export default function SwiperItem({
   idx,
@@ -16,75 +11,24 @@ export default function SwiperItem({
   idx: number;
   movie: MovieList;
 }) {
-  const { id, original_title, poster_path, title, vote_average, release_date } =
-    movie;
+  const { original_title, poster_path, title, genres } = movie;
   const displayTitle = getEnrichMovieTitle(original_title, title);
 
   return (
     <article className="relative flex flex-col drop-shadow-xl">
-      {/* 랭킹 번호 */}
-      <header className="absolute top-0 left-0 z-50 flex w-full items-center rounded-t-2xl bg-linear-to-t from-transparent to-black/60 py-2 pr-2 pl-3 text-white">
+      <header className="absolute top-0 left-0 z-50 flex w-full items-center justify-between rounded-t-2xl bg-linear-to-t from-transparent to-black/60 py-2 pr-2 pl-3 text-white">
+        {/* 인덱스 */}
         <p className="text-2xl font-semibold">{idx + 1}</p>
+        {/* 등급 */}
+        <div className="flex shrink-0 items-start gap-2">
+          <MovieCertification certification={movie.certification ?? null} />
+        </div>
       </header>
 
       {/* 영화 포스터 */}
       <MoviePoster posterPath={poster_path} title={displayTitle} />
-
-      {/* 영화 정보 카드 - 제목, 등급, 평점, 장르 */}
-      <section className="flex flex-1 flex-col rounded-2xl bg-white p-2">
-        {/* 평점 & 등급 */}
-        <div className="mb-2 flex shrink-0 items-center justify-between">
-          {/* 평점 */}
-          <div className="flex items-center justify-center gap-1">
-            <FaStar className="text-accent-300 text-sm" />
-            {vote_average ? Math.round(vote_average * 10) / 10 : 0}
-          </div>
-
-          <div className="flex items-center gap-1">
-            {/* 등급 */}
-            <div className="hidden sm:block">
-              <MovieCertification certification={movie.certification || null} />
-            </div>
-
-            {/* 인포 버튼 */}
-            <Tooltip content={`${displayTitle} 영화 상세정보 보기`}>
-              <Link
-                href={`/movie-details/${id}`}
-                aria-label={`${displayTitle} 영화 상세정보 보기`}
-              >
-                <IoInformationCircle
-                  className="text-xl text-gray-300 transition-all duration-300 ease-in-out hover:text-gray-800"
-                  aria-hidden
-                />
-              </Link>
-            </Tooltip>
-          </div>
-        </div>
-
-        {/* 영화 제목 */}
-        <div className="mt-auto mb-2 shrink-0">
-          <div className="flex items-center gap-1 md:gap-2">
-            <div className="flex-1">
-              <h3 className="line-clamp-1 text-base leading-tight font-bold tracking-tight">
-                {title}
-              </h3>
-              <p className="line-clamp-1 text-xs leading-tight tracking-tight text-gray-500">
-                {`${original_title} (${release_date.slice(0, 4)})`}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* 장르 */}
-        <div className="mt-auto mb-4 shrink-0">
-          <GenreList genres={movie.genres || []} />
-        </div>
-
-        {/* 티켓 만들기 버튼 - 항상 하단 고정 */}
-        <div className="mt-auto shrink-0">
-          <WriteButton movieId={id} />
-        </div>
-      </section>
+      {/* 영화 리스트 카드 */}
+      <MovieListCard movie={movie} genres={genres || []} />
     </article>
   );
 }

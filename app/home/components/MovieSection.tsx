@@ -5,13 +5,11 @@ import SwiperList from "app/components/swiper/SwiperList";
 import { MovieList } from "lib/movies/fetchNowPlayingMovies";
 
 interface MovieSectionProps {
-  title: string;
   movieList: MovieList[];
   maxItems?: number;
 }
 
 const MovieSection = memo(function MovieSection({
-  title,
   movieList,
   maxItems,
 }: MovieSectionProps) {
@@ -60,7 +58,9 @@ const MovieSection = memo(function MovieSection({
           isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
       >
-        <h2 className="text-xl font-bold tracking-tight text-white">{title}</h2>
+        <h2 className="text-xl font-bold tracking-tight text-white">
+          상영 중인 영화
+        </h2>
       </header>
 
       {/* SwiperList */}

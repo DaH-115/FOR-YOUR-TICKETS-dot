@@ -42,11 +42,7 @@ export default function HomePage({
         genres={genres}
         uniqueDirectors={uniqueDirectors}
       />
-      <MovieSection
-        title="상영 중인 영화"
-        movieList={movieList}
-        maxItems={10}
-      />
+      <MovieSection movieList={movieList} maxItems={10} />
       <LatestReviewList reviews={latestReviews} />
     </main>
   );

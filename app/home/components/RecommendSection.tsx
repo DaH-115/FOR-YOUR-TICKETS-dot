@@ -3,12 +3,12 @@
 import MovieCertification from "@/components/movie/MovieCertification";
 import MoviePoster from "@/components/movie/MoviePoster";
 import VideoPlayer from "@/components/movie/VideoPlayer";
-import MovieInfoCard from "@/home/components/MovieInfoCard";
 import getEnrichMovieTitle from "@/utils/getEnrichMovieTitle";
 import type { MovieList, CrewMember } from "types/movie";
 import { useMemo } from "react";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
+import MovieInfoCard from "@/components/movie/MovieInfoCard";
 
 interface RecommendSectionProps {
   movie: MovieList;
@@ -29,14 +29,15 @@ export default function RecommendSection({
   );
 
   return (
-    <article className="mx-auto max-w-2xl px-4 lg:mb-16 lg:max-w-3xl lg:px-0 xl:max-w-5xl 2xl:max-w-6xl">
+    <article className="mx-auto max-w-5xl">
       <div className="mx-auto flex flex-col items-center justify-center md:flex-row">
-        {/* 영화 타이틀 및 정보 */}
-        <div className="mx-auto mr-8 w-full xl:max-w-2xl">
-          <header className="sm:mx-4 lg:mx-0">
-            <p className="text-accent-300 mb-2 text-sm font-semibold tracking-tight lg:text-lg">
+        {/* 모바일: order-2로 포스터 아래 시각 배치 → md 이상에서는 order-1로 복귀(텍스트 왼쪽) */}
+        <div className="order-2 w-full min-w-0 pb-16 md:order-1 md:pb-0 lg:mr-16 xl:max-w-2xl">
+          <header className="mx-8 lg:mx-0">
+            <p className="text-accent-300 lg:text-md mb-4 inline-block bg-[#222] px-2 py-1 text-sm font-semibold tracking-tight">
               오늘의 추천 영화
             </p>
+
             {/* 영화 제목 */}
             <h2 className="mb-2 text-4xl font-bold tracking-tight text-white lg:mb-4 lg:text-5xl">
               {movie.title}
@@ -58,12 +59,12 @@ export default function RecommendSection({
             </div>
 
             {/* 장르 */}
-            <p className="mt-4 text-sm text-gray-200 lg:mt-2">{`${movie.genres?.join(", ")}`}</p>
+            <div className="text-gray-200">{movie.genres?.join(" · ")}</div>
           </header>
 
           {/* 줄거리 */}
           {movie.overview && (
-            <div className="mt-6 sm:mx-4 md:mt-8 md:max-w-lg lg:mx-0">
+            <div className="mx-8 mt-6 md:mt-8 md:max-w-lg lg:mx-0">
               <p className="line-clamp-3 text-sm leading-loose tracking-tight wrap-break-word text-white">
                 {movie.overview}
               </p>
@@ -80,22 +81,22 @@ export default function RecommendSection({
 
           {/* 예고편 */}
           {trailerKey && (
-            <section className="mt-8 w-full lg:mt-18 lg:max-w-lg">
+            <section className="mx-8 mt-6 lg:mx-0">
               <h3 className="mb-2 font-semibold tracking-tight text-gray-200">
                 예고편
               </h3>
-              <div className="aspect-video rounded-xl">
+              <div className="aspect-video max-w-full overflow-hidden rounded-xl">
                 <VideoPlayer trailerKey={trailerKey} thumbnailSize={"large"} />
               </div>
             </section>
           )}
         </div>
 
-        {/* 영화 포스터 & 정보 카드 */}
-        <div className="w-full max-w-sm">
+        {/* 모바일: order-1로 맨 위에 표시, md 이상에서는 order-2(텍스트 오른쪽) */}
+        <div className="order-1 w-full max-w-sm md:order-2">
           <div className="group mx-auto drop-shadow-xl transition-transform duration-300 ease-in-out hover:drop-shadow-2xl">
             {/* 전체 티켓을 3D 효과로 묶기 */}
-            <div className="pointer-events-auto relative scale-75 rotate-x-4 -rotate-y-6 skew-y-3 transform transition-all duration-300 ease-in-out group-hover:scale-90 group-hover:rotate-x-0 group-hover:rotate-y-0 group-hover:skew-y-0 lg:scale-90 lg:group-hover:scale-100">
+            <div className="pointer-events-auto relative scale-90 rotate-x-4 -rotate-y-6 skew-y-3 transform transition-all duration-300 ease-in-out group-hover:scale-90 group-hover:rotate-x-0 group-hover:rotate-y-0 group-hover:skew-y-0 lg:scale-80 lg:group-hover:scale-100">
               {/* 영화 포스터 */}
               <MoviePoster
                 posterPath={movie.poster_path}

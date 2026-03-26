@@ -52,7 +52,7 @@ export default function MovieCertification({
 
   return (
     <div
-      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg ${colorClass}`}
+      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white ${colorClass}`}
       aria-label={ariaLabel}
     >
       {visibleLabel}
