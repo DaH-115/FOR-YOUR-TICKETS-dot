@@ -72,7 +72,7 @@ function LatestReviewList({ reviews }: { reviews: ReviewDoc[] }) {
 
       {/* 티켓 목록 애니메이션 */}
       <div
-        className={`mx-auto grid grid-cols-1 gap-x-2 gap-y-2 transition-all duration-500 ease-out md:grid-cols-2 md:gap-y-4 lg:gap-y-6 ${
+        className={`mx-auto grid grid-cols-1 gap-x-4 gap-y-2 transition-all duration-500 ease-out md:grid-cols-2 md:gap-y-4 lg:grid-cols-3 lg:gap-y-6 ${
           isClient && isVisible
             ? "transition-delay-300 translate-y-0 opacity-100"
             : "translate-y-8 opacity-0"

@@ -57,7 +57,9 @@ export async function POST(req: NextRequest) {
 
     try {
       const createdSnap = await docRef.get();
-      const createdAt = createdSnap.get("review.createdAt") as Timestamp | undefined;
+      const createdAt = createdSnap.get("review.createdAt") as
+        | Timestamp
+        | undefined;
       if (createdAt && typeof createdAt.toDate === "function") {
         const orderNumber = await computeGlobalReviewOrderNumber(createdAt);
         await docRef.update({ orderNumber });

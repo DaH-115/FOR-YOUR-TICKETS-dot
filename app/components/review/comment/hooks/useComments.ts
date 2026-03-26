@@ -255,10 +255,8 @@ export const useComments = ({ reviewId, userState }: UseCommentsProps) => {
         return;
       }
 
-      showConfirmHandler(
-        "댓글 삭제",
-        "정말 이 댓글을 삭제하시겠습니까?",
-        () => performDelete(commentId),
+      showConfirmHandler("댓글 삭제", "정말 이 댓글을 삭제하시겠습니까?", () =>
+        performDelete(commentId),
       );
     },
     [userState?.uid, isPosting, showConfirmHandler, performDelete],
