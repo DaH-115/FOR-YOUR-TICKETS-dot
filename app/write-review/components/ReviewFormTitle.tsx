@@ -1,5 +1,9 @@
 import { useFormContext, Controller } from "react-hook-form";
 import { ReviewFormValues } from "@/write-review/types";
+import {
+  reviewFormFieldError,
+  reviewFormTextFieldBase,
+} from "@/write-review/utils/reviewFormFieldClasses";
 
 export default function ReviewFormTitle() {
   const { control } = useFormContext<ReviewFormValues>();
@@ -24,8 +28,8 @@ export default function ReviewFormTitle() {
             <input
               {...field}
               id="reviewTitle"
-              className={`focus:border-accent-500 focus:ring-accent-300 w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 transition-all duration-300 focus:bg-white focus:ring-1 focus:ring-offset-1 focus:outline-hidden ${
-                error ? "border-red-500 bg-red-50 ring-2 ring-red-500/30" : ""
+              className={`${reviewFormTextFieldBase}${
+                error ? ` ${reviewFormFieldError}` : ""
               }`}
               placeholder="제목을 입력해주세요"
               onBlur={(e) => {

@@ -8,6 +8,7 @@ import Background from "@/components/ui/layout/Background";
 import ReviewFormContent from "@/write-review/components/ReviewFormContent";
 import ReviewFormRating from "@/write-review/components/ReviewFormRating";
 import ReviewFormTitle from "@/write-review/components/ReviewFormTitle";
+import { formatTodayKorean } from "@/utils/formatMovieDate";
 
 interface ReviewFormProps {
   onSubmitMode: ReviewMode;
@@ -52,40 +53,31 @@ export default function ReviewForm({
       {movieData.backdrop_path && (
         <Background imageUrl={movieData.backdrop_path} isFixed={true} />
       )}
-      <main className="relative mt-8 mb-16 drop-shadow-lg lg:mt-16 lg:mb-20">
-        <div className="mx-auto w-11/12 max-w-2xl">
+      <main className="mt-8 mb-16 drop-shadow-lg lg:mt-16 lg:mb-20">
+        <div className="mx-auto max-w-2xl">
           {/* 티켓 헤더 */}
           <h1 className="sr-only">
             {onSubmitMode === "edit" ? "리뷰 수정" : "리뷰 작성"}
           </h1>
           {/* 티켓 작성 폼 */}
-          <div className="relative rounded-3xl border-2 bg-white p-8 shadow-2xl">
-            <FormProvider {...methods}>
-              <form onSubmit={handleSubmit(submitHandler)}>
+          <FormProvider {...methods}>
+            <form onSubmit={handleSubmit(submitHandler)}>
+              <div className="rounded-2xl border-b-2 border-dashed bg-white p-8 shadow-2xl">
                 {/* 영화 정보 */}
-                <div className="mb-4 text-center">
+                <div className="mb-6 text-center">
                   <h2 className="mb-1 text-2xl font-bold text-gray-800">
                     {`${movieData.title}(${movieData.original_title})`}
                   </h2>
-                  <p className="text-sm text-gray-600">
-                    {movieData.release_date
-                      ? movieData.release_date.replaceAll("-", ".")
-                      : "개봉일 미정"}
+                  <p className="text-sm tracking-tight text-gray-600">
+                    {formatTodayKorean()}
                   </p>
                 </div>
 
                 {/* 작성 중 안내 메시지 */}
                 {isDirty && (
-                  <div className="mb-4 rounded-lg">
-                    <div className="flex items-center justify-center">
-                      <div className="ml-1">
-                        <p className="text-sm text-gray-400">
-                          <strong>작성 중입니다!</strong> 페이지를 떠나면 작성한
-                          내용이 사라집니다.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <p className="mb-4 text-sm text-gray-400">
+                    페이지를 떠나면 작성 중인 내용이 사라집니다.
+                  </p>
                 )}
 
                 {/* 폼 필드 */}
@@ -93,20 +85,26 @@ export default function ReviewForm({
                   <ReviewFormTitle />
                   <ReviewFormRating />
                   <ReviewFormContent />
-                  {/* 폼 제출 버튼 */}
-                  <div className="pt-4">
-                    <button
-                      type="submit"
-                      className="bg-accent-400 hover:bg-accent-500 w-full rounded-xl p-4 text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
-                      disabled={!isValid}
-                    >
-                      {onSubmitMode === "edit" ? "리뷰 수정" : "리뷰 등록"}
-                    </button>
-                  </div>
                 </div>
-              </form>
-            </FormProvider>
-          </div>
+              </div>
+              {/* 폼 제출 버튼 */}
+              <button
+                type="submit"
+                disabled={!isValid}
+                className="relative mx-auto block w-full overflow-hidden rounded-2xl bg-white px-4 py-6 text-center transition-colors duration-300 ease-in-out hover:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-[52%] left-1/2 z-0 -translate-x-1/2 text-4xl font-extrabold tracking-tight whitespace-nowrap text-gray-300/70 select-none"
+                >
+                  For your Ticket.
+                </span>
+                <p className="text-md relative z-10 font-bold tracking-tight text-gray-800 lg:text-lg">
+                  {onSubmitMode === "edit" ? "리뷰 수정" : "리뷰 등록"}
+                </p>
+              </button>
+            </form>
+          </FormProvider>
         </div>
       </main>
     </>

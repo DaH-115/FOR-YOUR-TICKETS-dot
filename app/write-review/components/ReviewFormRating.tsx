@@ -8,6 +8,10 @@ import { useFormContext, Controller } from "react-hook-form";
 import { IoChevronDown } from "react-icons/io5";
 import { FaExclamationTriangle, FaStar, FaStarHalf } from "react-icons/fa";
 import { ReviewFormValues } from "@/write-review/types";
+import {
+  reviewFormFieldError,
+  reviewFormListboxButtonBase,
+} from "@/write-review/utils/reviewFormFieldClasses";
 
 const ratingOptions = [
   { value: 1, label: "1점", stars: 0.5, description: "매우 나쁨" },
@@ -59,10 +63,8 @@ export default function ReviewFormRating() {
             <div className="relative">
               <Listbox value={field.value} onChange={field.onChange}>
                 <ListboxButton
-                  className={`w-full rounded-xl border px-4 py-3 text-left transition-all focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1 ${
-                    error
-                      ? "border-red-500 bg-red-50 ring-2 ring-red-500/30"
-                      : "bg-gray-white border-gray-200 focus:border-accent-500"
+                  className={`${reviewFormListboxButtonBase}${
+                    error ? ` ${reviewFormFieldError}` : ""
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -94,13 +96,13 @@ export default function ReviewFormRating() {
 
                 <ListboxOptions
                   modal={false}
-                  className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg focus:outline-hidden"
+                  className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg focus:outline-none"
                 >
                   {ratingOptions.map((option) => (
                     <ListboxOption
                       key={option.value}
                       value={option.value}
-                      className="flex cursor-pointer items-center space-x-3 px-4 py-3 transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-accent-50 data-focus:bg-accent-100 data-selected:bg-accent-50"
+                      className="hover:bg-accent-50 data-focus:bg-accent-100 data-selected:bg-accent-50 flex cursor-pointer items-center space-x-3 px-4 py-3 transition-colors first:rounded-t-xl last:rounded-b-xl"
                     >
                       <Stars count={option.stars} />
                       <div className="space-x-2 text-gray-800">

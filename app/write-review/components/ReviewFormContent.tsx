@@ -1,5 +1,9 @@
 import { useFormContext, Controller } from "react-hook-form";
 import { ReviewFormValues } from "@/write-review/types";
+import {
+  reviewFormFieldError,
+  reviewFormTextFieldBase,
+} from "@/write-review/utils/reviewFormFieldClasses";
 
 export default function ReviewFormContent() {
   const { control } = useFormContext<ReviewFormValues>();
@@ -7,7 +11,7 @@ export default function ReviewFormContent() {
   return (
     <div className="space-y-2">
       <label htmlFor="reviewContent" className="text-sm text-gray-600">
-        상세 리뷰
+        리뷰
       </label>
       <Controller
         name="reviewContent"
@@ -25,12 +29,12 @@ export default function ReviewFormContent() {
               {...field}
               id="reviewContent"
               rows={6}
-              className={`w-full resize-none rounded-xl border bg-gray-50 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 transition-all duration-300 focus:border-accent-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-accent-300 focus:ring-offset-1 ${
-                error ? "border-red-500 bg-red-50 ring-2 ring-red-500/30" : ""
+              className={`resize-none ${reviewFormTextFieldBase}${
+                error ? ` ${reviewFormFieldError}` : ""
               }`}
-              placeholder="상세 리뷰를 작성해주세요"
+              placeholder="리뷰를 작성해주세요"
             />
-            <div className="flex items-center justify-between">
+            <div className="mt-1 flex items-center justify-between">
               {error && <p className="text-sm text-red-600">{error.message}</p>}
               <p className="ml-auto text-sm text-gray-400">
                 {(field.value || "").length}/500
