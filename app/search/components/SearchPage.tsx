@@ -121,7 +121,7 @@ export default function SearchPage({
               상영 중인 영화
             </h2>
           </div>
-          <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-6 shadow-2xl sm:grid-cols-4 md:grid-cols-5">
             {nowPlayingMovies.map((movie, idx) => (
               <SwiperItem key={movie.id} movie={movie} idx={idx} />
             ))}

@@ -83,12 +83,12 @@ export default function SocialLogin({ rememberMe }: { rememberMe: boolean }) {
     <div className="space-y-6">
       <div className="flex items-center" role="separator" aria-label="또는">
         <div
-          className="grow border-t-4 border-dotted border-gray-300"
+          className="grow border-t-2 border-dashed border-gray-300"
           aria-hidden="true"
         ></div>
         <span className="mx-4 font-mono text-xs text-gray-600">또는</span>
         <div
-          className="grow border-t-4 border-dotted border-gray-300"
+          className="grow border-t-2 border-dashed border-gray-300"
           aria-hidden="true"
         ></div>
       </div>

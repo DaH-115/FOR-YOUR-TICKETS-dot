@@ -114,7 +114,7 @@ export default function RootLayout({
             <AlertProvider>
               <LevelUpProvider>
                 <Header />
-                <div className="mx-auto mt-32 min-w-80 lg:mt-36">
+                <div className="mx-auto mt-32 min-w-md lg:mt-36">
                   {children}
                 </div>
                 <Footer />

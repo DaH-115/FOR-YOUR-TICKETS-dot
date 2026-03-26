@@ -39,25 +39,6 @@ export default function MyProfilePage() {
     return getActivityLevel(user?.myTicketsCount || 0);
   })();
 
-  // 안전한 배경 그라데이션 적용을 위한 등급별 클래스 맵핑
-  const getBackgroundGradient = (level: { label?: string } | null) => {
-    const baseClasses =
-      "flex flex-col items-center rounded-2xl justify-center bg-linear-to-b p-6 md:w-1/3";
-
-    switch (level?.label) {
-      case "NEWBIE":
-        return `${baseClasses} from-yellow-50 to-yellow-100`;
-      case "REGULAR":
-        return `${baseClasses} from-green-50 to-green-100`;
-      case "ACTIVE":
-        return `${baseClasses} from-blue-50 to-blue-100`;
-      case "EXPERT":
-        return `${baseClasses} from-purple-50 to-purple-100`;
-      default:
-        return `${baseClasses} from-gray-50 to-gray-100`;
-    }
-  };
-
   // 포트폴리오용 등급 변경 핸들러 (실제 API 호출)
   const handleGradeChange = useCallback(
     async (newGrade: string) => {
@@ -99,28 +80,25 @@ export default function MyProfilePage() {
   );
 
   return (
-    <main className="w-full">
-      {/* 메인 프로필 카드 */}
-      <section className="mx-auto flex max-w-xs flex-col shadow-xl md:mx-auto md:max-w-2xl md:flex-row">
-        {/* 프로필 아바타 섹션 */}
-        <div className={getBackgroundGradient(activityLevel)}>
+    <section className="w-full">
+      {/* 프로필 정보 */}
+      <div className="mx-auto flex max-w-2xl flex-col rounded-2xl bg-white p-6 shadow-2xl lg:px-8">
+        <div className="flex items-center gap-4">
+          {/* 프로필 이미지 */}
           <ProfileAvatar
             userDisplayName={user?.displayName || "사용자"}
             s3photoKey={user?.photoKey || undefined}
             size={96}
             showLoading={true}
           />
-        </div>
-        {/* 프로필 정보 섹션 */}
-        <div className="flex flex-1 flex-col rounded-2xl bg-white px-6 py-6 lg:px-8">
-          {/* 사용자 이름과 편집 버튼 */}
-          <div className="border-b-4 border-dotted pb-3">
+          {/* 사용자 정보 */}
+          <div className="pb-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-gray-800">
                   {user?.displayName || "사용자"}
                 </h1>
-                {/* 사용자 등급 정보 */}
+                {/* 사용자 등급 */}
                 <UserGradeInfo
                   currentLevel={activityLevel}
                   currentReviewCount={user?.myTicketsCount || 0}
@@ -130,58 +108,54 @@ export default function MyProfilePage() {
             </div>
             <p className="text-sm text-gray-600">{user?.email}</p>
             {/* 프로필 편집 버튼 */}
-            <div className="mt-2 flex">
-              <Link
-                href="/my-page/edit"
-                className="flex items-center gap-1 rounded-full bg-accent-300 px-3 py-1.5 text-xs font-medium text-white transition-colors duration-200 hover:bg-accent-500"
-              >
-                <FaEdit size={10} />
-                편집
-              </Link>
-            </div>
-          </div>
-
-          {/* 티켓 통계 섹션 */}
-          <div className="border-b-4 border-dotted py-3">
-            <div className="flex gap-6">
-              {/* 내 티켓 수 */}
-              <Link
-                href={`/my-page/my-ticket-list?uid=${user?.uid}`}
-                className="text-center transition-opacity hover:opacity-80"
-              >
-                <div className="text-lg font-bold text-gray-800">
-                  {user?.myTicketsCount || 0}
-                </div>
-                <div className="text-xs text-gray-600">내 티켓</div>
-              </Link>
-              <div className="border-l-4 border-dotted pl-6">
-                {/* 좋아요한 티켓 수 */}
-                <Link
-                  href={`/my-page/liked-ticket-list?uid=${user?.uid}`}
-                  className="text-center transition-opacity hover:opacity-80"
-                >
-                  <div className="text-lg font-bold text-gray-800">
-                    {user?.likedTicketsCount || 0}
-                  </div>
-                  <div className="text-xs text-gray-600">좋아요</div>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* 자기소개 및 가입일 정보 */}
-          <div className="flex-1 pt-3">
-            <div className="mb-2 text-xs text-gray-800">자기 소개</div>
-            <p className="text-sm">{user?.biography || "소개글이 없습니다."}</p>
-            <div className="mt-4 border-t-4 border-dotted pt-3">
-              <div className="mb-2 text-xs text-gray-800">가입일</div>
-              <p className="text-xs text-gray-800">
-                {user?.createdAt ? formatDate(user.createdAt) : "정보 없음"}
-              </p>
-            </div>
+            <Link
+              href="/my-page/edit"
+              className="bg-accent-300 hover:bg-accent-500 mt-6 inline-block items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-white transition-colors duration-200"
+            >
+              편집
+            </Link>
           </div>
         </div>
-      </section>
-    </main>
+
+        {/* 티켓 통계 */}
+        <div className="border-b-2 border-dashed py-3">
+          <div className="flex gap-6">
+            {/* 내 티켓 수 */}
+            <Link
+              href={`/my-page/my-ticket-list?uid=${user?.uid}`}
+              className="text-center transition-opacity hover:opacity-80"
+            >
+              <div className="text-lg font-bold text-gray-800">
+                {user?.myTicketsCount || 0}
+              </div>
+              <div className="text-xs text-gray-600">내 티켓</div>
+            </Link>
+
+            {/* 좋아요한 티켓 수 */}
+            <Link
+              href={`/my-page/liked-ticket-list?uid=${user?.uid}`}
+              className="text-center transition-opacity hover:opacity-80"
+            >
+              <div className="text-lg font-bold text-gray-800">
+                {user?.likedTicketsCount || 0}
+              </div>
+              <div className="text-xs text-gray-600">좋아요</div>
+            </Link>
+          </div>
+        </div>
+
+        {/* 자기소개 및 가입일 정보 */}
+        <div className="flex-1 pt-3">
+          <div className="mb-2 text-xs text-gray-800">자기 소개</div>
+          <p className="text-sm">{user?.biography || "소개글이 없습니다."}</p>
+          <div className="mt-4 border-t-2 border-dashed pt-3">
+            <div className="mb-2 text-xs text-gray-800">가입일</div>
+            <p className="text-xs text-gray-800">
+              {user?.createdAt ? formatDate(user.createdAt) : "정보 없음"}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

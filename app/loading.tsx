@@ -7,7 +7,7 @@ export default function Loading() {
 
         {/* 로딩 텍스트 */}
         <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-          <div className="text-accent-300 text-xs font-bold tracking-wider">
+          <div className="text-accent-300 text-xs font-bold tracking-tighter">
             LOADING
           </div>
         </div>

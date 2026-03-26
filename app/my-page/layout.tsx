@@ -5,7 +5,7 @@ import { PrivateRoute } from "store/context/auth/PrivateRoute";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <PrivateRoute>
-      <div className="mx-4 flex flex-col md:mx-8 lg:mx-12 lg:flex-row xl:mx-auto xl:max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px]">
+      <div className="mx-8 flex flex-col lg:mx-0 lg:flex-row xl:mx-auto xl:max-w-7xl">
         <MobileMenu />
         <SideMenu />
         <div className="flex w-full flex-col items-center lg:flex-1">

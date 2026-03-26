@@ -103,10 +103,10 @@ export default function Footer() {
         </div>
 
         {/* 구분선 */}
-        <div className="mb-6 mt-8 border-t-4 border-dotted border-primary-500"></div>
+        <div className="border-primary-500 mt-8 mb-6 border-t-2 border-dashed"></div>
 
         {/* 하단 저작권 정보 */}
-        <div className="mb-6 flex flex-col items-center space-y-2 text-xs md:mb-4 md:flex-row md:space-x-2 md:space-y-0">
+        <div className="mb-6 flex flex-col items-center space-y-2 text-xs md:mb-4 md:flex-row md:space-y-0 md:space-x-2">
           <span>© {new Date().getFullYear()} GWAK DA HYUN</span>
           <span className="hidden md:inline">•</span>
           <span className="hidden md:inline">All rights reserved</span>

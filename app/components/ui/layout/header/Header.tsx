@@ -135,12 +135,12 @@ export default function Header() {
                 />
               </div>
             ) : (
-              <button
-                type="button"
+              <Link
+                href="/login"
                 className="rounded-full bg-white px-4 py-2 text-sm text-black"
               >
-                <Link href="/login">로그인</Link>
-              </button>
+                로그인
+              </Link>
             )}
           </div>
 
