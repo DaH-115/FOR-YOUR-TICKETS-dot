@@ -1,183 +1,227 @@
-# Just Your Tickets 🎬
+# For Your Tickets.
 
-> 영화 리뷰 검색 및 공유 플랫폼
+![메인 이미지](public/images/og-card.png)
 
-[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://just-your-tickets.vercel.app)
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![AWS S3](https://img.shields.io/badge/AWS%20S3-569A31?style=for-the-badge&logo=amazon-s3&logoColor=white)](https://aws.amazon.com/s3/)
+영화 리뷰를 검색하고, 감상을 티켓 형태로 기록·공유하는 **Next.js 기반 영화 커뮤니티 웹 앱**입니다.  
+소셜 로그인, 리뷰/댓글/좋아요, 프로필 커스터마이징, 활동 등급 배지까지 포함해 “영화를 보고 기록하는 경험”을 확장합니다.
 
-## 🚀 Quick Start
+**웹사이트**: [for-your-tickets.vercel.app](https://for-your-tickets.vercel.app)
+**GitHub**: [github.com/DaH-115/FOR-YOUR-TICKETS-dot](https://github.com/DaH-115/FOR-YOUR-TICKETS-dot)
+
+---
+
+## 1) 프로젝트 개요
+
+**For Your Tickets**는 다음 문제를 해결하기 위해 만들어졌습니다.
+
+- 단순 평점이 아닌, **영화 감상을 구조화된 리뷰 티켓**으로 남기고 싶다.
+- 내가 쓴 리뷰를 다른 사용자와 **댓글/좋아요 기반으로 상호작용**하고 싶다.
+- 단발성 리뷰 작성이 아니라, **프로필·활동 등급 기반의 지속적인 참여 동기**가 필요하다.
+
+핵심 UX는 **“탐색 → 리뷰 작성 → 커뮤니티 상호작용 → 마이페이지 관리”** 흐름입니다.
+
+---
+
+## 2) 핵심 기능
+
+### 영화 탐색
+
+- TMDB 기반 영화 검색 (`/search`)
+- 주간 트렌딩/현재 상영작 조회
+- 영화 상세 정보(메타 정보, 트레일러, 유사 영화) 제공
+
+### 리뷰(Ticket) 관리
+
+- 리뷰 작성 / 수정 / 삭제
+- 영화별 리뷰 상세 페이지 제공
+- 페이징 기반 리뷰 목록 조회
+
+### 인증/프로필
+
+- 이메일 회원가입 + 소셜 로그인(예: Google/GitHub) 지원
+- Firebase Auth + 서버사이드 토큰 검증(Firebase Admin)
+- 프로필 편집(닉네임/소개/아바타)
+- S3 Presigned URL 기반 이미지 업로드
+
+### 사용자 경험
+
+- 활동량 기반 사용자 배지(Activity Badge)
+- 반응형 UI 및 접근성 고려 컴포넌트
+- 테스트 코드(Jest + Testing Library) 기반 품질 관리
+
+---
+
+## 3) 사용자 흐름
+
+1. 메인에서 현재 상영작/추천 영화 탐색
+2. 검색에서 원하는 영화를 찾고 상세 정보 확인
+3. 리뷰 티켓 작성 및 게시
+4. 다른 사용자의 리뷰에 댓글/좋아요로 상호작용
+5. 마이페이지에서 프로필/내 리뷰/좋아요한 리뷰 관리
+
+---
+
+## 4) 아키텍처
+
+### 전체 구조(런타임)
+
+```txt
+[Next.js App Router]
+  ├─ app/ (pages, layouts, route handlers)
+  ├─ components (UI / domain)
+  ├─ services (client API wrappers)
+  └─ hooks/forms (react-hook-form + zod)
+          │
+          ▼
+[State & Auth]
+  ├─ Redux Toolkit (client state)
+  ├─ Firebase Auth (client auth)
+  └─ Firebase Admin (server token verify)
+          │
+          ▼
+[External Services]
+  ├─ TMDB API (movie data)
+  ├─ Firestore (app data)
+  └─ AWS S3 (profile image storage)
+```
+
+### 화면 아키텍처
+
+- **App Router 기반 페이지 구성**
+  - 메인(`/`), 검색(`/search`), 영화 상세(`/movie-details/[id]`)
+  - 리뷰 목록/상세(`/ticket-list`, `/ticket-list/[reviewId]`)
+  - 리뷰 작성(`/write-review/new`, `/write-review/[id]`)
+  - 마이페이지(`/my-page`, `/my-page/edit`)
+
+### 상태 아키텍처
+
+- 클라이언트 상태: Redux Toolkit
+- 폼 상태: React Hook Form + Zod
+- 인증 상태: Firebase Auth + Context
+
+### API 아키텍처
+
+- Next.js Route Handler 기반 API (`app/api/*`)
+- 주요 엔드포인트
+  - 인증: `/api/auth/*`
+  - 리뷰: `/api/reviews/*`
+  - 댓글: `/api/reviews/[id]/comments/*`
+  - 좋아요: `/api/reviews/[id]/likes/*`
+  - 사용자: `/api/users/*`
+  - 파일 업로드: `/api/s3`
+  - 영화 검색: `/api/tmdb/movies`
+
+---
+
+## 5) 디렉터리 구조
+
+```txt
+├── app/                          # App Router 페이지/레이아웃/API 라우트
+│   ├── api/                      # Route Handlers (auth, reviews, users, s3, tmdb)
+│   ├── components/               # 공통 UI/도메인 컴포넌트
+│   ├── movie-details/            # 영화 상세 페이지
+│   ├── my-page/                  # 마이페이지 및 프로필 편집
+│   ├── search/                   # 검색 페이지
+│   ├── ticket-list/              # 리뷰 목록/상세
+│   └── write-review/             # 리뷰 작성/수정
+├── lib/                          # 영화/리뷰/인증/S3 유틸 함수
+├── store/                        # Redux Toolkit, Context 상태 관리
+├── firebase-config/              # Firebase Client SDK 설정
+├── firebase-admin-config/        # Firebase Admin SDK 설정
+├── __tests__/                    # Jest 테스트 코드
+├── public/                       # 정적 파일(아이콘, OG 이미지)
+└── README.md
+```
+
+---
+
+## 6) 기술 스택
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **UI**: Tailwind CSS 4, Headless UI, Swiper, React Icons
+- **State/Form**: Redux Toolkit, React-Redux, React Hook Form, Zod
+- **Auth/Data**: Firebase Auth, Firebase Admin, Firestore, AWS S3 Presigned URL
+- **Movie Data**: TMDB API
+- **Quality**: ESLint, Jest, Testing Library, MSW
+
+---
+
+## 7) 실행 방법
+
+### 요구 사항
+
+- Node.js 20+
+- Yarn
+
+### 설치
 
 ```bash
-# 의존성 설치
+git clone https://github.com/DaH-115/just-your-tickets.git
+cd just-your-tickets
 yarn install
+```
 
-# 개발 서버 실행
+### 개발 서버
+
+```bash
 yarn dev
+```
 
-# 프로덕션 빌드
+### 빌드 / 실행
+
+```bash
 yarn build
+yarn start
+```
 
-# 테스트 실행
+### 테스트
+
+```bash
 yarn test
 ```
 
-## ✨ 주요 기능
+---
 
-- 🔍 **실시간 영화 검색** - TMDB API 기반 자동완성 검색
-- 👤 **다중 인증 시스템** - Google, GitHub 소셜 로그인 + 이메일/비밀번호
-- 📸 **프로필 관리** - AWS S3 Presigned URL 기반 이미지 업로드
-- 💬 **커뮤니티** - 리뷰 댓글 및 좋아요 시스템
-- 🏆 **등급 배지 시스템** - 사용자 활동 등급 표시
-- 🎬 **동영상 플레이어** - YouTube 트레일러 재생
-- 🎠 **캐러셀 UI** - Swiper 기반 반응형 영화 목록
-- 🧪 **테스트 환경** - Jest Mock 기반 포괄적인 테스트 환경
+## 8) 환경 변수
 
-## 🛠 기술 스택
+`.env.local` 예시:
 
-### Frontend
+```bash
+# Firebase (Client)
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key
+NEXT_PUBLIC_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_PROJECT_ID=your_project_id
+NEXT_PUBLIC_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_APP_ID=your_app_id
 
-- **Next.js 14** - App Router, Server Components
-- **TypeScript** - 타입 안전성
-- **Tailwind CSS** - 유틸리티 기반 스타일링
-- **React Hook Form + Zod** - 폼 관리 및 유효성 검증
-- **Redux Toolkit + Redux Persist** - 전역 상태 관리
-- **Swiper** - 반응형 캐러셀 컴포넌트
-- **Plaiceholder** - 이미지 최적화
+# Firebase Admin (Server)
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_PRIVATE_KEY_ID=your_private_key_id
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=your_service_account_email
+FIREBASE_CLIENT_ID=your_client_id
 
-### Backend & Database
+# TMDB
+TMDB_API_KEY=your_tmdb_api_key
 
-- **Firebase Authentication** - 다중 인증
-- **Firebase Admin SDK** - 서버 사이드 JWT 토큰 검증
-- **Firestore** - 실시간 NoSQL 데이터베이스
-- **AWS S3** - Presigned URL 기반 이미지 저장
-- **TMDB API** - 영화 정보 및 트레일러
+# AWS S3
+AWS_REGION=ap-northeast-2
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_S3_BUCKET=your_bucket_name
+S3_DOWNLOAD_URL_TTL=600
 
-### Testing & Development
-
-- **Jest + React Testing Library** - 테스트 프레임워크
-- **Jest Mock** - 모듈 및 API 모킹
-- **ESLint + Prettier** - 코드 품질 관리
-
-## 🌟 주요 특징
-
-### 🔐 보안 및 인증
-
-- **Firebase Admin SDK** - 프로덕션 레벨 JWT 토큰 검증
-- **다중 인증 방식** - 이메일/비밀번호, Google, GitHub 소셜 로그인
-- **JWT 토큰 자동 갱신** - 만료 시 자동 재시도 로직
-
-### ⚡ 성능 최적화
-
-- **Server Components** - 초기 로딩 최적화
-- **API 캐싱 시스템** - 영화 등급 정보 메모리 캐시 (N+1 문제 해결)
-- **이미지 최적화** - Plaiceholder 기반 플레이스홀더
-- **Swiper 최적화** - 터치 제스처 및 반응형 브레이크포인트
-
-### 🧪 테스트 환경
-
-- **Jest + React Testing Library** - 포괄적인 테스트 환경
-- **Jest Mock** - 모듈 및 API 모킹
-- **Firebase 모킹** - Firebase 서비스 모킹
-
-## 🚀 RESTful API
-
-### 🔐 인증 API
-
-- `POST /api/auth/signup` - 이메일 회원가입
-- `POST /api/auth/social-setup` - 소셜 로그인 설정
-- `POST /api/auth/check-availability` - 닉네임/이메일 중복 확인
-
-### 리뷰 API
-
-- `GET /api/reviews` - 리뷰 목록 조회
-- `POST /api/reviews` - 새 리뷰 생성
-- `GET /api/reviews/[id]` - 개별 리뷰 조회
-- `PUT /api/reviews/[id]` - 리뷰 수정
-- `DELETE /api/reviews/[id]` - 리뷰 삭제
-
-### 좋아요 API
-
-- `POST /api/reviews/[id]/like` - 좋아요 추가
-- `DELETE /api/reviews/[id]/like` - 좋아요 취소
-- `GET /api/reviews/[id]/like` - 좋아요 상태 확인
-
-### 사용자 API
-
-- `GET /api/users/[uid]` - 사용자 프로필 조회
-- `PUT /api/users/[uid]` - 프로필 업데이트
-
-### 댓글 API
-
-- `GET /api/comments/[reviewId]` - 댓글 목록 조회
-- `POST /api/comments/[reviewId]` - 새 댓글 생성
-- `PUT /api/comments/[reviewId]/[commentId]` - 댓글 수정
-- `DELETE /api/comments/[reviewId]/[commentId]` - 댓글 삭제
-
-### 기타 API
-
-- `GET /api/s3`, `POST /api/s3` - AWS S3 파일 업로드
-- `GET /api/tmdb/search` - TMDB 영화 검색
-
-## 📁 프로젝트 구조
-
-```
-├── app/                 # Next.js App Router
-│   ├── components/      # 공통 컴포넌트
-│   ├── api/            # RESTful API 라우트
-│   ├── my-page/        # 프로필 관리 페이지
-│   └── [pages]/        # 페이지 컴포넌트
-├── __tests__/          # 테스트 파일
-├── lib/                # 유틸리티 함수
-├── store/              # 상태 관리 (Redux)
-├── firebase-config/    # Firebase 설정
-└── firebase-admin-config/ # Firebase Admin SDK 설정
+# Optional
+NEXT_PUBLIC_BASE_URL=https://just-your-tickets.vercel.app
 ```
 
-## 🔐 Firebase Admin SDK 보안
+---
 
-- **JWT 토큰 검증**: Firebase ID Token 사용
-- **자동 토큰 만료**: 1시간 후 자동 만료
-- **서명 검증**: Firebase 공개키로 토큰 무결성 검증
-- **자동 갱신**: 토큰 만료 시 자동 갱신
+## 9) 배포
 
-모든 인증이 필요한 API는 JWT 토큰 검증을 통과해야 합니다.
+Vercel 배포를 기준으로 구성되어 있습니다.
 
-## 📝 버전 히스토리
+## 10) 라이선스
 
-### v2.3.0 (2025-07-09)
-
-- **테스트 환경 구축**: Jest Mock 기반 포괄적인 테스트 환경
-- **Swiper 캐러셀**: 반응형 영화 목록 UI 개선
-- **이미지 최적화**: Plaiceholder 기반 플레이스홀더 시스템
-- **Redux Persist**: 상태 지속성으로 사용자 경험 개선
-- **코드 품질**: ESLint + Prettier 설정 강화
-
-### v2.2.0 (2025-06-16)
-
-- **등급 배지 시스템**: 사용자 활동 등급 표시 기능 추가
-- **리뷰 작성자 등급**: 리뷰 작성자 활동 등급 표시
-- **댓글 작성자 등급**: 댓글 작성자 활동 등급 표시
-
-### v2.1.0 (2025.01.08)
-
-- **비밀번호 변경**: 이메일 사용자 비밀번호 변경 기능
-- **프로필 편집**: 통합된 프로필 관리 시스템 개선
-- **로그인 상태 유지**: 브라우저/세션 저장소 선택 기능
-
-### v2.0.0 (2025.01.07)
-
-- **App Router 마이그레이션**: Next.js App Router 도입
-- **Server Components**: 서버 컴포넌트 전면 적용
-- **Next.js 14 업데이트**: 최신 버전으로 전면 업그레이드
-- **성능 최적화**: 번들 크기 62% 감소
-
-### v1.0.0 (2022.12.24)
-
-- **첫 배포**: 기본 기능 구현 및 초기 배포
-
-## 🔗 링크
-
-- **배포 사이트**: [https://just-your-tickets.vercel.app/](https://just-your-tickets.vercel.app/)
+개인 포트폴리오 및 학습 목적 프로젝트입니다.
