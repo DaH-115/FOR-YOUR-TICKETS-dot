@@ -14,22 +14,22 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   title: {
-    template: "%s | Just Your Tickets",
-    default: "Just Your Tickets",
+    template: "%s | For Your Tickets.",
+    default: "For Your Tickets.",
   },
   description: "나만의 영화 티켓을 만들어보세요",
   keywords: ["movie", "ticket", "booking"],
   openGraph: {
-    title: "Just Your Tickets",
+    title: "For Your Tickets.",
     description: "나만의 영화 티켓을 만들어보세요",
     url: "/",
-    siteName: "Just Your Tickets",
+    siteName: "For Your Tickets.",
     images: [
       {
         url: "/images/og-card.jpg",
         width: 1200,
         height: 630,
-        alt: "Just Your Tickets",
+        alt: "For Your Tickets.",
       },
     ],
   },

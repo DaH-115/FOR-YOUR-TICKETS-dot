@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useAppSelector } from "store/redux-toolkit/hooks";
 import { selectUser } from "store/redux-toolkit/slice/userSlice";
 import { FaGithub } from "react-icons/fa";
-import { MdDescription } from "react-icons/md";
 
 export default function Footer() {
   const user = useAppSelector(selectUser);
@@ -29,11 +28,6 @@ export default function Footer() {
 
   const externalLinks = [
     {
-      href: "https://zippy-position-4e4.notion.site/Dahyun-Gwak-45235441d63641798c44ee9d7ed607f5",
-      label: "이력서",
-      icon: MdDescription,
-    },
-    {
       href: "https://github.com/DaH-115/JUST-YOUR-TICKETS-dot",
       label: "GitHub",
       icon: FaGithub,
@@ -41,12 +35,12 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="mt-8 bg-black/80 px-6 text-white lg:mt-16">
+    <footer className="mt-8 bg-black/80 px-6 lg:mt-16">
       <div className="mx-auto max-w-7xl py-8">
         {/* 메인 푸터 콘텐츠 */}
         <div className="mb-12">
-          <h2 className="text-xl font-bold tracking-tighter text-white">
-            Just Your Tickets
+          <h2 className="text-xl font-bold tracking-tighter text-gray-200">
+            For Your Tickets.
           </h2>
           <p className="text-xs text-gray-300">
             나만의 영화 티켓을 만들어보세요.
@@ -55,7 +49,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* 메인 메뉴 */}
           <div>
-            <h3 className="text-lg font-semibold text-white">메인 메뉴</h3>
+            <h3 className="text-lg font-semibold text-gray-200">메인 메뉴</h3>
             <ul className="text-base">
               {mainMenuItems.map(({ href, label }) => (
                 <li key={href}>
@@ -73,7 +67,7 @@ export default function Footer() {
           {/* 마이 메뉴 */}
           {isLoggedIn ? (
             <div>
-              <h3 className="text-lg font-semibold text-white">나의 메뉴</h3>
+              <h3 className="text-lg font-semibold text-gray-200">나의 메뉴</h3>
               <ul className="text-base">
                 {userMenuItems.map(({ href, label }) => (
                   <li key={href}>
@@ -107,9 +101,9 @@ export default function Footer() {
 
         {/* 하단 저작권 정보 */}
         <div className="mb-6 flex flex-col items-center space-y-2 text-xs md:mb-4 md:flex-row md:space-y-0 md:space-x-2">
-          <span>© {new Date().getFullYear()} GWAK DA HYUN</span>
-          <span className="hidden md:inline">•</span>
-          <span className="hidden md:inline">All rights reserved</span>
+          <span className="text-gray-200">
+            © GWAK DAHYUN {new Date().getFullYear()} All rights reserved.
+          </span>
           <span className="text-gray-300">
             포트폴리오 목적으로 제작된 프로젝트
           </span>

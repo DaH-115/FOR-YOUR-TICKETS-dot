@@ -106,7 +106,7 @@ export default function Header() {
         {/* LOGO */}
         <Link href="/" className="max-w-48">
           <p className="px-2 text-lg leading-tight font-bold tracking-tighter text-white transition-colors duration-200 md:px-0 md:text-xl">
-            Just Your Tickets
+            For Your Tickets.
           </p>
         </Link>
 
