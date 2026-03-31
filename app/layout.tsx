@@ -9,7 +9,7 @@ import Footer from "@/components/ui/layout/Footer";
 import ScrollToTopButton from "@/components/ui/buttons/ScrollToTopButton";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://just-your-tickets.vercel.app"),
+  metadataBase: new URL("https://for-your-tickets.vercel.app"),
   alternates: {
     canonical: "/",
   },
