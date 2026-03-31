@@ -9,7 +9,7 @@ const certificationColors: Record<string, string> = {
   "12": "bg-linear-to-br from-blue-400 to-blue-600",
   "15": "bg-linear-to-br from-yellow-500 to-yellow-700",
   "18": "bg-linear-to-br from-red-400 to-red-600",
-  // 정보 없음·미지원: 밝은 회색(내부 텍스트 없음 → 대비 부담 적음)
+  // API 값은 있으나 알 수 없는 코드: 밝은 회색(내부 텍스트 없음 → 대비 부담 적음)
   default: "bg-linear-to-br from-gray-200 to-gray-400",
 };
 
@@ -33,7 +33,10 @@ export default function MovieCertification({
   certification,
   showLabel = true,
 }: MovieCertificationProps) {
-  const isMissing = !certification;
+  // 등급 문자열이 없으면 배지 자체를 렌더하지 않음
+  if (certification == null || certification.trim() === "") {
+    return null;
+  }
 
   const colorClass = isKnownCertification(certification)
     ? certificationColors[certification]
@@ -44,11 +47,9 @@ export default function MovieCertification({
       ? certificationLabels[certification]
       : null;
 
-  const ariaLabel = isMissing
-    ? "관람 등급 정보 없음"
-    : isKnownCertification(certification)
-      ? `${certificationLabels[certification]} 관람 등급`
-      : `관람 등급 ${certification}`;
+  const ariaLabel = isKnownCertification(certification)
+    ? `${certificationLabels[certification]} 관람 등급`
+    : `관람 등급 ${certification}`;
 
   return (
     <div
