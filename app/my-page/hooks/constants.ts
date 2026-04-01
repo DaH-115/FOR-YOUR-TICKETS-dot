@@ -3,7 +3,6 @@
 export const PASSWORD_CHANGE_MESSAGES = {
   ALERT_TITLE: "비밀번호 변경",
   VERIFY: {
-    SUCCESS: "비밀번호가 확인되었습니다.",
     ERROR: {
       NO_USER: "사용자 정보가 올바르지 않습니다.",
       NOT_LOGGED_IN: "사용자가 로그인되어 있지 않습니다.",

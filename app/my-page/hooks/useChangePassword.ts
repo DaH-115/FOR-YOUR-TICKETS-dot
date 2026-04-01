@@ -26,19 +26,23 @@ export function useChangePassword() {
   const [isVerified, setIsVerified] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  /** 재인증 실패 시 인풋 아래 인라인 표시(토스트 대신) */
+  const [verifyErrorMessage, setVerifyErrorMessage] = useState<string | null>(
+    null,
+  );
 
-  // 현재 비밀번호 재인증
+  const clearVerifyError = useCallback(() => setVerifyErrorMessage(null), []);
+
+  // 현재 비밀번호 재인증 — 실패 시 throw 하지 않음(Next/RHF에서 미처리 rejection 오버레이 방지)
   const onVerifyCurrent = useCallback(
-    async (data: { currentPassword: string }) => {
+    async (data: { currentPassword: string }): Promise<boolean> => {
       if (!currentUser || !user?.email) {
-        showErrorHandler(
-          PASSWORD_CHANGE_MESSAGES.ALERT_TITLE,
-          PASSWORD_CHANGE_MESSAGES.VERIFY.ERROR.NO_USER,
-        );
-        throw new Error(PASSWORD_CHANGE_MESSAGES.VERIFY.ERROR.NO_USER);
+        setVerifyErrorMessage(PASSWORD_CHANGE_MESSAGES.VERIFY.ERROR.NO_USER);
+        return false;
       }
 
       setIsVerifying(true);
+      setVerifyErrorMessage(null);
 
       try {
         const credential = EmailAuthProvider.credential(
@@ -47,21 +51,20 @@ export function useChangePassword() {
         );
         await reauthenticateWithCredential(currentUser, credential);
 
+        // UI에 "확인 완료"가 표시되므로 성공 토스트는 생략
         setIsVerified(true);
-        showSuccessHandler(
-          PASSWORD_CHANGE_MESSAGES.ALERT_TITLE,
-          PASSWORD_CHANGE_MESSAGES.VERIFY.SUCCESS,
-        );
+        setVerifyErrorMessage(null);
+        return true;
       } catch (error) {
         setIsVerified(false);
-        const { title, message } = firebaseErrorHandler(error);
-        showErrorHandler(title, message);
-        throw error; // 컴포넌트에서 에러 처리 가능하도록
+        const { message } = firebaseErrorHandler(error);
+        setVerifyErrorMessage(message);
+        return false;
       } finally {
         setIsVerifying(false);
       }
     },
-    [currentUser, user?.email, showErrorHandler, showSuccessHandler],
+    [currentUser, user?.email],
   );
 
   // 새 비밀번호로 변경
@@ -111,6 +114,8 @@ export function useChangePassword() {
     isVerified,
     isVerifying,
     isUpdating,
+    verifyErrorMessage,
+    clearVerifyError,
     onVerifyCurrent,
     onChangePassword,
   };

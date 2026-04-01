@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useMemo } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaArrowRight } from "react-icons/fa";
 import { z } from "zod";
 import InputField from "app/components/ui/forms/InputField";
+import { getPortfolioDemoLoginDefaults } from "app/login/constants/portfolioDemoLogin";
 import SocialLogin from "app/login/components/SocialLogin";
 import { setRememberMe } from "app/utils/authPersistence";
 import { firebaseErrorHandler } from "app/utils/firebaseError";
@@ -36,6 +37,10 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { showErrorHandler } = useAlert();
   const user = useAppSelector(selectUser);
+
+  const loginDefaultValues = useMemo(() => getPortfolioDemoLoginDefaults(), []);
+  const isDemoLoginPrefilled = loginDefaultValues.email.length > 0;
+
   const {
     register,
     watch,
@@ -44,6 +49,7 @@ export default function LoginPage() {
   } = useForm<LoginInputs>({
     resolver: zodResolver(loginSchema),
     mode: "onTouched",
+    defaultValues: loginDefaultValues,
   });
   const isRememberMe = watch("rememberMe");
 
@@ -83,7 +89,7 @@ export default function LoginPage() {
         {/* 로그인 카드 */}
         <div className="relative" role="region" aria-labelledby="login-title">
           {/* 티켓 메인 부분 */}
-          <div className="relative rounded-3xl border-2 border-accent-300/30 bg-white px-6 py-8 shadow-2xl">
+          <div className="border-accent-300/30 relative rounded-3xl border-2 bg-white px-6 py-8 shadow-2xl">
             {/* 로그인 헤더 */}
             <header className="mb-8 text-center">
               <h1
@@ -95,6 +101,13 @@ export default function LoginPage() {
               <p className="text-sm text-gray-600">
                 계정에 로그인하여 시작하세요
               </p>
+              {isDemoLoginPrefilled && (
+                <p className="text-accent-500 mt-2 text-xs">
+                  포트폴리오 데모용 계정이 미리 입력되어 있습니다.
+                  <br />
+                  로그인만 눌러 체험할 수 있어요.
+                </p>
+              )}
             </header>
 
             <section aria-labelledby="login-form-title">
@@ -138,13 +151,13 @@ export default function LoginPage() {
                     type="checkbox"
                     id="rememberMe"
                     {...register("rememberMe")}
-                    className="h-4 w-4 rounded-md border-2 border-gray-300 bg-white text-accent-500 transition-all duration-200 checked:border-accent-500 checked:bg-accent-500 focus:border-accent-500 focus:outline-hidden focus:ring-2 focus:ring-accent-500/20"
+                    className="text-accent-500 checked:border-accent-500 checked:bg-accent-500 focus:border-accent-500 focus:ring-accent-500/20 h-4 w-4 rounded-md border-2 border-gray-300 bg-white transition-all duration-200 focus:ring-2 focus:outline-hidden"
                     disabled={isLoading}
                     aria-describedby="rememberMe-description"
                   />
                   <label
                     htmlFor="rememberMe"
-                    className="cursor-pointer select-none text-xs text-gray-700"
+                    className="cursor-pointer text-xs text-gray-700 select-none"
                   >
                     로그인 상태 유지
                   </label>
@@ -156,7 +169,7 @@ export default function LoginPage() {
                 <div>
                   <button
                     type="submit"
-                    className={`w-full rounded-2xl bg-accent-400 p-4 text-sm text-white transition-all duration-300 ${
+                    className={`bg-accent-400 w-full rounded-2xl p-4 text-sm text-white transition-all duration-300 ${
                       isLoading
                         ? "cursor-not-allowed opacity-50"
                         : "hover:bg-accent-500 hover:shadow-lg"
@@ -186,11 +199,7 @@ export default function LoginPage() {
                     }}
                   >
                     회원가입
-                    <FaArrowRight
-                      size={14}
-                      className="ml-2"
-                      aria-hidden
-                    />
+                    <FaArrowRight size={14} className="ml-2" aria-hidden />
                   </Link>
                 </div>
               </form>

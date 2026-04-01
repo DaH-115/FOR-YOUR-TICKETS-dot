@@ -67,22 +67,26 @@ jest.mock("app/components/ui/forms/InputField", () => {
     register,
     error,
     touched,
+    inlineError,
     disabled,
   }: {
     id: string;
     label: string;
     type: string;
     placeholder: string;
-    register: (name: string) => {
+    register: (name: string, options?: { onChange?: (e: unknown) => void }) => {
       name: string;
-      onChange: () => void;
+      onChange: (e: unknown) => void;
       onBlur: () => void;
       ref: () => void;
     };
     error?: string;
     touched: boolean;
+    inlineError?: string;
     disabled: boolean;
   }) {
+    const displayError =
+      (error && touched ? error : undefined) ?? inlineError;
     return (
       <div>
         <label htmlFor={id}>{label}</label>
@@ -94,7 +98,9 @@ jest.mock("app/components/ui/forms/InputField", () => {
           {...register(id)}
           data-testid={id}
         />
-        {error && touched && <span data-testid={`${id}-error`}>{error}</span>}
+        {displayError && (
+          <span data-testid={`${id}-error`}>{displayError}</span>
+        )}
       </div>
     );
   };
@@ -170,7 +176,35 @@ describe("ChangePassword", () => {
         "currentPassword123!",
       );
       expect(reauthenticateWithCredential).toHaveBeenCalled();
-      expect(mockShowSuccessHandler).toHaveBeenCalled();
+      // 재인증 성공은 화면의 "확인 완료"로 피드백, 성공 토스트는 사용하지 않음
+      expect(mockShowSuccessHandler).not.toHaveBeenCalled();
+      expect(
+        screen.getByRole("button", { name: "비밀번호 확인 완료" }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  test("현재 비밀번호가 틀리면 인라인 오류를 보여준다", async () => {
+    (EmailAuthProvider.credential as jest.Mock).mockReturnValue({});
+    (reauthenticateWithCredential as jest.Mock).mockRejectedValue({
+      code: "auth/wrong-password",
+    });
+
+    render(<ChangePassword />);
+
+    await act(async () => {
+      await fireEvent.change(screen.getByTestId("currentPassword"), {
+        target: { value: "wrongPassword1!" },
+      });
+      await fireEvent.click(
+        screen.getByRole("button", { name: "비밀번호 확인" }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("currentPassword-error")).toHaveTextContent(
+        "현재 비밀번호가 올바르지 않습니다.",
+      );
     });
   });
 });

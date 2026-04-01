@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type UseFormRegister } from "react-hook-form";
 import { z } from "zod";
 import InputField from "@/components/ui/forms/InputField";
 import { useChangePassword } from "@/my-page/hooks/useChangePassword";
@@ -49,19 +49,29 @@ export default function ChangePassword() {
     isVerified,
     isVerifying,
     isUpdating,
+    verifyErrorMessage,
+    clearVerifyError,
     onVerifyCurrent,
     onChangePassword,
   } = useChangePassword();
 
-  // 현재 비밀번호 확인 핸들러: 성공 시 현재 비밀번호 필드 리셋
+  const registerCurrentWithClear: UseFormRegister<CurrentPasswordForm> = (
+    name,
+    options,
+  ) =>
+    regCurrent(name, {
+      ...options,
+      onChange: (e) => {
+        clearVerifyError();
+        options?.onChange?.(e);
+      },
+    });
+
+  // 현재 비밀번호 확인 핸들러: 성공 시에만 필드 리셋(실패는 훅에서 인라인 메시지 처리)
   const handleVerifyCurrent = async (data: CurrentPasswordForm) => {
-    try {
-      await onVerifyCurrent(data);
-      // 재인증 성공 시 보안을 위해 입력 필드 즉시 클리어
+    const ok = await onVerifyCurrent(data);
+    if (ok) {
       resetCurrentPassword();
-    } catch (error) {
-      // 재인증 실패 시 폼 유지 (사용자가 다시 시도 가능)
-      console.error("비밀번호 확인 실패:", error);
     }
   };
 
@@ -99,16 +109,17 @@ export default function ChangePassword() {
             label="현재 비밀번호"
             type="password"
             placeholder="현재 비밀번호를 입력하세요."
-            register={regCurrent}
+            register={registerCurrentWithClear}
             error={errCurrent.currentPassword?.message}
             touched={!!touchedCurrent.currentPassword}
+            inlineError={verifyErrorMessage ?? undefined}
             disabled={isVerifying || isVerified}
             autoComplete="off"
           />
         </div>
         <div className="flex items-center justify-end gap-2">
           {isVerified && (
-            <span className="text-xs text-green-600">✓ 확인 완료</span>
+            <span className="text-xs text-green-600">확인 완료</span>
           )}
           <button
             type="button"
