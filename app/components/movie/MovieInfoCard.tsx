@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Fragment } from "react";
 import { CrewMember, MovieList } from "types";
 import { FaStar } from "react-icons/fa";
 import { IoInformationCircle } from "react-icons/io5";
@@ -53,14 +52,21 @@ export default function MovieInfoCard({
           {/* 개봉일, 한국 날짜 */}
           <p className="text-xs">{formatMovieDate(movie.release_date)}</p>
           {/* 감독 */}
-          <ul className="text-xs">
-            {uniqueDirectors.map((director) => (
-              <Fragment key={director.id}>
-                <li className="font-semibold">{director.name}</li>
-                <li>{director.original_name}</li>
-                <li className="mt-1">{director.job}</li>
-              </Fragment>
-            ))}
+          <ul className="space-y-2 text-xs">
+            {uniqueDirectors.map((director) => {
+              // 현지화된 이름과 원어 이름이 동일하면 중복이므로 하나만 표시한다.
+              const hasDistinctOriginalName =
+                !!director.original_name &&
+                director.original_name !== director.name;
+
+              return (
+                <div key={director.id}>
+                  <li className="font-semibold">{director.name}</li>
+                  {hasDistinctOriginalName && <li>{director.original_name}</li>}
+                  <li className="mt-1">{director.job}</li>
+                </div>
+              );
+            })}
           </ul>
 
           {/* 평점 */}

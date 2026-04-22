@@ -42,3 +42,7 @@ yarn.lock
 .firebase
 .firebase/
 .vercel
+
+# Claude Code (로컬 설정 및 워크트리는 공유하지 않음)
+.claude/settings.local.json
+.claude/worktrees/
