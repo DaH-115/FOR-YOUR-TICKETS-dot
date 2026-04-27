@@ -9,19 +9,17 @@ import AddTicketButton from "@/components/ui/buttons/AddTicketButton";
 
 interface MovieInfoCardProps {
   movie: MovieList;
-  genres: string[];
   uniqueDirectors: CrewMember[];
 }
 
 export default function MovieInfoCard({
   movie,
-  genres,
   uniqueDirectors,
 }: MovieInfoCardProps) {
   return (
     <section className="mx-auto w-full max-w-md">
       <div className="rounded-2xl border-b-2 border-dashed bg-white p-8 pt-6">
-        {/* 제목 & 원제목 & 개봉년도 */}
+        {/* 인증등급 & 상세정보 버튼 */}
         <div className="flex items-start justify-between">
           <MovieCertification certification={movie.certification ?? null} />
           <Tooltip
@@ -38,21 +36,17 @@ export default function MovieInfoCard({
           </Tooltip>
         </div>
 
-        <div className="mb-4">
-          <h1 className="text-3xl font-bold tracking-tight">{movie.title}</h1>
+        {/* 제목 & 원제목 & 개봉년도 */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold tracking-tight">{movie.title}</h1>
           <p className="text-lg tracking-tight text-gray-400">{`${movie.original_title} (${movie.release_date.split("-")[0]})`}</p>
         </div>
 
-        {/* 장르 */}
-        <p className="mb-16 space-x-2 text-lg text-gray-800">
-          {genres.join(" · ")}
-        </p>
-
-        <div className="flex items-start justify-between gap-2 text-gray-800">
+        <div className="flex items-start justify-between gap-2 text-sm text-gray-800">
           {/* 개봉일, 한국 날짜 */}
-          <p className="text-xs">{formatMovieDate(movie.release_date)}</p>
+          <p>{formatMovieDate(movie.release_date)}</p>
           {/* 감독 */}
-          <ul className="space-y-2 text-xs">
+          <ul className="space-y-2">
             {uniqueDirectors.map((director) => {
               // 현지화된 이름과 원어 이름이 동일하면 중복이므로 하나만 표시한다.
               const hasDistinctOriginalName =
@@ -63,7 +57,7 @@ export default function MovieInfoCard({
                 <div key={director.id}>
                   <li className="font-semibold">{director.name}</li>
                   {hasDistinctOriginalName && <li>{director.original_name}</li>}
-                  <li className="mt-1">{director.job}</li>
+                  <li className="text-xs">{director.job}</li>
                 </div>
               );
             })}
@@ -78,7 +72,7 @@ export default function MovieInfoCard({
           </div>
         </div>
       </div>
-      <AddTicketButton movieId={movie.id} />
+      <AddTicketButton movieId={movie.id} variant="large" />
     </section>
   );
 }

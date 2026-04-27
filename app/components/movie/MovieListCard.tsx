@@ -11,12 +11,12 @@ interface MovieListCardProps {
 export default function MovieListCard({ movie, genres }: MovieListCardProps) {
   return (
     <article className="mx-auto w-full max-w-md">
-      <div className="flex h-32 flex-col overflow-hidden rounded-2xl border-b-2 border-dashed bg-white p-6 pt-4">
+      <div className="flex h-32 flex-col overflow-hidden rounded-2xl border-b-2 border-dashed bg-white px-4 py-6 pt-4">
         {/* 제목 & 원제목 & 개봉년도 (줄 수 고정) */}
         <div className="min-w-0 shrink-0">
           <Link
             href={`/movie-details/${movie.id}`}
-            className="block min-w-0 hover:text-gray-600"
+            className="block min-w-0 transition-colors duration-300 ease-in-out hover:text-gray-600"
           >
             <h1 className="line-clamp-2 text-lg leading-tight font-bold tracking-tight">
               {movie.title}

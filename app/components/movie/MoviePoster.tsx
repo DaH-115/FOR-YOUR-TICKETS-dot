@@ -30,7 +30,7 @@ export default function MoviePoster({
   return (
     <div
       className={[
-        "group relative aspect-2/3 overflow-hidden rounded-2xl",
+        "group/poster relative aspect-2/3 overflow-hidden rounded-2xl",
         className,
       ]
         .filter(Boolean)
@@ -42,7 +42,7 @@ export default function MoviePoster({
         priority={policy.priority}
         sizes={policy.sizes}
       />
-      <div className="absolute inset-0 rounded-2xl border border-white/20 transition-all duration-300 ease-out group-hover:border-white/40" />
+      <div className="absolute inset-0 rounded-2xl border border-white/20 transition-all duration-300 ease-out group-hover/poster:border-white/40" />
     </div>
   );
 }

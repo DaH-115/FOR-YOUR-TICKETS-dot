@@ -13,14 +13,12 @@ import MovieInfoCard from "@/components/movie/MovieInfoCard";
 interface RecommendSectionProps {
   movie: MovieList;
   trailerKey?: string;
-  genres: string[];
   uniqueDirectors: CrewMember[];
 }
 
 export default function RecommendSection({
   movie,
   trailerKey,
-  genres,
   uniqueDirectors,
 }: RecommendSectionProps) {
   const movieTitle = useMemo(
@@ -104,11 +102,7 @@ export default function RecommendSection({
                 importance="hero"
               />
               {/* 영화 정보 카드 */}
-              <MovieInfoCard
-                movie={movie}
-                genres={genres}
-                uniqueDirectors={uniqueDirectors}
-              />
+              <MovieInfoCard movie={movie} uniqueDirectors={uniqueDirectors} />
             </div>
           </div>
         </div>

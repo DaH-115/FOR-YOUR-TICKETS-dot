@@ -95,10 +95,8 @@ export default function ReviewForm({
               >
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute top-[52%] left-1/2 z-0 -translate-x-1/2 text-4xl font-extrabold tracking-tight whitespace-nowrap text-gray-300/70 select-none"
-                >
-                  For your Ticket.
-                </span>
+                  className="pointer-events-none absolute inset-0 z-0 bg-[url('/patterns/ticket-text-pattern.svg')] bg-cover bg-center select-none"
+                />
                 <p className="text-md relative z-10 font-bold tracking-tight text-gray-800 lg:text-lg">
                   {onSubmitMode === "edit" ? "리뷰 수정" : "리뷰 등록"}
                 </p>

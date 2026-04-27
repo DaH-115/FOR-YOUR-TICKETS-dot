@@ -17,7 +17,6 @@ interface HomePageProps {
   recommendMovie: MovieList;
   trailerKey: string;
   latestReviews: ReviewDoc[];
-  genres: string[];
   uniqueDirectors: CrewMember[];
 }
 
@@ -26,7 +25,6 @@ export default function HomePage({
   recommendMovie,
   trailerKey,
   latestReviews,
-  genres,
   uniqueDirectors,
 }: HomePageProps) {
   return (
@@ -40,7 +38,6 @@ export default function HomePage({
       <RecommendSection
         movie={recommendMovie}
         trailerKey={trailerKey}
-        genres={genres}
         uniqueDirectors={uniqueDirectors}
       />
       <MovieSection movieList={movieList} maxItems={10} />

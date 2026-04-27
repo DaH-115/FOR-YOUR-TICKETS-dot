@@ -20,7 +20,7 @@ function SwiperList({ movieList }: { movieList: MovieList[] }) {
   }
 
   return (
-    <div className="group relative">
+    <div className="group/swiper relative">
       <Swiper
         className="pb-12!"
         loop={true}
