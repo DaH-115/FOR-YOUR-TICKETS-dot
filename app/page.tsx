@@ -5,8 +5,8 @@ import { notFound } from "next/navigation";
 import HomePage from "@/home/HomePage";
 
 export default async function Page() {
-  // 상영 중인 영화 목록 조회
-  const [nowPlayingMovies] = await Promise.all([
+  // 첫 진입에 필요한 독립 데이터를 병렬로 조회한다.
+  const [nowPlayingMovies, latestReviewsResult] = await Promise.all([
     fetchNowPlayingMovies(),
     fetchReviewsPaginated({ page: 1, pageSize: 10 }),
   ]);
@@ -24,10 +24,7 @@ export default async function Page() {
     uniqueDirectors,
   } = await getRecommendMovie(nowPlayingMovies);
 
-  const { reviews: latestReviews } = await fetchReviewsPaginated({
-    page: 1,
-    pageSize: 10,
-  });
+  const { reviews: latestReviews } = latestReviewsResult;
 
   return (
     <HomePage
