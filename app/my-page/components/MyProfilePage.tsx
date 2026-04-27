@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import Link from "next/link";
-import { FaEdit } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "store/redux-toolkit/hooks";
 import {
   selectUser,

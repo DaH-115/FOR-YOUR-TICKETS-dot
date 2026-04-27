@@ -19,7 +19,6 @@ export default async function Page() {
   // 오늘의 추천 영화 선택 (예고편, 크레딧 포함)
   const {
     movie: recommendMovie,
-    genres,
     trailerKey,
     uniqueDirectors,
   } = await getRecommendMovie(nowPlayingMovies);
@@ -32,7 +31,6 @@ export default async function Page() {
       recommendMovie={recommendMovie}
       trailerKey={trailerKey}
       latestReviews={latestReviews}
-      genres={genres}
       uniqueDirectors={uniqueDirectors}
     />
   );
