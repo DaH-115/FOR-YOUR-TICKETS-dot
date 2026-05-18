@@ -3,6 +3,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
+import { validateReviewPhotoKeys } from "../review-photo-validation";
 
 // PUT /api/reviews/[id] - 리뷰 수정
 export async function PUT(
@@ -58,13 +59,29 @@ export async function PUT(
       );
     }
 
-    // 리뷰 업데이트
-    await reviewRef.update({
+    const reviewUpdate: Record<string, unknown> = {
       "review.reviewTitle": updateData.reviewTitle,
       "review.reviewContent": updateData.reviewContent,
       "review.rating": updateData.rating,
       "review.updatedAt": FieldValue.serverTimestamp(),
-    });
+    };
+
+    if ("photoKeys" in updateData) {
+      const photoValidation = validateReviewPhotoKeys(
+        updateData.photoKeys,
+        reviewData!.user.uid,
+      );
+      if (!photoValidation.success) {
+        return NextResponse.json(
+          { error: photoValidation.error },
+          { status: 400 },
+        );
+      }
+      reviewUpdate["review.photoKeys"] = photoValidation.photoKeys ?? [];
+    }
+
+    // 리뷰 업데이트
+    await reviewRef.update(reviewUpdate);
 
     // 캐시 재검증
     revalidatePath("/ticket-list");
