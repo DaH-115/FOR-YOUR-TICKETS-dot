@@ -4,6 +4,7 @@ import ProfileAvatar from "@/components/user/ProfileAvatar";
 import formatDate from "@/utils/formatDate";
 import { FaStar } from "react-icons/fa";
 import { ReviewDoc, ReviewUser } from "lib/reviews/fetchReviewsPaginated";
+import ReviewPhotoGrid from "@/components/review/ReviewPhotoGrid";
 
 interface ReviewCardProps {
   user: ReviewUser;
@@ -23,6 +24,7 @@ export default function ReviewCard({
     reviewTitle,
     createdAt,
     rating,
+    photoKeys,
   } = reviews.review;
 
   return (
@@ -58,9 +60,12 @@ export default function ReviewCard({
         </div>
 
         {/* 리뷰 타이틀 */}
-        <h2 className="pt-8 pb-12 text-xl font-semibold tracking-tight">
+        <h2 className="pt-8 pb-6 text-xl font-semibold tracking-tight">
           &quot;{reviewTitle}&quot;
         </h2>
+
+        <ReviewPhotoGrid photoKeys={photoKeys?.slice(0, 2)} compact />
+
         {/* 꾸밈요소 (선택·드래그 방지) */}
         <div className="text-md font-extrabold tracking-tight whitespace-nowrap text-gray-300 select-none">
           For your Ticket.
