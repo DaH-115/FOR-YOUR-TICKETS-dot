@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import AvatarUploader from "app/my-page/components/profile-avatar/AvatarUploader";
 
 // jest.mock
@@ -121,12 +121,6 @@ describe("AvatarUploader", () => {
     // 파일 입력이 렌더링되었는지 확인
     expect(screen.getByTestId("avatar-file-input")).toBeInTheDocument();
 
-    // 파일 변경 이벤트를 시뮬레이션하여 mockOnFileChange를 호출
-    const fileInput = screen.getByTestId("avatar-file-input");
-    const mockEvent = {
-      target: { files: [validFile] },
-    };
-
     // useAvatarUpload의 onFileChange가 실제로 파일 검증을 수행하도록 모킹
     mockOnFileChange.mockImplementation((e) => {
       const file = e.target.files?.[0];
@@ -144,6 +138,9 @@ describe("AvatarUploader", () => {
     });
 
     // 파일 변경 이벤트를 트리거
+    const mockEvent = {
+      target: { files: [validFile] },
+    };
     mockOnFileChange(mockEvent);
 
     // 파일 검증 함수들이 호출되는지 확인

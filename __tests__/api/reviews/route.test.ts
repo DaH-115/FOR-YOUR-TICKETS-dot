@@ -1,6 +1,5 @@
 import { GET, POST } from "@/api/reviews/route";
 import { NextRequest } from "next/server";
-import { adminFirestore } from "firebase-admin-config";
 import { fetchReviewsPaginated } from "lib/reviews/fetchReviewsPaginated";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
