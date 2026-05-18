@@ -12,6 +12,7 @@ import ProfileAvatar from "@/components/user/ProfileAvatar";
 import ReviewDetailCardComment from "@/components/review/ReviewDetailCardComment";
 import ActivityBadge from "@/components/ui/feedback/ActivityBadge";
 import ReviewDetailLike from "@/components/review/ReviewDetailLike";
+import ReviewPhotoGrid from "@/components/review/ReviewPhotoGrid";
 
 interface ReviewDetailCardContentProps {
   review: ReviewDoc;
@@ -23,7 +24,7 @@ export default function ReviewDetailCardContent({
   user,
 }: ReviewDetailCardContentProps) {
   const router = useRouter();
-  const { reviewContent, createdAt } = review.review;
+  const { reviewContent, createdAt, photoKeys } = review.review;
   const currentUser = useAppSelector(selectUser);
   // 본인 리뷰인지 확인
   const isOwnReview = currentUser?.uid === user.uid;
@@ -137,9 +138,11 @@ export default function ReviewDetailCardContent({
         </div>
 
         {/* 리뷰 내용 (줄바꿈·빈줄 보존) */}
-        <p className="pt-8 pb-12 text-sm tracking-tight whitespace-pre-line">
+        <p className="pt-8 pb-6 text-sm tracking-tight whitespace-pre-line">
           {reviewContent}
         </p>
+
+        <ReviewPhotoGrid photoKeys={photoKeys} />
 
         {/* 날짜 (시간 제외) */}
         <p className="text-left text-xs tracking-tight text-gray-400">
