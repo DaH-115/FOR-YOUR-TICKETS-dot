@@ -5,6 +5,7 @@ import { adminFirestore } from "firebase-admin-config";
 import { verifyAuthToken, verifyResourceOwnership } from "lib/auth/verifyToken";
 import { computeGlobalReviewOrderNumber } from "lib/reviews/computeGlobalReviewOrderNumber";
 import { updateUserActivityLevel } from "lib/users/updateUserActivityLevel";
+import { validateReviewPhotoKeys } from "./review-photo-validation";
 
 // POST /api/reviews - 리뷰 생성
 export async function POST(req: NextRequest) {
@@ -40,11 +41,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const photoValidation = validateReviewPhotoKeys(
+      reviewData.review.photoKeys,
+      reviewData.user.uid,
+    );
+    if (!photoValidation.success) {
+      return NextResponse.json(
+        { error: photoValidation.error },
+        { status: 400 },
+      );
+    }
+
+    const reviewPayload = { ...reviewData.review };
+    if (photoValidation.photoKeys) {
+      reviewPayload.photoKeys = photoValidation.photoKeys;
+    }
+
     // Firestore에 리뷰 생성
     const newReview = {
       user: reviewData.user,
       review: {
-        ...reviewData.review,
+        ...reviewPayload,
         createdAt: FieldValue.serverTimestamp(),
         updatedAt: FieldValue.serverTimestamp(),
         likeCount: 0,
