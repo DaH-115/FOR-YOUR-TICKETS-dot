@@ -27,6 +27,7 @@ export interface ReviewDoc {
     rating: number;
     reviewTitle: string;
     reviewContent: string;
+    photoKeys?: string[];
     createdAt: string;
     updatedAt: string;
     likeCount: number;
