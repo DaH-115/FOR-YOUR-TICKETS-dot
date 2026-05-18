@@ -9,7 +9,7 @@ export const S3_PRESIGNED_URL_EXPIRY = {
 } as const;
 
 // S3에서 허용하는 경로 접두사
-export const ALLOWED_S3_PATHS = ["profile-img/"] as const;
+export const ALLOWED_S3_PATHS = ["profile-img/", "review-img/"] as const;
 
 /**
  * S3 키가 허용된 경로인지 검증
