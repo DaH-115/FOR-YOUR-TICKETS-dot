@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ReviewDoc } from "lib/reviews/fetchReviewsPaginated";
-import MoviePoster from "@/components/movie/MoviePoster";
 import ReviewListCard from "@/components/review/ReviewListCard";
+import ReviewThumbnail from "@/components/review/ReviewThumbnail";
 
 export default function ReviewTicket({ review }: { review: ReviewDoc }) {
   const router = useRouter();
@@ -20,7 +20,8 @@ export default function ReviewTicket({ review }: { review: ReviewDoc }) {
           No.{review.orderNumber}
         </div>
       )}
-      <MoviePoster
+      <ReviewThumbnail
+        photoKey={review.review.photoKeys?.[0]}
         posterPath={review.review.moviePosterPath || ""}
         title={review.review.movieTitle}
       />
