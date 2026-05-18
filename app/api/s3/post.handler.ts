@@ -7,6 +7,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { MAX_FILE_SIZE } from "@/utils/file/validateFileSize";
 import { ALLOWED_CONTENT_TYPES } from "@/utils/file/validateFileType";
 
+const UPLOAD_PREFIX_BY_PURPOSE = {
+  profile: "profile-img",
+  review: "review-img",
+} as const;
+
+type UploadPurpose = keyof typeof UPLOAD_PREFIX_BY_PURPOSE;
+
 /**
  * S3 업로드를 위한 요청 본문 타입
  */
@@ -14,12 +21,17 @@ interface UploadRequestBody {
   filename: string;
   contentType: string;
   size: number;
+  purpose?: UploadPurpose;
+}
+
+function isUploadPurpose(value: unknown): value is UploadPurpose {
+  return value === "profile" || value === "review";
 }
 
 /**
  * S3 Presigned URL 업로드 엔드포인트 (POST)
  * - 인증 필수
- * - 프로필 이미지 업로드용
+ * - purpose에 맞는 S3 prefix로 이미지 업로드
  */
 export async function POST(req: NextRequest) {
   try {
@@ -36,11 +48,19 @@ export async function POST(req: NextRequest) {
     // 요청 본문 파싱 및 타입 체크
     const body = (await req.json()) as Partial<UploadRequestBody>;
     const { filename, contentType, size } = body;
+    const purpose = body.purpose ?? "profile";
 
     // 필수 파라미터 검증
     if (!filename || !contentType || typeof size !== "number") {
       return NextResponse.json(
         { error: "filename, contentType, size가 모두 필요합니다." },
+        { status: 400 },
+      );
+    }
+
+    if (!isUploadPurpose(purpose)) {
+      return NextResponse.json(
+        { error: "허용되지 않는 업로드 목적입니다." },
         { status: 400 },
       );
     }
@@ -61,8 +81,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // S3 키 생성 (사용자별 디렉토리 + 타임스탬프)
-    const uploadKey = `profile-img/${uid}/${Date.now()}_${filename}`;
+    // S3 키 생성 (용도별 디렉토리 + 사용자별 디렉토리 + 타임스탬프)
+    const uploadPrefix = UPLOAD_PREFIX_BY_PURPOSE[purpose];
+    const uploadKey = `${uploadPrefix}/${uid}/${Date.now()}_${filename}`;
 
     const command = new PutObjectCommand({
       Bucket: getS3BucketName(),
