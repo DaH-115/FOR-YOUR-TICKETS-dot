@@ -4,6 +4,7 @@ import ProfileAvatar from "@/components/user/ProfileAvatar";
 import formatDate from "@/utils/formatDate";
 import { FaStar } from "react-icons/fa";
 import { ReviewDoc, ReviewUser } from "lib/reviews/fetchReviewsPaginated";
+import ReviewPhotoGrid from "@/components/review/ReviewPhotoGrid";
 
 interface ReviewListCardProps {
   user: ReviewUser;
@@ -23,11 +24,12 @@ export default function ReviewListCard({
     reviewTitle,
     createdAt,
     rating,
+    photoKeys,
   } = reviews.review;
 
   return (
     <article onClick={handleReviewClick} className="mx-auto w-full max-w-md">
-      <div className="flex h-56 cursor-pointer flex-col overflow-hidden rounded-2xl bg-white p-4 transition-colors duration-300 ease-in-out hover:bg-gray-100">
+      <div className="flex h-72 cursor-pointer flex-col overflow-hidden rounded-2xl bg-white p-4 transition-colors duration-300 ease-in-out hover:bg-gray-100">
         {/* 제목 (2줄까지, 초과 시 말줄임) */}
         <div className="mb-3 shrink-0">
           <h1 className="line-clamp-2 text-sm leading-tight font-bold">
@@ -50,12 +52,15 @@ export default function ReviewListCard({
           </p>
         </div>
 
-        {/* 리뷰 타이틀 (남는 높이 안에서 최대 4줄) */}
-        <div className="flex min-h-0 flex-1 flex-col pt-2">
-          <h2 className="text-md line-clamp-4 leading-snug font-semibold tracking-tight">
+        {/* 리뷰 타이틀 */}
+        <div className="flex min-h-0 shrink-0 flex-col pt-2">
+          <h2 className="text-md line-clamp-2 leading-snug font-semibold tracking-tight">
             {`"${reviewTitle}"`}
           </h2>
         </div>
+
+        <ReviewPhotoGrid photoKeys={photoKeys?.slice(0, 1)} compact />
+
         {/* 꾸밈요소 (선택·드래그 방지) */}
         <div className="shrink-0 text-sm font-bold tracking-tight whitespace-nowrap text-gray-200 select-none">
           {"For your Ticket."}
